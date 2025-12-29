@@ -1,10 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+// Lazy initialization for Supabase client
+let supabaseInstance: SupabaseClient | null = null
+
+function getSupabase(): SupabaseClient {
+  if (supabaseInstance) return supabaseInstance
+
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!url || !key) {
+    throw new Error('Supabase 환경변수가 설정되지 않았습니다.')
+  }
+
+  supabaseInstance = createClient(url, key)
+  return supabaseInstance
+}
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -15,6 +27,8 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    const supabase = getSupabase()
+
     // 상권명 검색
     const { data: areas, error } = await supabase
       .from('trade_areas')

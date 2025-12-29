@@ -1,12 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { GRADE_INFO } from '@/lib/types'
 import { calculateGrade, getGradeCopy } from '@/lib/engine'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+// Lazy initialization for Supabase client
+let supabaseInstance: SupabaseClient | null = null
+
+function getSupabase(): SupabaseClient {
+  if (supabaseInstance) return supabaseInstance
+
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!url || !key) {
+    throw new Error('Supabase 환경변수가 설정되지 않았습니다.')
+  }
+
+  supabaseInstance = createClient(url, key)
+  return supabaseInstance
+}
 
 const KAKAO_REST_KEY = process.env.KAKAO_REST_KEY
 
@@ -46,6 +58,7 @@ async function getCoordinatesFromKakao(query: string): Promise<{ lat: number; ln
 
 // 좌표 기반으로 상권 찾기 (폴리곤 포함 우선 → nearest fallback)
 async function findAreaByPoint(lat: number, lng: number) {
+  const supabase = getSupabase()
   const { data, error } = await supabase.rpc('find_area_by_point', {
     p_lat: lat,
     p_lng: lng
@@ -89,6 +102,7 @@ const AREA_ALIASES: Record<string, string[]> = {
 
 // DB에서 상권명으로 직접 검색 (폴백)
 async function findAreaByName(query: string) {
+  const supabase = getSupabase()
   const normalizedQuery = query.trim()
   const aliasTargets = AREA_ALIASES[normalizedQuery]
 
@@ -144,6 +158,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    const supabase = getSupabase()
     let area = null
 
     // 1. 카카오 API로 좌표 검색 → 폴리곤 포함/nearest 상권 찾기
