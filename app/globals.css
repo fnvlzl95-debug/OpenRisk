@@ -1,26 +1,722 @@
 @import "tailwindcss";
 
+/* ============================================
+   OpenRisk Design System
+   Aesthetic: Financial Terminal + Editorial
+   ============================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Core Palette - Deep Charcoal Base */
+  --bg-base: #0a0a0c;
+  --bg-surface: #111114;
+  --bg-elevated: #18181c;
+  --bg-hover: #1f1f24;
+
+  /* Text Hierarchy */
+  --text-primary: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --text-tertiary: #71717a;
+  --text-muted: #3f3f46;
+
+  /* Grade Colors - Bold & Saturated */
+  --grade-a: #10b981;
+  --grade-a-glow: rgba(16, 185, 129, 0.15);
+  --grade-b: #f59e0b;
+  --grade-b-glow: rgba(245, 158, 11, 0.15);
+  --grade-c: #ef4444;
+  --grade-c-glow: rgba(239, 68, 68, 0.15);
+  --grade-d: #8b5cf6;
+  --grade-d-glow: rgba(139, 92, 246, 0.15);
+
+  /* Accent */
+  --accent: #3b82f6;
+  --accent-glow: rgba(59, 130, 246, 0.12);
+
+  /* Borders & Lines */
+  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border-default: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --grid-line: rgba(255, 255, 255, 0.03);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.5);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+  --shadow-glow: 0 0 40px rgba(59, 130, 246, 0.08);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--bg-base);
+  --color-foreground: var(--text-primary);
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, system-ui, sans-serif;
+  --font-mono: "Pretendard Variable", Pretendard, ui-monospace, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ============================================
+   Base Styles
+   ============================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-feature-settings: "ss01" on, "cv01" on;
+  min-height: 100vh;
+}
+
+/* ============================================
+   Typography System
+   ============================================ */
+
+/* Display - Hero numbers */
+.text-display {
+  font-family: var(--font-mono);
+  font-size: clamp(2.5rem, 8vw, 4rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+/* Headline - Section titles */
+.text-headline {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+/* Title - Card headers */
+.text-title {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Body - Regular text */
+.text-body {
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* Caption - Secondary info */
+.text-caption {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* Label - Uppercase labels */
+.text-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Mono - Numbers & Data */
+.text-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Large data numbers */
+.text-data {
+  font-family: var(--font-mono);
+  font-size: 1.75rem;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.text-data-sm {
+  font-family: var(--font-mono);
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1;
+}
+
+/* ============================================
+   Layout Components
+   ============================================ */
+
+/* Card - Primary container */
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+}
+
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+/* Panel - Elevated surface */
+.panel {
+  background: var(--bg-elevated);
+  border-radius: 6px;
+  padding: 16px;
+}
+
+/* ============================================
+   Data Display
+   ============================================ */
+
+/* Data Grid */
+.data-grid {
+  display: grid;
+  gap: 1px;
+  background: var(--border-subtle);
+}
+
+.data-grid > * {
+  background: var(--bg-surface);
+  padding: 16px;
+}
+
+/* Data Row */
+.data-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.data-row:last-child {
+  border-bottom: none;
+}
+
+.data-label {
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+}
+
+.data-value {
+  font-family: var(--font-mono);
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.data-value-highlight {
+  color: var(--accent);
+}
+
+/* Stat Block */
+.stat-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.stat-value {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.stat-unit {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-left: 2px;
+}
+
+/* ============================================
+   Grade System
+   ============================================ */
+
+.grade-badge {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  font-weight: 400;
+  color: white;
+  position: relative;
+}
+
+.grade-badge::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 13px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.grade-badge-sm {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  font-size: 1.125rem;
+}
+
+.grade-a { background: linear-gradient(135deg, var(--grade-a), #059669); box-shadow: 0 8px 24px var(--grade-a-glow); }
+.grade-b { background: linear-gradient(135deg, var(--grade-b), #d97706); box-shadow: 0 8px 24px var(--grade-b-glow); }
+.grade-c { background: linear-gradient(135deg, var(--grade-c), #dc2626); box-shadow: 0 8px 24px var(--grade-c-glow); }
+.grade-d { background: linear-gradient(135deg, var(--grade-d), #7c3aed); box-shadow: 0 8px 24px var(--grade-d-glow); }
+
+.grade-text-a { color: var(--grade-a); }
+.grade-text-b { color: var(--grade-b); }
+.grade-text-c { color: var(--grade-c); }
+.grade-text-d { color: var(--grade-d); }
+
+.grade-bg-a { background: var(--grade-a-glow); }
+.grade-bg-b { background: var(--grade-b-glow); }
+.grade-bg-c { background: var(--grade-c-glow); }
+.grade-bg-d { background: var(--grade-d-glow); }
+
+/* ============================================
+   Form Elements
+   ============================================ */
+
+.search-container {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.search-container:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow), var(--shadow-glow);
+}
+
+.search-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 1rem;
+  width: 100%;
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Button */
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Tag/Badge */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+/* ============================================
+   Progress & Charts
+   ============================================ */
+
+.progress-track {
+  height: 4px;
+  background: var(--bg-elevated);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Metric Bar */
+.metric-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.metric-bar-track {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-elevated);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.metric-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.5s ease-out;
+}
+
+.metric-bar-value {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  min-width: 40px;
+  text-align: right;
+}
+
+/* ============================================
+   List Items
+   ============================================ */
+
+.list-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg-elevated);
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+}
+
+.list-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.list-content {
+  flex: 1;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease forwards;
+  opacity: 0;
+}
+
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.spinner {
+  animation: spin 0.8s linear infinite;
+}
+
+/* Stagger delays */
+.delay-1 { animation-delay: 0.05s; }
+.delay-2 { animation-delay: 0.1s; }
+.delay-3 { animation-delay: 0.15s; }
+.delay-4 { animation-delay: 0.2s; }
+.delay-5 { animation-delay: 0.25s; }
+.delay-6 { animation-delay: 0.3s; }
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+
+.divider {
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+.divider-vertical {
+  width: 1px;
+  background: var(--border-subtle);
+}
+
+/* Grid background pattern */
+.grid-bg {
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Glow effects */
+.glow-accent {
+  box-shadow: 0 0 40px var(--accent-glow);
+}
+
+/* ============================================
+   Scrollbar
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-base);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ============================================
+   Skeleton Loading
+   ============================================ */
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-elevated) 25%,
+    var(--bg-hover) 50%,
+    var(--bg-elevated) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 4px;
+}
+
+.skeleton-text {
+  height: 1em;
+  border-radius: 4px;
+}
+
+.skeleton-text-sm {
+  height: 0.75em;
+}
+
+.skeleton-text-lg {
+  height: 1.5em;
+}
+
+.skeleton-badge {
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+}
+
+.skeleton-badge-lg {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+}
+
+.skeleton-panel {
+  border-radius: 6px;
+  padding: 12px;
+  background: var(--bg-elevated);
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 768px) {
+  .card-header {
+    padding: 12px 16px;
+  }
+
+  .card-body {
+    padding: 16px;
+  }
+
+  .panel {
+    padding: 12px;
+  }
+
+  .text-data-sm {
+    font-size: 1rem;
+  }
+
+  .list-item {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .list-content {
+    font-size: 0.8125rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .text-display {
+    font-size: 2rem;
+  }
+
+  .text-headline {
+    font-size: 1.125rem;
+  }
+
+  .text-title {
+    font-size: 0.9375rem;
+  }
+
+  .text-body {
+    font-size: 0.875rem;
+  }
+
+  .grade-badge {
+    width: 56px;
+    height: 56px;
+    font-size: 1.5rem;
+    border-radius: 10px;
+  }
+
+  .grade-badge-sm {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+
+  .stat-value {
+    font-size: 1.125rem;
+  }
+
+  .stat-label {
+    font-size: 0.625rem;
+  }
+
+  .btn-primary {
+    padding: 10px 20px;
+    font-size: 0.8125rem;
+  }
+
+  .tag {
+    padding: 4px 8px;
+    font-size: 0.6875rem;
+  }
+
+  .search-container {
+    border-radius: 10px;
+  }
+
+  .search-input {
+    font-size: 0.9375rem;
+  }
+
+  /* 자동완성 드롭다운 모바일 최적화 */
+  .search-dropdown-item {
+    padding: 12px;
+  }
 }

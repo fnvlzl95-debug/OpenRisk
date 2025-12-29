@@ -87,6 +87,22 @@ export const GRADE_INFO: Record<Grade, GradeInfo> = {
   }
 }
 
+// 원본 지표 데이터
+export interface RawMetrics {
+  period: string
+  traffic_total: number
+  traffic_weekday: number
+  traffic_weekend: number
+  resident_index: number
+  worker_index: number
+}
+
+// GeoJSON 폴리곤 타입
+export interface GeoJSONPolygon {
+  type: 'Polygon'
+  coordinates: number[][][]
+}
+
 // 분석 결과
 export interface AnalysisResult {
   area: {
@@ -94,7 +110,9 @@ export interface AnalysisResult {
     name: string
     district: string
     center: { lat: number; lng: number }
+    polygon?: GeoJSONPolygon | null
   }
+  rawMetrics: RawMetrics
   lv3_5: {
     grade: Grade
     gradeName: string
