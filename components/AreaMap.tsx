@@ -8,7 +8,8 @@ declare global {
       maps: {
         load: (callback: () => void) => void
         Map: new (container: HTMLElement, options: { center: unknown; level: number }) => KakaoMap
-        LatLng: new (lat: number, lng: number) => unknown
+        LatLng: new (lat: number, lng: number) => KakaoLatLng
+        LatLngBounds: new () => KakaoLatLngBounds
         Marker: new (options: { position: unknown; map: KakaoMap }) => unknown
         Circle: new (options: {
           center: unknown
@@ -42,9 +43,19 @@ declare global {
   }
 }
 
+interface KakaoLatLng {
+  getLat: () => number
+  getLng: () => number
+}
+
+interface KakaoLatLngBounds {
+  extend: (latlng: KakaoLatLng) => void
+}
+
 interface KakaoMap {
   setCenter: (latlng: unknown) => void
   setLevel: (level: number) => void
+  setBounds: (bounds: KakaoLatLngBounds, paddingTop?: number, paddingRight?: number, paddingBottom?: number, paddingLeft?: number) => void
 }
 
 interface GeoJSONPolygon {
@@ -57,6 +68,7 @@ interface AreaMapProps {
   areaName: string
   grade: 'A' | 'B' | 'C' | 'D'
   polygon?: GeoJSONPolygon | null
+  searchedLocation?: { lat: number; lng: number } | null  // 사용자가 검색한 실제 위치
   className?: string
 }
 
@@ -67,7 +79,7 @@ const GRADE_COLORS = {
   D: '#8b5cf6'
 }
 
-export default function AreaMap({ center, areaName, grade, polygon, className = '' }: AreaMapProps) {
+export default function AreaMap({ center, areaName, grade, polygon, searchedLocation, className = '' }: AreaMapProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const [isLoaded, setIsLoaded] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -99,7 +111,7 @@ export default function AreaMap({ center, areaName, grade, polygon, className = 
     return () => {
       // cleanup if needed
     }
-  }, [center.lat, center.lng, polygon])
+  }, [center.lat, center.lng, polygon, searchedLocation])
 
   function initializeMap() {
     if (!mapRef.current) return
@@ -113,15 +125,113 @@ export default function AreaMap({ center, areaName, grade, polygon, className = 
         level: 4 // 줌 레벨 (1~14, 작을수록 확대)
       })
 
-      // 마커 추가
-      new kakao.maps.Marker({
+      // 등급 색상 먼저 정의
+      const gradeColor = GRADE_COLORS[grade]
+
+      // 상권 중심 마커 (말풍선 스타일 - 위쪽 배치)
+      const centerMarkerContent = `
+        <div style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        ">
+          <div style="
+            padding: 8px 12px;
+            background: rgba(17, 17, 20, 0.95);
+            border: 1px solid ${gradeColor};
+            border-radius: 6px;
+            color: #f4f4f5;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          ">
+            <span style="color: ${gradeColor}; margin-right: 6px;">${grade}</span>
+            ${areaName}
+          </div>
+          <div style="
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 10px solid rgba(17, 17, 20, 0.95);
+          "></div>
+          <div style="
+            width: 14px;
+            height: 14px;
+            background: ${gradeColor};
+            border: 3px solid white;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            margin-top: -3px;
+          "></div>
+        </div>
+      `
+      new kakao.maps.CustomOverlay({
         position: position,
+        content: centerMarkerContent,
+        yAnchor: 1,
         map: map
       })
 
-      // 상권 영역 표시 (폴리곤 또는 원형 폴백)
-      const gradeColor = GRADE_COLORS[grade]
+      // 검색 위치 마커 추가 (상권 밖일 때만, 검색 위치가 있을 때만)
+      const hasSearchLocation = searchedLocation && (searchedLocation.lat !== center.lat || searchedLocation.lng !== center.lng)
 
+      if (hasSearchLocation) {
+        const searchPosition = new kakao.maps.LatLng(searchedLocation.lat, searchedLocation.lng)
+
+        // 검색 위치 마커 + 라벨 통합 (말풍선 스타일)
+        const searchMarkerContent = `
+          <div style="
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          ">
+            <div style="
+              padding: 6px 10px;
+              background: #ef4444;
+              border-radius: 6px;
+              color: white;
+              font-size: 11px;
+              font-weight: 600;
+              white-space: nowrap;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            ">
+              검색 위치
+            </div>
+            <div style="
+              width: 0;
+              height: 0;
+              border-left: 6px solid transparent;
+              border-right: 6px solid transparent;
+              border-top: 8px solid #ef4444;
+            "></div>
+            <div style="
+              width: 10px;
+              height: 10px;
+              background: #ef4444;
+              border: 2px solid white;
+              border-radius: 50%;
+              box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+              margin-top: -2px;
+            "></div>
+          </div>
+        `
+        new kakao.maps.CustomOverlay({
+          position: searchPosition,
+          content: searchMarkerContent,
+          yAnchor: 1,
+          map: map
+        })
+
+        // 지도 범위를 검색 위치와 상권 중심이 모두 보이도록 조정
+        const bounds = new kakao.maps.LatLngBounds()
+        bounds.extend(position)
+        bounds.extend(searchPosition)
+        map.setBounds(bounds, 80, 80, 80, 80)  // 상하좌우 80px 패딩
+      }
+
+      // 상권 영역 표시 (폴리곤 또는 원형 폴백)
       if (polygon && polygon.coordinates && polygon.coordinates.length > 0) {
         // GeoJSON 폴리곤 그리기
         const path = polygon.coordinates[0].map(coord => {
@@ -153,31 +263,6 @@ export default function AreaMap({ center, areaName, grade, polygon, className = 
           map: map
         })
       }
-
-      // 상권명 오버레이
-      const overlayContent = `
-        <div style="
-          padding: 8px 12px;
-          background: rgba(17, 17, 20, 0.95);
-          border: 1px solid ${gradeColor};
-          border-radius: 6px;
-          color: #f4f4f5;
-          font-size: 13px;
-          font-weight: 600;
-          white-space: nowrap;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        ">
-          <span style="color: ${gradeColor}; margin-right: 6px;">${grade}</span>
-          ${areaName}
-        </div>
-      `
-
-      new kakao.maps.CustomOverlay({
-        position: position,
-        content: overlayContent,
-        yAnchor: 2.5,
-        map: map
-      })
 
       setIsLoaded(true)
     } catch (err) {

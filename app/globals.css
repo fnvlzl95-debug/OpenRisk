@@ -646,7 +646,7 @@ body {
   }
 
   .text-data-sm {
-    font-size: 1rem;
+    font-size: 0.875rem;
   }
 
   .list-item {
@@ -694,7 +694,7 @@ body {
   }
 
   .stat-label {
-    font-size: 0.625rem;
+    font-size: 0.5625rem;
   }
 
   .btn-primary {
@@ -719,4 +719,152 @@ body {
   .search-dropdown-item {
     padding: 12px;
   }
+
+  /* 툴팁 트리거 모바일 최적화 */
+  .tooltip-trigger {
+    width: 12px;
+    height: 12px;
+    font-size: 8px;
+    margin-left: 2px;
+  }
+}
+
+/* ============================================
+   Tooltip System
+   ============================================ */
+
+.tooltip-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--bg-hover);
+  border: 1px solid var(--border-default);
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 600;
+  cursor: help;
+  transition: all 0.15s ease;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+.tooltip-trigger:hover {
+  background: var(--bg-elevated);
+  border-color: var(--border-strong);
+  color: var(--text-secondary);
+}
+
+.tooltip-content {
+  position: absolute;
+  z-index: 100;
+  padding: 8px 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  box-shadow: var(--shadow-md);
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  white-space: normal;
+  max-width: 240px;
+  min-width: 160px;
+  pointer-events: none;
+  animation: tooltipFadeIn 0.15s ease;
+}
+
+/* Portal 기반 툴팁 (overflow 문제 해결) */
+.tooltip-box {
+  position: relative;
+  padding: 10px 14px;
+  background: #1f1f24;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #d4d4d8;
+  white-space: normal;
+  max-width: 240px;
+  min-width: 160px;
+  pointer-events: none;
+  animation: tooltipFadeIn 0.15s ease;
+}
+
+.tooltip-arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  transform: translateX(-50%);
+}
+
+.tooltip-arrow-down {
+  bottom: -6px;
+  border-top: 6px solid #1f1f24;
+}
+
+.tooltip-arrow-up {
+  top: -6px;
+  border-bottom: 6px solid #1f1f24;
+}
+
+.tooltip-above {
+  animation: tooltipFadeInDown 0.15s ease;
+}
+
+.tooltip-below {
+  animation: tooltipFadeInUp 0.15s ease;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes tooltipFadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes tooltipFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 섹션 헤더에 사용되는 라벨과 툴팁 조합 */
+.section-label-with-tooltip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* stat-label에서 사용되는 인라인 툴팁 */
+.stat-label-with-tooltip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }

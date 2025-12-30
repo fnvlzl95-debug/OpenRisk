@@ -7,6 +7,7 @@
 export {
   calculateGrade,
   calculateDisplayMetrics,
+  calculateMarketingElasticity,
   type GradeInput,
   type GradeResult,
   type GradeReason
