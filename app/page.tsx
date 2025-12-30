@@ -137,11 +137,10 @@ export default function Home() {
           {/* Hero Content */}
           <div className="text-center mb-6 sm:mb-10 animate-fade-up">
             <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-2 sm:mb-4 text-white">
-              오픈리스크
+              상권의 진실을<br />마주하세요.
             </h1>
             <p className="text-sm sm:text-base md:text-lg max-w-lg mx-auto text-zinc-400 leading-relaxed">
-              서울시 상권의 리스크를 데이터로 분석합니다.<br className="hidden sm:block" />
-              초보 창업자를 위한 <span className="text-white font-medium">객관적인 상권 진단</span> 서비스.
+              서울시 빅데이터 기반 상권 리스크 분석 엔진
             </p>
           </div>
 
@@ -219,7 +218,7 @@ export default function Home() {
           </form>
 
           {/* Example Tags */}
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-10 sm:mb-12 animate-fade-up delay-2">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-6 sm:mb-8 animate-fade-up delay-2">
             <span className="text-xs sm:text-sm text-zinc-600">예시:</span>
             {EXAMPLE_AREAS.map((area) => (
               <button
@@ -235,7 +234,7 @@ export default function Home() {
 
           {/* Grade Cards */}
           <div className="animate-fade-up delay-3">
-            <div className="text-center mb-4 sm:mb-6">
+            <div className="text-center mb-2 sm:mb-3">
               <span className="text-xs sm:text-sm font-medium tracking-widest uppercase text-zinc-600">리스크 등급 체계</span>
             </div>
 
@@ -263,7 +262,7 @@ export default function Home() {
           </div>
 
           {/* Stats Preview */}
-          <div className="mt-10 sm:mt-16 grid grid-cols-3 gap-2 sm:gap-3 animate-fade-up delay-5">
+          <div className="mt-6 sm:mt-10 grid grid-cols-3 gap-2 sm:gap-3 animate-fade-up delay-5">
             <div className="p-3 sm:p-6 text-center rounded-xl sm:rounded-2xl bg-zinc-900/80 border border-zinc-800">
               <div className="text-[10px] sm:text-sm font-medium tracking-wider uppercase text-zinc-600 mb-1 sm:mb-2">분석 가능</div>
               <div className="text-xl sm:text-3xl font-bold text-white">51<span className="text-sm sm:text-lg text-zinc-500 ml-0.5">개</span></div>
