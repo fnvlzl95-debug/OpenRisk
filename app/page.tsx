@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 interface SearchSuggestion {
   id: string
@@ -116,9 +117,18 @@ export default function Home() {
             <div className="text-mono text-title" style={{ color: 'var(--text-primary)' }}>OpenRisk</div>
             <span className="tag">BETA</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--grade-a)' }} />
-            <span className="text-caption" style={{ color: 'var(--text-tertiary)' }}>서울시 공공데이터</span>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/select"
+              className="text-caption px-3 py-1 rounded-full transition-colors"
+              style={{ color: 'var(--text-muted)', border: '1px solid var(--border-subtle)' }}
+            >
+              스킨 변경
+            </Link>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--grade-a)' }} />
+              <span className="text-caption" style={{ color: 'var(--text-tertiary)' }}>서울시 공공데이터</span>
+            </div>
           </div>
         </div>
       </nav>
