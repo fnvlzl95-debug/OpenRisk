@@ -12,22 +12,20 @@ interface SearchSuggestion {
 }
 
 const GRADE_DATA = [
-  { grade: 'A', label: '주거형', desc: '안정적 단골 기반', className: 'grade-a', color: '#10b981' },
-  { grade: 'B', label: '혼합형', desc: '시간대별 전략 필요', className: 'grade-b', color: '#f59e0b' },
-  { grade: 'C', label: '상업형', desc: '고위험 고수익', className: 'grade-c', color: '#ef4444' },
-  { grade: 'D', label: '특수형', desc: '전문 분석 필요', className: 'grade-d', color: '#8b5cf6' },
+  { grade: 'A', label: '주거형', color: 'from-emerald-400 to-emerald-600' },
+  { grade: 'B', label: '혼합형', color: 'from-blue-400 to-blue-600' },
+  { grade: 'C', label: '상업형', color: 'from-amber-400 to-amber-600' },
+  { grade: 'D', label: '특수형', color: 'from-rose-400 to-rose-600' },
 ]
-
-const EXAMPLE_AREAS = ['홍대입구역', '강남역', '성수동', '이태원']
 
 export default function Home() {
   const [query, setQuery] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const searchContainerRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
 
   // 자동완성 검색 (debounced)
@@ -59,6 +57,7 @@ export default function Home() {
     const handleClickOutside = (e: MouseEvent) => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
         setShowSuggestions(false)
+        setIsFocused(false)
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
@@ -95,8 +94,7 @@ export default function Home() {
     setQuery(suggestion.name)
     setShowSuggestions(false)
     setSelectedIndex(-1)
-    // 검색창에 값만 입력하고 포커스 유지
-    inputRef.current?.focus()
+    // 검색창에 값만 입력 (자동 이동 안함)
   }
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -108,183 +106,154 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-[#09090b]">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#09090b]/90 backdrop-blur-xl border-b border-white/5">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-12 sm:h-14 flex items-center justify-between">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="text-lg sm:text-xl font-bold tracking-tight text-white">OpenRisk</div>
-            <span className="px-2 py-0.5 text-[10px] sm:text-xs font-medium rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">BETA</span>
-          </div>
-          <div className="flex items-center gap-2 sm:gap-4">
-            <Link
-              href="/select"
-              className="text-xs sm:text-sm px-3 py-1.5 rounded-lg transition-all text-zinc-500 hover:text-white border border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800/50"
-            >
-              스킨 변경
-            </Link>
-            <div className="hidden sm:flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full animate-pulse bg-emerald-500" />
-              <span className="text-xs text-zinc-500">서울시 공공데이터</span>
-            </div>
+    <div className="relative min-h-screen bg-[#050505] text-white overflow-hidden selection:bg-blue-500/30">
+      {/* Background Gradient Spotlights */}
+      <div className="fixed top-[-20%] left-[-10%] w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="fixed bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[100px] pointer-events-none" />
+
+      {/* Navbar */}
+      <nav className="fixed top-0 w-full p-4 sm:p-6 flex justify-between items-center z-50">
+        <div className="font-bold text-lg sm:text-xl tracking-tighter flex items-center gap-2">
+          <div className="w-2.5 sm:w-3 h-2.5 sm:h-3 bg-white rounded-full" />
+          OpenRisk
+        </div>
+        <div className="flex items-center gap-2 sm:gap-4">
+          <Link
+            href="/select"
+            className="text-[10px] sm:text-xs font-mono text-white/40 hover:text-white transition-colors px-2 sm:px-3 py-1 rounded-full border border-white/10 hover:border-white/30"
+          >
+            SWITCH
+          </Link>
+          <div className="hidden sm:block text-xs font-mono opacity-50 border border-white/20 px-3 py-1 rounded-full">
+            SEOUL DATA 2025.Q3
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <main className="pt-16 sm:pt-20 pb-8 sm:pb-12 px-4 sm:px-6">
-        <div className="max-w-5xl mx-auto">
-          {/* Hero Content */}
-          <div className="text-center mb-6 sm:mb-10 animate-fade-up">
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-2 sm:mb-4 text-white">
-              상권의 진실을<br />마주하세요.
+      {/* Main Content */}
+      <main className="relative z-10 pt-20 pb-10">
+        <div className="relative flex flex-col items-center justify-center min-h-[80vh] px-4 w-full max-w-4xl mx-auto transition-all duration-700">
+
+          {/* Hero Text */}
+          <div className={`text-center transition-all duration-500 ${isFocused ? 'opacity-40 scale-95 blur-sm' : 'opacity-100'}`}>
+            <h1 className="text-3xl sm:text-5xl md:text-7xl font-bold tracking-tight mb-3 sm:mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
+              창업 실패를<br />관리하다.
             </h1>
-            <p className="text-sm sm:text-base md:text-lg max-w-lg mx-auto text-zinc-400 leading-relaxed">
-              서울시 빅데이터 기반 상권 리스크 분석 엔진
+            <p className="text-sm sm:text-lg text-white/40 font-light mb-8 sm:mb-12">
+              공공데이터 기반 창업 리스크 지표 분석
             </p>
           </div>
 
-          {/* Search Form */}
-          <form onSubmit={handleSearch} className="max-w-2xl mx-auto mb-6 sm:mb-8 animate-fade-up delay-1 relative" style={{ zIndex: 100 }}>
-            <div ref={searchContainerRef} className="relative">
-              <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-zinc-900 border border-zinc-800 focus-within:border-blue-500/50 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all shadow-2xl shadow-black/50">
-                <div className="pl-2 sm:pl-3 text-zinc-500">
-                  <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="11" cy="11" r="8"/>
-                    <path d="m21 21-4.35-4.35"/>
+          {/* Search Section */}
+          <div
+            ref={searchContainerRef}
+            className={`w-full max-w-2xl transition-all duration-500 ease-out ${isFocused ? 'scale-105' : 'scale-100'}`}
+            style={{ zIndex: 100, position: 'relative' }}
+          >
+            <form onSubmit={handleSearch} className="relative group">
+              {/* Input Glow Effect */}
+              <div className={`absolute -inset-1 rounded-2xl bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 opacity-0 transition duration-500 blur-lg group-hover:opacity-30 ${isFocused ? 'opacity-50' : ''}`} />
+
+              {/* Input Field */}
+              <div className="relative flex items-center bg-[#111] border border-white/10 rounded-xl sm:rounded-2xl p-1.5 sm:p-2 shadow-2xl">
+                <div className="pl-3 sm:pl-4 pr-1 sm:pr-2 text-white/40">
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
                   </svg>
                 </div>
-
                 <input
-                  ref={inputRef}
                   type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
+                  onFocus={() => { setIsFocused(true); if(suggestions.length) setShowSuggestions(true); }}
                   onKeyDown={handleKeyDown}
-                  onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
-                  placeholder="지역명 또는 주소 입력..."
-                  className="flex-1 h-11 sm:h-14 bg-transparent text-base sm:text-lg text-white placeholder:text-zinc-600 outline-none"
+                  placeholder="지역명, 지하철역 입력..."
+                  className="w-full bg-transparent h-10 sm:h-14 text-base sm:text-xl outline-none placeholder:text-white/20 text-white font-medium"
                   autoComplete="off"
                 />
-
                 <button
                   type="submit"
                   disabled={isLoading || !query.trim()}
-                  className="px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-lg sm:rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm sm:text-base font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
+                  className="px-4 sm:px-6 py-2 sm:py-3 bg-white text-black text-sm sm:text-base font-bold rounded-lg sm:rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
                 >
                   {isLoading ? (
                     <>
-                      <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <path d="M12 2v4m0 12v4m10-10h-4M6 12H2"/>
-                      </svg>
-                      <span className="hidden sm:inline">분석 중</span>
+                      <div className="w-3 sm:w-4 h-3 sm:h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                      <span className="hidden sm:inline">분석중</span>
                     </>
                   ) : (
-                    '분석하기'
+                    '분석'
                   )}
                 </button>
               </div>
 
-              {/* 자동완성 드롭다운 */}
-              {showSuggestions && suggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-2 sm:mt-3 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl bg-zinc-900 border border-zinc-800" style={{ zIndex: 9999 }}>
+              {/* Suggestions Dropdown */}
+              {showSuggestions && (
+                <div className="absolute top-full left-0 right-0 mt-2 sm:mt-4 bg-[#111]/90 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl" style={{ zIndex: 9999 }}>
+                  <div className="px-3 sm:px-4 py-2 sm:py-3 text-[10px] sm:text-xs font-mono text-white/30 border-b border-white/5 flex justify-between">
+                    <span>SUGGESTIONS</span>
+                    <span className="hidden sm:inline">ENTER to Select</span>
+                  </div>
                   {suggestions.map((item, index) => (
                     <button
                       key={item.id}
                       type="button"
                       onMouseDown={(e) => e.preventDefault()}
                       onClick={() => selectSuggestion(item)}
-                      className={`w-full px-4 py-3 sm:py-4 flex items-center gap-3 text-left transition-all ${
-                        index === selectedIndex ? 'bg-zinc-800' : 'hover:bg-zinc-800/50'
-                      } ${index < suggestions.length - 1 ? 'border-b border-zinc-800' : ''}`}
                       onMouseEnter={() => setSelectedIndex(index)}
+                      className={`w-full px-3 sm:px-5 py-3 sm:py-4 flex items-center justify-between text-left transition-all ${
+                        index === selectedIndex ? 'bg-white/10' : 'hover:bg-white/5'
+                      }`}
                     >
-                      <svg className="w-4 h-4 text-zinc-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                        <circle cx="12" cy="10" r="3"/>
-                      </svg>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm sm:text-base text-white font-medium truncate">{item.name}</div>
-                        <div className="text-xs sm:text-sm text-zinc-500 truncate">{item.district}</div>
+                      <div>
+                        <div className="text-sm sm:text-base text-white font-medium">{item.name}</div>
+                        <div className="text-xs sm:text-sm text-white/40">{item.district}</div>
                       </div>
-                      {index === selectedIndex && (
-                        <span className="text-xs text-zinc-600 hidden sm:block">Enter ↵</span>
-                      )}
+                      <svg className={`w-3 sm:w-4 h-3 sm:h-4 text-white/40 transform transition-transform ${index === selectedIndex ? 'translate-x-1 text-white' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
                     </button>
                   ))}
                 </div>
               )}
-            </div>
-          </form>
+            </form>
 
-          {/* Example Tags */}
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mb-6 sm:mb-8 animate-fade-up delay-2">
-            <span className="text-xs sm:text-sm text-zinc-600">예시:</span>
-            {EXAMPLE_AREAS.map((area) => (
-              <button
-                key={area}
-                type="button"
-                onClick={() => setQuery(area)}
-                className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-600 hover:bg-zinc-800 transition-all cursor-pointer"
-              >
-                {area}
-              </button>
-            ))}
-          </div>
-
-          {/* Grade Cards */}
-          <div className="animate-fade-up delay-3">
-            <div className="text-center mb-2 sm:mb-3">
-              <span className="text-xs sm:text-sm font-medium tracking-widest uppercase text-zinc-600">리스크 등급 체계</span>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
-              {GRADE_DATA.map((item, i) => (
-                <div
-                  key={item.grade}
-                  className={`p-3 sm:p-6 text-center rounded-xl sm:rounded-2xl bg-zinc-900/80 border border-zinc-800 hover:border-zinc-700 transition-all animate-fade-up delay-${i + 3}`}
-                >
-                  <div
-                    className="w-10 h-10 sm:w-14 sm:h-14 mx-auto mb-2 sm:mb-3 rounded-lg sm:rounded-xl flex items-center justify-center text-lg sm:text-2xl font-bold text-white"
-                    style={{ background: `linear-gradient(135deg, ${item.color}, ${item.color}99)`, boxShadow: `0 6px 24px ${item.color}33` }}
+            {/* Quick Tags */}
+            {!showSuggestions && (
+              <div className={`mt-4 sm:mt-6 flex flex-wrap justify-center gap-1.5 sm:gap-2 transition-opacity duration-500 ${isFocused ? 'opacity-0' : 'opacity-100'}`}>
+                {['홍대입구역', '성수동', '강남역', '이태원'].map((tag) => (
+                  <button
+                    key={tag}
+                    onClick={() => { setQuery(tag); }}
+                    className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/20 text-white/60 hover:text-white transition-all"
                   >
-                    {item.grade}
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Footer Stats / Legend */}
+          <div className={`absolute bottom-6 sm:bottom-10 left-0 right-0 px-4 sm:px-6 transition-all duration-700 ${isFocused ? 'translate-y-20 opacity-0' : 'translate-y-0 opacity-100'}`}>
+            <div className="max-w-4xl mx-auto border-t border-white/10 pt-4 sm:pt-6 flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4 text-xs sm:text-sm text-white/40">
+              <div className="flex flex-wrap justify-center gap-3 sm:gap-6">
+                {GRADE_DATA.map((g) => (
+                  <div key={g.grade} className="flex items-center gap-1.5 sm:gap-2">
+                    <div className={`w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-gradient-to-r ${g.color}`} />
+                    <span className="font-mono text-[10px] sm:text-xs text-white/70">{g.label}</span>
                   </div>
-                  <div className="text-sm sm:text-base font-semibold text-white mb-0.5">
-                    {item.label}
-                  </div>
-                  <div className="text-[10px] sm:text-xs text-zinc-500">
-                    {item.desc}
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
+              <div className="font-mono text-[10px] sm:text-xs">
+                <span className="text-white">51</span> AREAS
+              </div>
             </div>
           </div>
 
-          {/* Stats Preview */}
-          <div className="mt-6 sm:mt-10 grid grid-cols-3 gap-2 sm:gap-3 animate-fade-up delay-5">
-            <div className="p-3 sm:p-6 text-center rounded-xl sm:rounded-2xl bg-zinc-900/80 border border-zinc-800">
-              <div className="text-[10px] sm:text-sm font-medium tracking-wider uppercase text-zinc-600 mb-1 sm:mb-2">분석 가능</div>
-              <div className="text-xl sm:text-3xl font-bold text-white">51<span className="text-sm sm:text-lg text-zinc-500 ml-0.5">개</span></div>
-            </div>
-            <div className="p-3 sm:p-6 text-center rounded-xl sm:rounded-2xl bg-zinc-900/80 border border-zinc-800">
-              <div className="text-[10px] sm:text-sm font-medium tracking-wider uppercase text-zinc-600 mb-1 sm:mb-2">데이터 기준</div>
-              <div className="text-xl sm:text-3xl font-bold text-white">2025<span className="text-sm sm:text-lg text-zinc-500">.3Q</span></div>
-            </div>
-            <div className="p-3 sm:p-6 text-center rounded-xl sm:rounded-2xl bg-zinc-900/80 border border-zinc-800">
-              <div className="text-[10px] sm:text-sm font-medium tracking-wider uppercase text-zinc-600 mb-1 sm:mb-2">커버리지</div>
-              <div className="text-xl sm:text-3xl font-bold text-blue-400">85<span className="text-sm sm:text-lg text-zinc-500">%</span></div>
-            </div>
-          </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="py-6 sm:py-10 text-center border-t border-zinc-900">
-        <p className="text-xs sm:text-sm text-zinc-600">
-          OpenRisk &middot; 초보 창업자를 위한 상권 분석 서비스
-        </p>
-      </footer>
     </div>
   )
 }

@@ -6,19 +6,21 @@ import { useState } from 'react'
 const SKINS = [
   {
     id: 'a',
-    name: 'Classic Dark',
-    description: '미니멀한 다크 테마, 그리드 배경',
-    preview: '/preview-a.png',
-    gradient: 'from-zinc-800 to-zinc-900',
-    accent: '#00d4aa'
-  },
-  {
-    id: 'b',
     name: 'Glassmorphic',
     description: '글래스모피즘, 그라디언트 효과',
     preview: '/preview-b.png',
     gradient: 'from-blue-900 to-purple-900',
-    accent: '#60a5fa'
+    accent: '#60a5fa',
+    disabled: false
+  },
+  {
+    id: 'b',
+    name: 'TBD',
+    description: '준비 중입니다',
+    preview: '/preview-a.png',
+    gradient: 'from-zinc-800 to-zinc-900',
+    accent: '#666666',
+    disabled: true
   }
 ]
 
@@ -26,9 +28,10 @@ export default function SelectPage() {
   const router = useRouter()
   const [hoveredSkin, setHoveredSkin] = useState<string | null>(null)
 
-  const selectSkin = (skinId: string) => {
-    localStorage.setItem('openrisk-skin', skinId)
-    router.push(skinId === 'a' ? '/' : '/skin-b')
+  const selectSkin = (skin: typeof SKINS[0]) => {
+    if (skin.disabled) return
+    localStorage.setItem('openrisk-skin', skin.id)
+    router.push('/')
   }
 
   return (
@@ -59,12 +62,14 @@ export default function SelectPage() {
         {SKINS.map((skin) => (
           <button
             key={skin.id}
-            onClick={() => selectSkin(skin.id)}
-            onMouseEnter={() => setHoveredSkin(skin.id)}
+            onClick={() => selectSkin(skin)}
+            onMouseEnter={() => !skin.disabled && setHoveredSkin(skin.id)}
             onMouseLeave={() => setHoveredSkin(null)}
+            disabled={skin.disabled}
             className={`
               group relative p-1 rounded-3xl transition-all duration-500
               ${hoveredSkin === skin.id ? 'scale-[1.02]' : 'scale-100'}
+              ${skin.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
             `}
           >
             {/* Glow Effect */}
@@ -120,19 +125,27 @@ export default function SelectPage() {
               <div className="text-left">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-xl font-bold">{skin.name}</h3>
-                  <span className="text-xs font-mono px-2 py-1 rounded-full bg-white/10 text-white/60">
-                    SKIN {skin.id.toUpperCase()}
-                  </span>
+                  {skin.disabled ? (
+                    <span className="text-xs font-mono px-2 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                      COMING SOON
+                    </span>
+                  ) : (
+                    <span className="text-xs font-mono px-2 py-1 rounded-full bg-white/10 text-white/60">
+                      SKIN {skin.id.toUpperCase()}
+                    </span>
+                  )}
                 </div>
                 <p className="text-white/50 text-sm">{skin.description}</p>
               </div>
 
               {/* Hover Arrow */}
-              <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all">
-                <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </div>
+              {!skin.disabled && (
+                <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all">
+                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </div>
+              )}
             </div>
           </button>
         ))}
