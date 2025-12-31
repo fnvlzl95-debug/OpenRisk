@@ -6,6 +6,8 @@ import dynamic from 'next/dynamic'
 import { Suspense, useEffect, useState } from 'react'
 import { AnalysisResult, Grade, CHANGE_INDICATOR_INFO, MARKETING_ELASTICITY_INFO, DATA_COVERAGE_INFO, LOCATION_STATUS_INFO } from '@/lib/types'
 import Tooltip from '@/components/Tooltip'
+import AISummaryModal from '@/components/AISummaryModal'
+import type { AISummaryResponse } from '@/app/api/ai/summary/route'
 
 // 툴팁 설명 텍스트
 const TOOLTIP_TEXTS = {
@@ -83,6 +85,41 @@ function ResultContent() {
   const [result, setResult] = useState<AnalysisResult | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  // AI 요약 관련 상태
+  const [showAIModal, setShowAIModal] = useState(false)
+  const [aiSummary, setAISummary] = useState<AISummaryResponse | null>(null)
+  const [aiLoading, setAILoading] = useState(false)
+  const [aiError, setAIError] = useState<string | null>(null)
+
+  // AI 요약 요청
+  const handleAISummary = async () => {
+    if (!result) return
+
+    setShowAIModal(true)
+    setAILoading(true)
+    setAIError(null)
+
+    try {
+      const res = await fetch('/api/ai/summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ report: result })
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'AI 요약 생성에 실패했습니다.')
+      }
+
+      setAISummary(data.summary)
+    } catch (err) {
+      setAIError(err instanceof Error ? err.message : 'AI 요약 생성 중 오류가 발생했습니다.')
+    } finally {
+      setAILoading(false)
+    }
+  }
 
   useEffect(() => {
     if (!query) return
@@ -247,7 +284,13 @@ function ResultContent() {
             </svg>
             다시 검색
           </Link>
-          <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <button
+              onClick={handleAISummary}
+              className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-white hover:bg-zinc-100 text-zinc-900 text-xs sm:text-sm font-semibold transition-all shadow-lg shadow-black/20 hover:shadow-black/30 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              AI 요약
+            </button>
             <span className="text-xs sm:text-sm font-mono text-zinc-600">
               {today}
             </span>
@@ -628,6 +671,17 @@ function ResultContent() {
           OpenRisk &middot; 초보 창업자를 위한 상권 분석 서비스
         </p>
       </footer>
+
+      {/* AI 요약 모달 */}
+      <AISummaryModal
+        isOpen={showAIModal}
+        onClose={() => setShowAIModal(false)}
+        summary={aiSummary}
+        isLoading={aiLoading}
+        error={aiError}
+        areaName={result.area.name}
+        grade={result.analysis.grade}
+      />
     </div>
   )
 }

@@ -7,6 +7,8 @@ import type { AnalysisResult } from '@/lib/types'
 import { CHANGE_INDICATOR_INFO, MARKETING_ELASTICITY_INFO, DATA_COVERAGE_INFO, LOCATION_STATUS_INFO } from '@/lib/types'
 import AreaMap from '@/components/AreaMap'
 import Tooltip from '@/components/Tooltip'
+import AISummaryModal from '@/components/AISummaryModal'
+import type { AISummaryResponse } from '@/app/api/ai/summary/route'
 
 // 툴팁 설명 텍스트
 const TOOLTIP_TEXTS = {
@@ -30,6 +32,41 @@ function ResultContent() {
   const [result, setResult] = useState<AnalysisResult | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  // AI 요약 관련 상태
+  const [showAIModal, setShowAIModal] = useState(false)
+  const [aiSummary, setAISummary] = useState<AISummaryResponse | null>(null)
+  const [aiLoading, setAILoading] = useState(false)
+  const [aiError, setAIError] = useState<string | null>(null)
+
+  // AI 요약 요청
+  const handleAISummary = async () => {
+    if (!result) return
+
+    setShowAIModal(true)
+    setAILoading(true)
+    setAIError(null)
+
+    try {
+      const res = await fetch('/api/ai/summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ report: result })
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'AI 요약 생성에 실패했습니다.')
+      }
+
+      setAISummary(data.summary)
+    } catch (err) {
+      setAIError(err instanceof Error ? err.message : 'AI 요약 생성 중 오류가 발생했습니다.')
+    } finally {
+      setAILoading(false)
+    }
+  }
 
   useEffect(() => {
     if (!query) {
@@ -121,15 +158,24 @@ function ResultContent() {
 
   return (
     <div className="w-full max-w-5xl mx-auto px-4 py-8">
-      <Link
-        href="/skin-b"
-        className="mb-8 flex items-center text-white/40 hover:text-white transition-colors group"
-      >
-        <svg className="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-        NEW SEARCH
-      </Link>
+      {/* 헤더 영역 */}
+      <div className="flex items-center justify-between mb-8">
+        <Link
+          href="/skin-b"
+          className="flex items-center text-white/40 hover:text-white transition-colors group"
+        >
+          <svg className="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          NEW SEARCH
+        </Link>
+        <button
+          onClick={handleAISummary}
+          className="px-4 py-2 rounded-full bg-white hover:bg-white/90 text-black text-xs sm:text-sm font-bold transition-all shadow-lg shadow-white/10 hover:shadow-white/20 hover:scale-[1.02] active:scale-[0.98]"
+        >
+          AI 요약
+        </button>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
 
@@ -372,6 +418,17 @@ function ResultContent() {
 
         </div>
       </div>
+
+      {/* AI 요약 모달 */}
+      <AISummaryModal
+        isOpen={showAIModal}
+        onClose={() => setShowAIModal(false)}
+        summary={aiSummary}
+        isLoading={aiLoading}
+        error={aiError}
+        areaName={result.area.name}
+        grade={result.analysis.grade}
+      />
     </div>
   )
 }
