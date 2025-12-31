@@ -4,6 +4,10 @@ import OpenAI from 'openai'
 // Node.js 런타임 명시 (Edge에서 OpenAI SDK 호환 문제 방지)
 export const runtime = 'nodejs'
 
+// Vercel Function 타임아웃 확장 (Hobby: 10초, Pro: 60초)
+// GPT-5-mini는 reasoning 모델이라 응답이 느릴 수 있음
+export const maxDuration = 60
+
 // OpenAI 클라이언트는 요청 시점에 lazy 초기화
 let openaiClient: OpenAI | null = null
 
