@@ -1,31 +1,29 @@
 # AI 프롬프트 명세서
 
-> AI 요약 기능(`/api/ai/summary`)에서 사용하는 Groq Llama 3.3 70B 모델 프롬프트 구조 및 규칙
+> AI 요약 기능(`/api/ai/summary`)에서 사용하는 OpenAI GPT-5-mini 모델 프롬프트 구조 및 규칙
 
 ## 개요
 
 | 항목 | 내용 |
 |------|------|
-| 모델 | Llama 3.3 70B Versatile |
-| 제공사 | Groq (무료 티어) |
+| 모델 | GPT-5-mini |
+| 제공사 | OpenAI |
 | 용도 | 상권 데이터 기반 AI 해석 리포트 생성 |
 | 파일 | `app/api/ai/summary/route.ts` |
+| API 파라미터 | `role: developer`, `max_completion_tokens: 2500`, `response_format: json_object` |
 
-## 프롬프트 구조 (v1.2)
+## 프롬프트 구조 (v4 - OpenAI 강화 버전)
 
 ### 섹션 구성
 
 | 섹션 | 내용 |
 |------|------|
-| 0) 입력 데이터 취급 규칙 | 프롬프트 주입 방지 |
-| 1) 역할 및 톤 | 냉철한 분석가, 단정 금지 |
-| 2) 절대 금지 | 추천/확신 표현 금지 |
-| 3) 입력 스키마 | OpenRisk 데이터 구조 |
-| 4) 해석 규칙 | 근거→해석→리스크 연결 |
-| 5) 마케팅 언급 규칙 | 등급별 조건부 |
-| 6) 출력 규격 | JSON 형식, 길이 제한 |
-| 7) 최종 출력 JSON | 템플릿 |
-| 8) 최종 자기검증 | 파싱 가능 여부 점검 |
+| 역할 정의 | "오픈리스크" 상권 분석 전문 AI 컨설턴트 |
+| 톤 & 스타일 | 전문적이지만 이해하기 쉬운 언어, 이모지 금지 |
+| 입력 데이터 구조 | area, analysis, rawMetrics, interpretation |
+| 분석 가이드라인 | 등급별 상권 특성 해석, 지표 해석 기준, 마케팅 탄성 해석 |
+| 출력 JSON 구조 | 10개 필드 (oneLiner ~ disclaimer) |
+| 주의사항 | 업종 추천 금지, 데이터 없는 정보 추측 금지 |
 
 ---
 
@@ -172,6 +170,7 @@ keyMetrics: "외부 유입 의존도 높음"
 | v1.0 | 2025-12-30 | 초기 프롬프트 작성 |
 | v1.1 | 2025-12-31 | 계산 금지 완화 (배수/비율 허용), 규모 표현 규칙 추가, 길이 통일 |
 | v1.2 | 2025-12-31 | 필드 역할 분리, finalSummary 결론 카드 구조, marketingNote 조건부 null |
+| v4.0 | 2026-01-01 | OpenAI GPT-5-mini 마이그레이션, opportunities/idealBusiness 필드 추가, 프롬프트 강화 |
 
 ---
 
