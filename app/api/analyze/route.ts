@@ -225,10 +225,10 @@ export async function GET(request: NextRequest) {
       }, { status: 404 })
     }
 
-    // 2. 해당 상권의 지표 조회 (Phase 2: 8지표 포함)
+    // 2. 해당 상권의 지표 조회 (Phase 2: 8지표 + 시간대별 유동인구)
     const { data: metrics } = await supabase
       .from('area_metrics')
-      .select('period,traffic_index,daypart_variance,weekend_ratio,resident_index,worker_index,competition_density,open_close_churn,cost_proxy')
+      .select('period,traffic_index,daypart_variance,weekend_ratio,resident_index,worker_index,competition_density,open_close_churn,cost_proxy,traffic_morning,traffic_day,traffic_night')
       .eq('area_id', area.id)
       .order('period', { ascending: false })
       .limit(1)
@@ -356,6 +356,10 @@ export async function GET(request: NextRequest) {
         traffic_total: trafficTotal,
         traffic_weekday: trafficWeekday,
         traffic_weekend: trafficWeekend,
+        // 시간대별 유동인구 (아침/낮/밤)
+        traffic_morning: metrics.traffic_morning || null,
+        traffic_day: metrics.traffic_day || null,
+        traffic_night: metrics.traffic_night || null,
         resident_index: metrics.resident_index || 0,
         worker_index: metrics.worker_index || 0
       },

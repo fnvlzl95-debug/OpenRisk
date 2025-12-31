@@ -277,19 +277,76 @@ function ResultContent() {
             </div>
           </div>
 
-          {/* 유동인구 + 마케팅탄성 + 주요시설 */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
-            {/* 유동인구 */}
+          {/* 유동인구 + 시간대별 + 마케팅탄성 (3컬럼) */}
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
+            {/* 유동인구 - 평일/주말 */}
             <div className="p-2.5 sm:p-3 rounded-xl bg-[#111] border border-white/10">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-[9px] sm:text-[10px] font-mono text-white/50">유동인구</span>
                 <Tooltip content={TOOLTIP_TEXTS.trafficTotal} />
               </div>
-              <div className="text-base sm:text-lg font-bold text-white">{formatNumber(rawMetrics.traffic_total)}</div>
-              <div className="flex gap-1.5 sm:gap-2 text-[8px] sm:text-[9px] text-white/50 mt-1">
-                <span>평일 <strong className="text-white/70">{formatNumber(rawMetrics.traffic_weekday)}</strong></span>
-                <span>주말 <strong className="text-white/70">{formatNumber(rawMetrics.traffic_weekend)}</strong></span>
+              <div className="text-base sm:text-lg font-bold text-white mb-2">{formatNumber(rawMetrics.traffic_total)}</div>
+              {/* 평일/주말 비율 바 */}
+              {(() => {
+                const weekdayRatio = rawMetrics.traffic_weekday / (rawMetrics.traffic_weekday + rawMetrics.traffic_weekend) * 100
+                const weekendRatio = 100 - weekdayRatio
+                return (
+                  <div className="space-y-1.5">
+                    <div className="flex h-1.5 rounded-full overflow-hidden bg-white/5">
+                      <div
+                        className="bg-blue-500 transition-all duration-500"
+                        style={{ width: `${weekdayRatio}%` }}
+                      />
+                      <div
+                        className="bg-amber-500 transition-all duration-500"
+                        style={{ width: `${weekendRatio}%` }}
+                      />
+                    </div>
+                    <div className="flex justify-between text-[8px] sm:text-[9px]">
+                      <span className="text-blue-400">
+                        평일 {weekdayRatio.toFixed(0)}%
+                      </span>
+                      <span className="text-amber-400">
+                        주말 {weekendRatio.toFixed(0)}%
+                      </span>
+                    </div>
+                  </div>
+                )
+              })()}
+            </div>
+
+            {/* 시간대별 유동인구 (아침/낮/밤) - 별도 섹션 */}
+            <div className="p-2.5 sm:p-3 rounded-xl bg-[#111] border border-white/10">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[9px] sm:text-[10px] font-mono text-white/50">시간대별</span>
+                <span className="text-[8px] font-mono text-white/30">06-11 / 11-17 / 17-06</span>
               </div>
+              {rawMetrics.traffic_morning && rawMetrics.traffic_day && rawMetrics.traffic_night ? (() => {
+                const total = rawMetrics.traffic_morning + rawMetrics.traffic_day + rawMetrics.traffic_night
+                const morningPct = (rawMetrics.traffic_morning / total) * 100
+                const dayPct = (rawMetrics.traffic_day / total) * 100
+                const nightPct = (rawMetrics.traffic_night / total) * 100
+                // 가장 높은 시간대 찾기
+                const maxPct = Math.max(morningPct, dayPct, nightPct)
+                const peakTime = morningPct === maxPct ? '아침' : dayPct === maxPct ? '낮' : '밤'
+                return (
+                  <div className="space-y-2">
+                    <div className="text-base sm:text-lg font-bold text-white">{peakTime} 피크</div>
+                    <div className="flex h-1.5 rounded-full overflow-hidden bg-white/5">
+                      <div className="bg-sky-400 transition-all duration-500" style={{ width: `${morningPct}%` }} />
+                      <div className="bg-orange-400 transition-all duration-500" style={{ width: `${dayPct}%` }} />
+                      <div className="bg-indigo-500 transition-all duration-500" style={{ width: `${nightPct}%` }} />
+                    </div>
+                    <div className="flex justify-between text-[7px] sm:text-[8px]">
+                      <span className="text-sky-400">아침 {morningPct.toFixed(0)}%</span>
+                      <span className="text-orange-400">낮 {dayPct.toFixed(0)}%</span>
+                      <span className="text-indigo-400">밤 {nightPct.toFixed(0)}%</span>
+                    </div>
+                  </div>
+                )
+              })() : (
+                <div className="text-[10px] text-white/30 mt-2">데이터 없음</div>
+              )}
             </div>
 
             {/* 마케팅 탄성 */}
@@ -307,27 +364,27 @@ function ResultContent() {
                   : '변화: -'}
               </div>
             </div>
+          </div>
 
-            {/* 주요 시설 */}
-            <div className="col-span-2 sm:col-span-1 p-2.5 sm:p-3 rounded-xl bg-[#111] border border-white/10">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[9px] sm:text-[10px] font-mono text-white/50">주요 시설</span>
-                <Tooltip content={TOOLTIP_TEXTS.anchors} />
-              </div>
-              <div className="flex flex-wrap gap-1 sm:gap-1.5 mt-1">
-                {result.analysis.anchors.subway && (
-                  <span className="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10">🚇 지하철</span>
-                )}
-                {result.analysis.anchors.university && (
-                  <span className="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10">🎓 대학</span>
-                )}
-                {result.analysis.anchors.hospital && (
-                  <span className="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10">🏥 병원</span>
-                )}
-                {!result.analysis.anchors.subway && !result.analysis.anchors.university && !result.analysis.anchors.hospital && (
-                  <span className="text-[9px] sm:text-[10px] text-white/30">없음</span>
-                )}
-              </div>
+          {/* 주요 시설 (세로 섹션) */}
+          <div className="p-2.5 sm:p-3 rounded-xl bg-[#111] border border-white/10">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[9px] sm:text-[10px] font-mono text-white/50">주요 시설</span>
+              <Tooltip content={TOOLTIP_TEXTS.anchors} />
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {result.analysis.anchors.subway && (
+                <span className="text-[10px] sm:text-[11px] px-2 py-1 rounded bg-white/5 border border-white/10">🚇 지하철</span>
+              )}
+              {result.analysis.anchors.university && (
+                <span className="text-[10px] sm:text-[11px] px-2 py-1 rounded bg-white/5 border border-white/10">🎓 대학</span>
+              )}
+              {result.analysis.anchors.hospital && (
+                <span className="text-[10px] sm:text-[11px] px-2 py-1 rounded bg-white/5 border border-white/10">🏥 병원</span>
+              )}
+              {!result.analysis.anchors.subway && !result.analysis.anchors.university && !result.analysis.anchors.hospital && (
+                <span className="text-[10px] sm:text-[11px] text-white/30">주변 주요 시설 없음</span>
+              )}
             </div>
           </div>
 

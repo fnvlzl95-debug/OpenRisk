@@ -109,6 +109,10 @@ export interface RawMetrics {
   traffic_total: number
   traffic_weekday: number
   traffic_weekend: number
+  // 시간대별 유동인구 (Phase 2-D)
+  traffic_morning: number | null  // 아침 06-11시
+  traffic_day: number | null      // 낮 11-17시
+  traffic_night: number | null    // 밤 17-06시
   resident_index: number
   worker_index: number
 }
