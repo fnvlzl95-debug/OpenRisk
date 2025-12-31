@@ -55,6 +55,7 @@ interface KakaoLatLngBounds {
 interface KakaoMap {
   setCenter: (latlng: unknown) => void
   setLevel: (level: number) => void
+  getLevel: () => number
   setBounds: (bounds: KakaoLatLngBounds, paddingTop?: number, paddingRight?: number, paddingBottom?: number, paddingLeft?: number) => void
 }
 
@@ -122,7 +123,7 @@ export default function AreaMap({ center, areaName, grade, polygon, searchedLoca
 
       const map = new kakao.maps.Map(mapRef.current, {
         center: position,
-        level: 4 // 줌 레벨 (1~14, 작을수록 확대)
+        level: 5 // 줌 레벨 5 = 약 250m 범위
       })
 
       // 등급 색상 먼저 정의
@@ -229,6 +230,11 @@ export default function AreaMap({ center, areaName, grade, polygon, searchedLoca
         bounds.extend(position)
         bounds.extend(searchPosition)
         map.setBounds(bounds, 80, 80, 80, 80)  // 상하좌우 80px 패딩
+
+        // setBounds 후 최소 줌 레벨 보장 (너무 가까우면 조정)
+        if (map.getLevel() < 5) {
+          map.setLevel(5)
+        }
       }
 
       // 상권 영역 표시 (폴리곤 또는 원형 폴백)
