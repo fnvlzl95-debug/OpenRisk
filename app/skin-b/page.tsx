@@ -102,7 +102,7 @@ export default function SkinBHome() {
     if (!query.trim()) return
 
     setIsLoading(true)
-    router.push(`/skin-b/result?query=${encodeURIComponent(query)}`)
+    router.push(`/result?query=${encodeURIComponent(query)}`)
   }
 
   return (

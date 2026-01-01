@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import CategorySelector from '@/components/CategorySelector'
+import { type BusinessCategory } from '@/lib/categories'
 
 interface SearchSuggestion {
   id: string
@@ -20,11 +22,13 @@ const GRADE_DATA = [
 
 export default function Home() {
   const [query, setQuery] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState<BusinessCategory | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(-1)
+  const [showCategoryWarning, setShowCategoryWarning] = useState(false)
   const searchContainerRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
@@ -101,8 +105,15 @@ export default function Home() {
     e.preventDefault()
     if (!query.trim()) return
 
+    // v2: 업종 필수 체크
+    if (!selectedCategory) {
+      setShowCategoryWarning(true)
+      setTimeout(() => setShowCategoryWarning(false), 3000)
+      return
+    }
+
     setIsLoading(true)
-    router.push(`/result?query=${encodeURIComponent(query)}`)
+    router.push(`/result?query=${encodeURIComponent(query)}&category=${selectedCategory}`)
   }
 
   return (
@@ -155,38 +166,62 @@ export default function Home() {
               <div className={`absolute -inset-1 rounded-2xl bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 opacity-0 transition duration-500 blur-lg group-hover:opacity-30 ${isFocused ? 'opacity-50' : ''}`} />
 
               {/* Input Field */}
-              <div className="relative flex items-center bg-[#111] border border-white/10 rounded-xl sm:rounded-2xl p-1.5 sm:p-2 shadow-2xl">
-                <div className="pl-3 sm:pl-4 pr-1 sm:pr-2 text-white/40">
-                  <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="11" cy="11" r="8" />
-                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                  </svg>
+              <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center bg-[#111] border border-white/10 rounded-xl sm:rounded-2xl p-1.5 sm:p-2 shadow-2xl gap-2 sm:gap-0">
+                {/* Category Selector */}
+                <div className="flex-shrink-0 px-1">
+                  <CategorySelector
+                    value={selectedCategory}
+                    onChange={setSelectedCategory}
+                    isFocused={isFocused}
+                  />
                 </div>
-                <input
-                  type="text"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onFocus={() => { setIsFocused(true); if(suggestions.length) setShowSuggestions(true); }}
-                  onKeyDown={handleKeyDown}
-                  placeholder="지역명, 지하철역 입력..."
-                  className="w-full bg-transparent h-10 sm:h-14 text-base sm:text-xl outline-none placeholder:text-white/20 text-white font-medium"
-                  autoComplete="off"
-                />
-                <button
-                  type="submit"
-                  disabled={isLoading || !query.trim()}
-                  className="px-4 sm:px-6 py-2 sm:py-3 bg-white text-black text-sm sm:text-base font-bold rounded-lg sm:rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
-                >
-                  {isLoading ? (
-                    <>
-                      <div className="w-3 sm:w-4 h-3 sm:h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-                      <span className="hidden sm:inline">분석중</span>
-                    </>
-                  ) : (
-                    '분석'
-                  )}
-                </button>
+
+                {/* Divider */}
+                <div className="hidden sm:block w-px h-8 bg-white/10 mx-2" />
+
+                {/* Search Input */}
+                <div className="flex items-center flex-1">
+                  <div className="pl-2 sm:pl-3 pr-1 sm:pr-2 text-white/40">
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="11" cy="11" r="8" />
+                      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                  </div>
+                  <input
+                    type="text"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    onFocus={() => { setIsFocused(true); if(suggestions.length) setShowSuggestions(true); }}
+                    onKeyDown={handleKeyDown}
+                    placeholder="지역명, 주소 입력..."
+                    className="w-full bg-transparent h-10 sm:h-14 text-base sm:text-xl outline-none placeholder:text-white/20 text-white font-medium"
+                    autoComplete="off"
+                  />
+                  <button
+                    type="submit"
+                    disabled={isLoading || !query.trim()}
+                    className="px-4 sm:px-6 py-2 sm:py-3 bg-white text-black text-sm sm:text-base font-bold rounded-lg sm:rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
+                  >
+                    {isLoading ? (
+                      <>
+                        <div className="w-3 sm:w-4 h-3 sm:h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                        <span className="hidden sm:inline">분석중</span>
+                      </>
+                    ) : (
+                      '분석'
+                    )}
+                  </button>
+                </div>
               </div>
+
+              {/* Category Warning */}
+              {showCategoryWarning && (
+                <div className="absolute -bottom-12 left-0 right-0 flex justify-center">
+                  <div className="px-4 py-2 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 text-sm animate-pulse">
+                    업종을 선택해주세요
+                  </div>
+                </div>
+              )}
 
               {/* Suggestions Dropdown */}
               {showSuggestions && (
