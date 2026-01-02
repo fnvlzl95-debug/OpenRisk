@@ -1,5 +1,6 @@
 /**
  * SurvivalCard - 생존 신호 카드
+ * 트렌드 + 등급 중심의 직관적 표현
  */
 
 'use client'
@@ -9,7 +10,7 @@ import { MetricCard } from './MetricCard'
 
 interface SurvivalCardProps {
   metrics: SurvivalMetrics
-  explanation: string
+  explanation?: string
   className?: string
 }
 
@@ -18,29 +19,21 @@ export function SurvivalCard({
   explanation,
   className,
 }: SurvivalCardProps) {
-  const { closureRate, openingRate, netChange, risk } = metrics
-
-  // 메인 값 표시
-  const mainValue = `폐업 ${closureRate}%`
-
-  // 순증감 표시
-  const netChangeDisplay = netChange > 0
-    ? `+${netChange}개 증가`
-    : netChange < 0
-    ? `${netChange}개 감소`
-    : '변동 없음'
+  const {
+    closureRate,
+    openingRate,
+    netChange,
+    risk,
+    trend,
+    trendLabel,
+    riskLabel,
+    summary,
+  } = metrics
 
   // 트렌드 방향
-  const trendDirection = netChange > 0 ? 'up' : netChange < 0 ? 'down' : 'stable'
+  const trendDirection = trend === 'growing' ? 'up' : trend === 'shrinking' ? 'down' : 'stable'
 
-  // 레벨 라벨
-  const levelLabel = {
-    low: '안정',
-    medium: '보통',
-    high: '위험',
-  }[risk]
-
-  // 확장 콘텐츠
+  // 확장 콘텐츠 - 상세 수치
   const expandedContent = (
     <div className="space-y-3 text-sm text-gray-600">
       <div className="flex justify-between">
@@ -57,25 +50,23 @@ export function SurvivalCard({
           {netChange >= 0 ? '+' : ''}{netChange}개
         </span>
       </div>
-      <p className="text-xs text-gray-400">
-        * 폐업률 5% 이하: 안정, 10% 이상: 위험
+      <p className="text-xs text-gray-400 mt-2">
+        * 2024.12 → 2025.10 데이터 비교
       </p>
     </div>
   )
 
   return (
     <MetricCard
-      title="생존 신호"
+      title="상권 트렌드"
       icon="📊"
-      mainValue={mainValue}
-      mainUnit={`· 개업 ${openingRate}%`}
+      mainValue={trendLabel || '📉 점포 감소세'}
       level={risk}
-      levelLabel={levelLabel}
-      comparison={`순증감 ${netChangeDisplay}`}
-      explanation={explanation}
+      levelLabel={riskLabel?.replace(/[🟢🟡🔴]\s?/, '') || '보통'}
+      explanation={summary || explanation || ''}
       trend={{
         direction: trendDirection,
-        label: netChangeDisplay,
+        label: `폐업 ${closureRate}% · 개업 ${openingRate}%`,
       }}
       expandedContent={expandedContent}
       className={className}

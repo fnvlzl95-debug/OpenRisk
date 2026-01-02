@@ -331,20 +331,19 @@ function ResultV2Content() {
 
           {/* 생존율 + 주말비율 */}
           <div className="grid grid-cols-2 gap-3">
-            {/* 생존 지표 */}
+            {/* 상권 트렌드 */}
             <div className="p-3 rounded-xl bg-[#111] border border-white/10">
-              <div className="text-[10px] font-mono text-white/50 mb-2">생존 지표</div>
+              <div className="text-[10px] font-mono text-white/50 mb-2">상권 트렌드</div>
               <div className="flex items-end gap-2">
-                <span className={`text-lg font-bold ${
-                  metrics.survival.risk === 'low' ? 'text-emerald-400' :
-                  metrics.survival.risk === 'medium' ? 'text-amber-400' : 'text-rose-400'
+                <span className={`text-base font-bold ${
+                  metrics.survival.trend === 'growing' ? 'text-emerald-400' :
+                  metrics.survival.trend === 'stable' ? 'text-amber-400' : 'text-rose-400'
                 }`}>
-                  {metrics.survival.closureRate}%
+                  {metrics.survival.trendLabel || '📉 감소세'}
                 </span>
-                <span className="text-[10px] text-white/40 pb-0.5">폐업률</span>
               </div>
               <div className="mt-1.5 text-[10px] text-white/60">
-                개업률 {metrics.survival.openingRate}% · 순증감 {metrics.survival.netChange > 0 ? '+' : ''}{metrics.survival.netChange}개
+                폐업 {metrics.survival.closureRate}% · 개업 {metrics.survival.openingRate}%
               </div>
             </div>
 

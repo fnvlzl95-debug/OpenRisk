@@ -158,8 +158,14 @@ export interface CostMetrics {
 export interface SurvivalMetrics {
   closureRate: number        // 폐업률 (%)
   openingRate: number        // 개업률 (%)
-  netChange: number          // 순증감
+  netChange: number          // 순증감 (개업 - 폐업)
   risk: 'low' | 'medium' | 'high'
+
+  // 직관적 표현 추가
+  trend: 'growing' | 'stable' | 'shrinking'  // 트렌드: 증가/유지/감소
+  trendLabel: string         // "점포 증가세" | "보합세" | "점포 감소세"
+  riskLabel: string          // "🟢 안정" | "🟡 보통" | "🔴 주의"
+  summary: string            // "최근 10개월간 점포가 늘고 있어요" 한줄 요약
 }
 
 export interface AnchorMetrics {

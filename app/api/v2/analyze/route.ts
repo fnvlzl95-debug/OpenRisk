@@ -490,11 +490,27 @@ function calculateSurvivalWithEstimation(
   if (totalClosure > 0 && totalPrev > 0) {
     const closureRate = (totalClosure / totalPrev) * 100
     const openingRate = (totalOpening / totalPrev) * 100
+    const netChange = totalOpening - totalClosure
+    const risk = getSurvivalRisk(closureRate)
+
+    // 트렌드 및 직관적 표현 생성
+    const { trend, trendLabel, riskLabel, summary } = buildSurvivalLabels(
+      closureRate,
+      openingRate,
+      netChange,
+      risk,
+      true // 실제 데이터 사용
+    )
+
     return {
       closureRate: Math.round(closureRate * 10) / 10,
       openingRate: Math.round(openingRate * 10) / 10,
-      netChange: totalOpening - totalClosure,
-      risk: getSurvivalRisk(closureRate),
+      netChange,
+      risk,
+      trend,
+      trendLabel,
+      riskLabel,
+      summary,
     }
   }
 
@@ -509,13 +525,106 @@ function calculateSurvivalWithEstimation(
   const competitionDensity = totalStores > 0 ? sameCategoryStores / totalStores : 0
 
   // closure-risk.ts 함수 호출
-  return calculateClosureRisk({
+  const baseMetrics = calculateClosureRisk({
     category,
     competitionDensity,
     trafficLevel,
     rentLevel,
     areaType,
   })
+
+  // 추정 데이터에도 직관적 표현 추가
+  const { trend, trendLabel, riskLabel, summary } = buildSurvivalLabels(
+    baseMetrics.closureRate,
+    baseMetrics.openingRate,
+    baseMetrics.netChange,
+    baseMetrics.risk,
+    false // 추정 데이터
+  )
+
+  return {
+    ...baseMetrics,
+    trend,
+    trendLabel,
+    riskLabel,
+    summary,
+  }
+}
+
+/**
+ * 생존지표 직관적 레이블 생성
+ */
+function buildSurvivalLabels(
+  closureRate: number,
+  openingRate: number,
+  netChange: number,
+  risk: 'low' | 'medium' | 'high',
+  isRealData: boolean
+): {
+  trend: 'growing' | 'stable' | 'shrinking'
+  trendLabel: string
+  riskLabel: string
+  summary: string
+} {
+  // 1. 트렌드 판단 (순증감 기준)
+  let trend: 'growing' | 'stable' | 'shrinking'
+  let trendLabel: string
+
+  // netChange가 실제 개수일 때
+  const netChangeRate = openingRate - closureRate // 비율 차이
+
+  if (netChangeRate > 2) {
+    trend = 'growing'
+    trendLabel = '📈 점포 증가세'
+  } else if (netChangeRate < -2) {
+    trend = 'shrinking'
+    trendLabel = '📉 점포 감소세'
+  } else {
+    trend = 'stable'
+    trendLabel = '➡️ 보합세'
+  }
+
+  // 2. 리스크 레이블 (등급 + 이유)
+  let riskLabel: string
+  if (risk === 'low') {
+    riskLabel = '🟢 안정'
+  } else if (risk === 'medium') {
+    riskLabel = '🟡 보통'
+  } else {
+    riskLabel = '🔴 주의'
+  }
+
+  // 3. 한줄 요약 (트렌드 + 이유) - 비율 기반으로 표현
+  let summary: string
+  const period = isRealData ? '최근 10개월' : '추정치'
+
+  // 순증감 비율 (폐업률 - 개업률)
+  const netRateDiff = Math.abs(Math.round((closureRate - openingRate) * 10) / 10)
+
+  if (trend === 'growing') {
+    if (risk === 'low') {
+      summary = `${period} 개업이 폐업보다 많아요. 성장하는 상권이에요.`
+    } else {
+      summary = `${period} 개업이 많지만, 경쟁도 치열해지고 있어요.`
+    }
+  } else if (trend === 'shrinking') {
+    // 비율로 표현 (예: "10개 중 1.3개가 폐업")
+    const closedPer10 = Math.round(closureRate) / 10
+    if (closureRate > 15) {
+      summary = `${period} 10개 중 ${closedPer10}개꼴로 폐업했어요. 신중하게 접근하세요.`
+    } else {
+      summary = `${period} 폐업이 개업보다 ${netRateDiff}%p 많아요. 안정화 단계일 수 있어요.`
+    }
+  } else {
+    // stable
+    if (risk === 'low') {
+      summary = `${period} 점포 수 변동이 적어요. 안정적인 상권이에요.`
+    } else {
+      summary = `${period} 개업과 폐업이 비슷해요.`
+    }
+  }
+
+  return { trend, trendLabel, riskLabel, summary }
 }
 
 /**
@@ -653,8 +762,14 @@ const MAJOR_DEPARTMENT_STORES = [
   'NC백화점',
 ]
 
+// 제외할 키워드 (주차장, 문화센터 등)
+const EXCLUDE_KEYWORDS = [
+  '주차장', '주차', '문화센터', '아카데미', '면세점',
+  '창고', '물류', '사무실', '본사',
+]
+
 /**
- * 주요 백화점만 검색
+ * 주요 백화점만 검색 (주차장 등 제외)
  */
 async function searchDepartmentStore(
   lat: number,
@@ -680,10 +795,12 @@ async function searchDepartmentStore(
     const data = await res.json()
     const docs = data.documents || []
 
-    // 주요 백화점 브랜드만 필터링
+    // 주요 백화점 브랜드만 필터링 + 제외 키워드 제거
     const majorDepts = docs.filter((d: any) => {
       const name = d.place_name || ''
-      return MAJOR_DEPARTMENT_STORES.some(brand => name.includes(brand))
+      const isMajorBrand = MAJOR_DEPARTMENT_STORES.some(brand => name.includes(brand))
+      const isExcluded = EXCLUDE_KEYWORDS.some(keyword => name.includes(keyword))
+      return isMajorBrand && !isExcluded
     })
 
     if (majorDepts.length === 0) return null

@@ -373,7 +373,7 @@ export function generateContextualExplanations(input: GeneratorInput): Interpret
   }
 }
 
-// ===== 요약 문장 생성 =====
+// ===== 요약 문장 생성 (3단 구조: 관측→해석→실패메커니즘) =====
 
 export function generateSummary(
   metrics: AllMetrics,
@@ -390,34 +390,48 @@ export function generateSummary(
   const goodCount = [compLevel, costLevel, survivalLevel].filter(l => l === 'low').length
     + (trafficLevel === 'high' ? 1 : 0)
 
-  // 최악 조합
+  // 최악 조합: 경쟁 높음 + 유동 낮음 + 임대료 높음
   if (compLevel === 'high' && trafficLevel === 'low' && costLevel === 'high') {
-    return '솔직히 말씀드리면 여기는 조건이 많이 안 좋아요. 다른 곳도 살펴보세요.'
+    return '경쟁은 치열한데 유동인구는 적고 임대료까지 높음 → 구조적으로 손익이 맞기 어려운 조건, 다른 입지와 비교 필요'
   }
 
-  // 위험 신호 많음
-  if (badCount >= 3) {
-    return '여러 지표가 좋지 않아요. 신중하게 검토하시고, 가능하면 다른 곳도 비교해보세요.'
+  // 경쟁 낮음 + 유동 낮음 (함정) - 먼저 체크해서 타입 분기
+  if (compLevel === 'low' && trafficLevel === 'low') {
+    return '경쟁도 유동도 적은 구조 → 수요 자체가 약할 가능성 있음 → 배후 주거 수요 확인 필수'
   }
 
-  // 혼합
-  if (badCount >= 2 && goodCount >= 1) {
-    if (trafficLevel === 'high' && compLevel === 'high') {
-      return '유동인구는 충분하지만 경쟁이 치열해요. 확실한 차별점이 필요해요.'
-    }
-    if (costLevel === 'high' && survivalLevel === 'low') {
-      return '임대료가 높지만 상권은 안정적이에요. 고정비 감당 가능한지 확인하세요.'
-    }
-    return '좋은 점과 우려되는 점이 섞여 있어요. 강점을 살릴 전략이 필요해요.'
-  }
-
-  // 양호
+  // 양호한 경우도 함정 언급
   if (goodCount >= 3) {
-    return '전반적으로 양호한 조건이에요. 하지만 현장 확인은 필수예요.'
+    return '지표는 양호한 편이나 → 좋은 조건은 경쟁자도 알고 있음 → 현장에서 왜 비어있는지 확인 필요'
+  }
+
+  // 위험 신호 3개 이상
+  if (badCount >= 3) {
+    return '여러 지표가 부정적 → 진입 시 복합적인 리스크에 노출됨 → 현장 확인 전 신중한 검토 필요'
+  }
+
+  // 경쟁 높음 + 유동 높음
+  if (trafficLevel === 'high' && compLevel === 'high') {
+    return `유동은 많지만 ${vars.sameCategory}개가 나눠 가지는 구조 → 차별점 없이 들어가면 체력전에서 밀릴 수 있음`
+  }
+
+  // 임대료 높음 + 폐업률 높음
+  if (costLevel === 'high' && survivalLevel === 'high') {
+    return '폐업률이 높고 임대료도 높은 구조 → 이미 많이 망하는 곳인데 비용 부담까지 큼 → 버티다 지치면 손실이 빠르게 누적됨'
+  }
+
+  // 임대료 높음
+  if (costLevel === 'high') {
+    return '고정비 부담이 큰 구조 → 매출이 기대치를 밑돌면 고정비 비중이 빠르게 올라감 → 손익분기 달성 전에 자금이 소진될 수 있음'
+  }
+
+  // 유동 낮음
+  if (trafficLevel === 'low') {
+    return '유동인구가 적은 구조 → 워킹 유입만으로는 매출이 채워지지 않을 수 있음 → 목적형 방문 또는 배달 의존 필요'
   }
 
   // 기본
-  return '보통 수준의 상권이에요. 업종 특성에 맞는 전략을 세워보세요.'
+  return '보통 수준의 상권 → 업종 특성과 타겟 고객층을 고려한 현장 확인 필요'
 }
 
 // ===== Top Factors 생성 =====

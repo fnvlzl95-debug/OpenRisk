@@ -13,6 +13,82 @@
 import type { BusinessCategory } from '../categories'
 import type { SurvivalMetrics, TrafficLevel, AreaType } from './types'
 
+/**
+ * 생존지표 직관적 레이블 생성
+ */
+function buildSurvivalLabels(
+  closureRate: number,
+  openingRate: number,
+  netChange: number,
+  risk: 'low' | 'medium' | 'high',
+  isRealData: boolean
+): {
+  trend: 'growing' | 'stable' | 'shrinking'
+  trendLabel: string
+  riskLabel: string
+  summary: string
+} {
+  // 1. 트렌드 판단 (순증감 기준)
+  let trend: 'growing' | 'stable' | 'shrinking'
+  let trendLabel: string
+
+  // netChange가 실제 개수일 때
+  const netChangeRate = openingRate - closureRate // 비율 차이
+
+  if (netChangeRate > 2) {
+    trend = 'growing'
+    trendLabel = '📈 점포 증가세'
+  } else if (netChangeRate < -2) {
+    trend = 'shrinking'
+    trendLabel = '📉 점포 감소세'
+  } else {
+    trend = 'stable'
+    trendLabel = '➡️ 보합세'
+  }
+
+  // 2. 리스크 레이블 (등급 + 이유)
+  let riskLabel: string
+  if (risk === 'low') {
+    riskLabel = '🟢 안정'
+  } else if (risk === 'medium') {
+    riskLabel = '🟡 보통'
+  } else {
+    riskLabel = '🔴 주의'
+  }
+
+  // 3. 한줄 요약 (3단 구조: 관측→해석→실패메커니즘)
+  let summary: string
+  const period = isRealData ? '최근 10개월' : '추정치'
+
+  // 순증감 비율 (폐업률 - 개업률)
+  const netRateDiff = Math.abs(Math.round((closureRate - openingRate) * 10) / 10)
+
+  if (trend === 'growing') {
+    if (risk === 'low') {
+      summary = `${period} 개업이 폐업보다 많은 구조 → 시장이 성장 중이나 신규 경쟁자도 늘어나는 중`
+    } else {
+      summary = `${period} 개업이 많지만 경쟁도 치열해지는 구조 → 후발 진입 시 기존 업체와 경쟁 불가피`
+    }
+  } else if (trend === 'shrinking') {
+    // 비율로 표현 (예: "10개 중 1.3개가 폐업")
+    const closedPer10 = Math.round(closureRate) / 10
+    if (closureRate > 15) {
+      summary = `${period} 10개 중 ${closedPer10}개꼴로 폐업 → 상권이 축소 국면일 수 있음 → 신중한 접근 필요`
+    } else {
+      summary = `${period} 폐업이 개업보다 ${netRateDiff}%p 많음 → 시장 안정화 또는 축소 진행 중`
+    }
+  } else {
+    // stable
+    if (risk === 'low') {
+      summary = `${period} 점포 수 변동이 적음 → 안정적이나 성장 여력도 제한적일 수 있음`
+    } else {
+      summary = `${period} 개업과 폐업이 비슷함 → 정체된 시장일 가능성 있음`
+    }
+  }
+
+  return { trend, trendLabel, riskLabel, summary }
+}
+
 // ===== 상수 =====
 
 // 업종별 기본 생존율 (1년 기준, 통계청 데이터 기반)
@@ -106,11 +182,28 @@ export function calculateClosureRisk(input: ClosureRiskInput): SurvivalMetrics {
   // 1. 실제 폐업 데이터가 있으면 사용
   if (actualClosureCount !== undefined && actualPrevCount && actualPrevCount > 0) {
     const actualClosureRate = (actualClosureCount / actualPrevCount) * 100
+    const closureRate = Math.round(actualClosureRate * 10) / 10
+    const risk = getClosureRiskLevel(actualClosureRate)
+    const netChange = -actualClosureCount
+
+    // 트렌드 및 레이블 생성
+    const { trend, trendLabel, riskLabel, summary } = buildSurvivalLabels(
+      closureRate,
+      0,
+      netChange,
+      risk,
+      true
+    )
+
     return {
-      closureRate: Math.round(actualClosureRate * 10) / 10,
+      closureRate,
       openingRate: 0,  // 데이터 없음
-      netChange: -actualClosureCount,
-      risk: getClosureRiskLevel(actualClosureRate),
+      netChange,
+      risk,
+      trend,
+      trendLabel,
+      riskLabel,
+      summary,
     }
   }
 
@@ -148,13 +241,27 @@ export function calculateClosureRisk(input: ClosureRiskInput): SurvivalMetrics {
   const estimatedOpeningRate = estimateOpeningRate(category, areaType)
 
   // 5. 순증감 추정
-  const netChange = estimatedOpeningRate - estimatedClosureRate
+  const netChange = Math.round((estimatedOpeningRate - estimatedClosureRate) * 10) / 10
+  const risk = getClosureRiskLevel(estimatedClosureRate)
+
+  // 트렌드 및 레이블 생성
+  const { trend, trendLabel, riskLabel, summary } = buildSurvivalLabels(
+    estimatedClosureRate,
+    estimatedOpeningRate,
+    netChange,
+    risk,
+    false // 추정 데이터
+  )
 
   return {
     closureRate: estimatedClosureRate,
     openingRate: estimatedOpeningRate,
-    netChange: Math.round(netChange * 10) / 10,
-    risk: getClosureRiskLevel(estimatedClosureRate),
+    netChange,
+    risk,
+    trend,
+    trendLabel,
+    riskLabel,
+    summary,
   }
 }
 
