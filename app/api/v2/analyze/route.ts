@@ -114,6 +114,20 @@ export async function POST(request: NextRequest) {
       storeCounts
     )
 
+    // 5-5-1. 시간대 패턴 추정 (DB 데이터 없으면 상권 유형 기반)
+    // DB에 시간대 데이터가 없는 경우 (모두 33/34/33인 경우) 상권 유형으로 추정
+    const isDefaultTimePattern =
+      traffic.timePattern.morning === 33 &&
+      traffic.timePattern.day === 34 &&
+      traffic.timePattern.night === 33
+
+    if (isDefaultTimePattern) {
+      const estimatedPattern = estimateTimePatternByAreaType(areaType, anchors)
+      traffic.timePattern = estimatedPattern.timePattern
+      traffic.peakTime = estimatedPattern.peakTime
+      traffic.weekendRatio = estimatedPattern.weekendRatio
+    }
+
     // 5-6. 생존율 지표 (closure-risk.ts 추정 로직 사용)
     const survival = calculateSurvivalWithEstimation(
       gridStoreData,
@@ -443,9 +457,9 @@ async function calculateCost(
     }
   }
 
-  // 기본값 (데이터 없음)
+  // 기본값 (데이터 없음) - DB 평균 기준 20만원/평
   return {
-    avgRent: 100, // 서울 평균 추정
+    avgRent: 20,
     level: 'medium',
   }
 }
@@ -716,4 +730,78 @@ function calculateCoverage(
   if (storeCount >= 5 && trafficCount >= 3) return 'high'
   if (storeCount >= 2 || trafficCount >= 1) return 'medium'
   return 'low'
+}
+
+/**
+ * 상권 유형 기반 시간대 패턴 추정
+ * DB에 시간대 데이터가 없을 때 상권 특성으로 추정
+ */
+function estimateTimePatternByAreaType(
+  areaType: AreaType,
+  anchors: AnchorMetrics
+): {
+  timePattern: { morning: number; day: number; night: number }
+  peakTime: 'morning' | 'day' | 'night'
+  weekendRatio: number
+} {
+  // 역세권 여부
+  const hasSubway = anchors.subway && anchors.subway.distance < 300
+
+  switch (areaType) {
+    case 'A_주거':
+      // 주거지: 아침 출근 + 저녁 귀가 패턴, 주말 비중 높음
+      return {
+        timePattern: { morning: 30, day: 25, night: 45 },
+        peakTime: 'night',
+        weekendRatio: 0.45,
+      }
+
+    case 'B_혼합':
+      // 혼합: 균형잡힌 패턴
+      if (hasSubway) {
+        // 역세권 혼합: 출퇴근 패턴 강함
+        return {
+          timePattern: { morning: 35, day: 30, night: 35 },
+          peakTime: 'morning',
+          weekendRatio: 0.35,
+        }
+      }
+      return {
+        timePattern: { morning: 30, day: 35, night: 35 },
+        peakTime: 'day',
+        weekendRatio: 0.40,
+      }
+
+    case 'C_상업':
+      // 상업지: 낮 + 저녁 중심, 평일 비중 높음
+      if (hasSubway) {
+        // 역세권 상업: 출퇴근 + 점심 피크
+        return {
+          timePattern: { morning: 30, day: 40, night: 30 },
+          peakTime: 'day',
+          weekendRatio: 0.30,
+        }
+      }
+      return {
+        timePattern: { morning: 25, day: 45, night: 30 },
+        peakTime: 'day',
+        weekendRatio: 0.35,
+      }
+
+    case 'D_특수':
+      // 특수 (관광/유흥): 저녁 중심, 주말 비중 매우 높음
+      return {
+        timePattern: { morning: 20, day: 30, night: 50 },
+        peakTime: 'night',
+        weekendRatio: 0.55,
+      }
+
+    default:
+      // 기본값
+      return {
+        timePattern: { morning: 33, day: 34, night: 33 },
+        peakTime: 'day',
+        weekendRatio: 0.35,
+      }
+  }
 }

@@ -36,8 +36,9 @@ const NORMALIZATION = {
     highThreshold: 40,   // 40 이상: 높음
   },
   cost: {
-    lowThreshold: 80,    // 80만원/평 이하: 낮음
-    highThreshold: 200,  // 200만원/평 이상: 높음
+    // DB 데이터 범위: 10~68만원/평 (서울 기준)
+    lowThreshold: 15,    // 15만원/평 이하: 낮음 (인천/경기 외곽)
+    highThreshold: 40,   // 40만원/평 이상: 높음 (강남/명동급)
   },
   survival: {
     lowThreshold: 5,     // 5% 이하: 낮음
