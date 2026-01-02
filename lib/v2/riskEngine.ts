@@ -9,10 +9,19 @@ import {
   AreaType,
   CompetitionMetrics,
   TrafficMetrics,
+  TrafficLevel,
   CostMetrics,
   SurvivalMetrics,
   AnchorMetrics,
+  InterpretationV2,
 } from './types'
+import {
+  generateContextualExplanations,
+  generateSummary as generateContextualSummary,
+  generateTopFactors as generateContextualTopFactors,
+  buildDynamicVars,
+  type AllMetrics,
+} from './interpretations'
 
 // 정규화 기준값 (서울 평균 기준)
 const NORMALIZATION = {
@@ -21,8 +30,10 @@ const NORMALIZATION = {
     highThreshold: 20,   // 20개 이상: 높음
   },
   traffic: {
-    lowThreshold: 5000,  // 5천 이하: 낮음
-    highThreshold: 30000, // 3만 이상: 높음
+    // 유동인구 추정치 (지하철+버스 기반, H3 셀당 0~10 범위)
+    // 500m 반경 합계 기준: 0~50+ 범위
+    lowThreshold: 10,    // 10 이하: 낮음
+    highThreshold: 40,   // 40 이상: 높음
   },
   cost: {
     lowThreshold: 80,    // 80만원/평 이하: 낮음
@@ -237,7 +248,7 @@ export function determineAreaType(
 
   // 3. 상업 지역 판별
   // 유동인구 높음 + 상업 점포 비율 60% 이상
-  const isHighTraffic = traffic.index > 50  // 유동인구 지수 50 이상
+  const isHighTraffic = traffic.index > 30  // 유동인구 지수 30 이상 (추정치 기준)
   if (isHighTraffic && commercialRatio > 0.6) {
     return 'C_상업'
   }
@@ -262,12 +273,15 @@ export function getCompetitionLevel(sameCategoryCount: number): 'low' | 'medium'
 }
 
 /**
- * 유동인구 레벨 판별
+ * 유동인구 레벨 판별 (5단계)
+ * 추정치 기반 (지하철+버스 데이터, H3 500m 반경 합계)
  */
-export function getTrafficLevel(estimated: number): 'low' | 'medium' | 'high' {
-  if (estimated <= 5000) return 'low'
-  if (estimated <= 20000) return 'medium'
-  return 'high'
+export function getTrafficLevel(estimated: number): TrafficLevel {
+  if (estimated <= 5) return 'very_low'
+  if (estimated <= 15) return 'low'
+  if (estimated <= 30) return 'medium'
+  if (estimated <= 50) return 'high'
+  return 'very_high'
 }
 
 /**
@@ -303,21 +317,88 @@ export function getPeakTime(
 }
 
 /**
- * 해석 문구 생성
+ * 해석 문구 생성 (v2 확장)
+ * 새로운 컨텍스트 조합 시스템 사용
  */
 export function generateInterpretation(
   category: BusinessCategory,
-  riskScore: number,
-  riskLevel: RiskLevel,
+  _riskScore: number,  // 현재 사용 안함 (API 호환성 유지)
+  _riskLevel: RiskLevel,  // 현재 사용 안함 (API 호환성 유지)
   metrics: {
     competition: CompetitionMetrics
     traffic: TrafficMetrics
     cost: CostMetrics
     survival: SurvivalMetrics
     anchors: AnchorMetrics
-  }
-): { summary: string; risks: string[]; opportunities: string[] } {
+  },
+  areaType?: AreaType,
+  h3Id?: string
+): InterpretationV2 {
   const categoryName = getCategoryName(category)
+  const currentAreaType = areaType || 'B_혼합'
+
+  // AllMetrics 구조로 변환
+  const allMetrics: AllMetrics = {
+    competition: metrics.competition,
+    traffic: metrics.traffic,
+    cost: metrics.cost,
+    survival: metrics.survival,
+    anchors: metrics.anchors,
+    areaType: currentAreaType,
+    category,
+  }
+
+  // 동적 변수 생성
+  const vars = buildDynamicVars(allMetrics, categoryName, h3Id)
+
+  // 새로운 컨텍스트 조합 시스템으로 해석 문장 생성
+  const easyExplanations = generateContextualExplanations({
+    metrics: allMetrics,
+    categoryName,
+    categoryKey: category,
+    h3Id,
+  })
+
+  // 요약문 생성 (컨텍스트 기반)
+  const summary = generateContextualSummary(allMetrics, vars)
+
+  // Top Factors 생성 (컨텍스트 기반)
+  const topFactors = generateContextualTopFactors(allMetrics, vars)
+
+  // 기존 방식의 risks/opportunities 생성 (상세 목록용)
+  const { risks, opportunities } = generateDetailedRisksAndOpportunities(
+    categoryName,
+    metrics,
+    currentAreaType
+  )
+
+  // 점수 기여도 계산
+  const scoreContribution = calculateScoreContribution(category, metrics)
+
+  return {
+    summary,
+    risks,
+    opportunities,
+    easyExplanations,
+    topFactors,
+    scoreContribution,
+  }
+}
+
+/**
+ * 상세 리스크/기회 목록 생성 (기존 로직 유지)
+ */
+function generateDetailedRisksAndOpportunities(
+  categoryName: string,
+  metrics: {
+    competition: CompetitionMetrics
+    traffic: TrafficMetrics
+    cost: CostMetrics
+    survival: SurvivalMetrics
+    anchors: AnchorMetrics
+  },
+  areaType: AreaType
+): { risks: string[]; opportunities: string[] } {
   const risks: string[] = []
   const opportunities: string[] = []
 
@@ -329,10 +410,10 @@ export function generateInterpretation(
   }
 
   // 유동인구 분석
-  if (metrics.traffic.index < 5000) {
-    risks.push('유동인구 5천 미만 - 배후 수요 검증 필요')
-  } else if (metrics.traffic.index > 30000) {
-    opportunities.push(`유동인구 ${(metrics.traffic.index / 10000).toFixed(1)}만 - 잠재 고객 풍부`)
+  if (metrics.traffic.index < 20) {
+    risks.push('유동인구 지수 낮음 - 배후 수요 검증 필요')
+  } else if (metrics.traffic.index > 60) {
+    opportunities.push(`유동인구 지수 ${metrics.traffic.index} - 잠재 고객 풍부`)
   }
 
   // 임대료 분석
@@ -343,29 +424,91 @@ export function generateInterpretation(
   }
 
   // 폐업률 분석
-  if (metrics.survival.closureRate > 10) {
-    risks.push(`연간 폐업률 ${metrics.survival.closureRate}% - 생존율 낮음`)
+  if (metrics.survival.closureRate > 50) {
+    risks.push(`폐업률 ${metrics.survival.closureRate}% - 생존율 낮음`)
+  } else if (metrics.survival.closureRate < 30) {
+    opportunities.push(`폐업률 ${metrics.survival.closureRate}% - 안정적 상권`)
   }
 
   // 앵커 분석
   if (metrics.anchors.subway && metrics.anchors.subway.distance <= 200) {
     opportunities.push(`${metrics.anchors.subway.name} ${metrics.anchors.subway.distance}m - 역세권`)
   }
-  if (!metrics.anchors.subway) {
-    risks.push('지하철역 없음 - 접근성 열위')
+  if (!metrics.anchors.hasAnyAnchor) {
+    risks.push('주요 앵커 시설 없음 - 자체 집객력 필요')
   }
 
-  // 요약문
-  let summary = ''
-  if (riskLevel === 'LOW') {
-    summary = `이 위치는 ${categoryName} 창업에 유리한 조건을 갖추고 있습니다.`
-  } else if (riskLevel === 'MEDIUM') {
-    summary = `${categoryName} 창업 시 몇 가지 확인이 필요한 지역입니다.`
-  } else if (riskLevel === 'HIGH') {
-    summary = `${categoryName} 창업 리스크가 높은 지역입니다. 신중한 검토를 권장합니다.`
-  } else {
-    summary = `${categoryName} 창업이 권장되지 않는 지역입니다.`
+  // 야간 유동 분석
+  if (metrics.traffic.peakTime === 'night' && metrics.traffic.timePattern.night > 40) {
+    opportunities.push('야간 유동인구 강함 - 저녁 영업 유리')
   }
 
-  return { summary, risks, opportunities }
+  // 상권 유형별 추가
+  if (areaType === 'D_특수') {
+    risks.push('특수 상권 - 시즌/이벤트 의존도 높음')
+  }
+
+  return { risks, opportunities }
+}
+
+/**
+1 * 점수 기여도 계산
+ */
+function calculateScoreContribution(
+  category: BusinessCategory,
+  metrics: {
+    competition: CompetitionMetrics
+    traffic: TrafficMetrics
+    cost: CostMetrics
+    survival: SurvivalMetrics
+    anchors: AnchorMetrics
+  }
+): InterpretationV2['scoreContribution'] {
+  const weights = getCategoryWeights(category)
+
+  // 각 지표의 점수 영향 계산
+  const competitionScore = normalizeCompetition(metrics.competition.sameCategory)
+  const costScore = normalizeCost(metrics.cost.avgRent)
+  const survivalScore = normalizeSurvival(metrics.survival.closureRate)
+  const trafficScore = normalizeTraffic(metrics.traffic.index)
+  const anchorScore = normalizeAnchor(metrics.anchors)
+
+  // 50을 기준으로 positive/negative 판단 (50 이상이면 리스크 증가 = negative)
+  const getImpact = (score: number): 'positive' | 'negative' | 'neutral' => {
+    if (score < 40) return 'positive'
+    if (score > 60) return 'negative'
+    return 'neutral'
+  }
+
+  // 시간대 패턴은 별도 계산 (주말 비중 높으면 리스크)
+  const timePatternScore = metrics.traffic.weekendRatio > 0.5 ? 60 :
+                           metrics.traffic.weekendRatio < 0.3 ? 30 : 45
+  const timePatternPercent = 10 // 고정 10%
+
+  return {
+    competition: {
+      percent: Math.round(weights.competition * 100),
+      impact: getImpact(competitionScore),
+    },
+    traffic: {
+      percent: Math.round(weights.traffic * 100),
+      impact: getImpact(trafficScore),
+    },
+    cost: {
+      percent: Math.round(weights.cost * 100),
+      impact: getImpact(costScore),
+    },
+    survival: {
+      percent: Math.round(weights.survival * 100),
+      impact: getImpact(survivalScore),
+    },
+    anchor: {
+      percent: Math.round(weights.anchor * 100),
+      impact: getImpact(anchorScore),
+    },
+    timePattern: {
+      percent: timePatternPercent,
+      impact: getImpact(timePatternScore),
+    },
+  }
 }

@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(Get-ChildItem -Force \"C:\\\\Users\\\\dbvision10\\\\project\\\\새 폴더\\\\OpenRisk\")",
+      "Bash(Where-Object { $_Name -like \"*.env*\" -or $_Name -like \".env*\" })",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git config:*)",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(npm run dev:*)",
+      "Bash(timeout:*)",
+      "Bash(ping:*)",
+      "Bash(npm install)",
+      "Bash(git checkout:*)",
+      "Bash(curl:*)",
+      "Bash(cat:*)",
+      "Bash(findstr:*)",
+      "Bash(powershell -Command \"\n$result = Invoke-RestMethod -Uri ''http://localhost:3000/api/admin/db-check'' -Method Get\n\nWrite-Host ''=== 샘플 데이터 \\(store_counts\\) ===''\n$result.storeCategories.sampleData | ForEach-Object {\n    $_| ConvertTo-Json -Compress\n}\n\")",
+      "Bash(powershell -Command \"Invoke-RestMethod -Uri ''http://localhost:3000/api/admin/db-check'' -Method Get | Select-Object -ExpandProperty storeCategories | Select-Object -ExpandProperty sampleData | ConvertTo-Json\")",
+      "Bash(powershell -Command:*)",
+      "Bash(if not exist docs mkdir docs)",
+      "Bash(Remove-Item -Path \"c:\\\\Users\\\\dbvision10\\\\project\\\\새 폴더\\\\OpenRisk\\\\components\\\\AreaMap.tsx\" -Force)",
+      "Bash(Remove-Item -Path \"c:\\\\Users\\\\dbvision10\\\\project\\\\새 폴더\\\\OpenRisk\\\\components\\\\AISummaryModal.tsx\" -Force)",
+      "Bash(Remove-Item -Path \"c:\\\\Users\\\\dbvision10\\\\project\\\\새 폴더\\\\OpenRisk\\\\components\\\\ui\\\\Tooltip.tsx\" -Force)",
+      "Bash(npm run build:*)",
+      "Bash(git reset:*)"
+    ]
+  }
+}

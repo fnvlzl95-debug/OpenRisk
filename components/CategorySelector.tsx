@@ -63,8 +63,8 @@ export default function CategorySelector({ value, onChange, isFocused = false }:
             onClick={() => { setIsOpen(false); setActiveGroup(null); }}
           />
 
-          {/* Menu */}
-          <div className="absolute top-full left-0 mt-2 z-50 bg-[#111]/95 backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden shadow-2xl min-w-[280px] sm:min-w-[320px]">
+          {/* Menu - 위로 열림 */}
+          <div className="absolute bottom-full left-0 mb-2 z-50 bg-[#111]/95 backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden shadow-2xl min-w-[280px] sm:min-w-[320px]">
             {/* Header */}
             <div className="px-4 py-3 border-b border-white/5">
               <div className="text-xs font-mono text-white/30 flex justify-between items-center">
@@ -74,7 +74,7 @@ export default function CategorySelector({ value, onChange, isFocused = false }:
             </div>
 
             {/* Category Groups */}
-            <div className="max-h-[400px] overflow-y-auto">
+            <div className="max-h-[300px] sm:max-h-[350px] overflow-y-auto">
               {CATEGORY_GROUPS.map((group) => (
                 <div key={group} className="border-b border-white/5 last:border-b-0">
                   {/* Group Header */}

@@ -59,11 +59,7 @@ export interface AnalyzeV2Response {
 
   anchors: AnchorMetrics
 
-  interpretation: {
-    summary: string
-    risks: string[]
-    opportunities: string[]
-  }
+  interpretation: InterpretationV2
 
   dataQuality: {
     storeDataAge: string
@@ -76,12 +72,47 @@ export interface AnalyzeV2Response {
   centerH3: string
 }
 
+// ===== 해석 (v2 확장) =====
+export interface InterpretationV2 {
+  summary: string
+  risks: string[]
+  opportunities: string[]
+
+  // 각 지표별 초보용 해석 문장
+  easyExplanations: {
+    competition: string    // "카페가 이미 많아 차별화 없으면 매출 분산 위험"
+    traffic: string        // "유동은 충분하지만 피크가 밤이라 낮 장사는 약함"
+    cost: string           // "임대료가 높아 작은 평수/테이크아웃형이 유리"
+    survival: string       // "최근 점포가 줄어드는 구간이라 운영 난이도 높음"
+    timePattern: string    // "주말 비중이 높아 평일 매출 방어 전략 필요"
+    areaType: string       // "상업형이라 유입은 좋지만 경쟁·임대료도 높음"
+    anchor: string         // "역이 가까워 유입은 안정적"
+  }
+
+  // Top 2 칩으로 표시할 핵심 요인
+  topFactors: {
+    risks: string[]        // ["임대료 높음", "동종 18개"]
+    opportunities: string[] // ["역세권 150m", "야간 유동 강함"]
+  }
+
+  // 점수 기여도 (신뢰 구축용)
+  scoreContribution: {
+    competition: { percent: number; impact: 'positive' | 'negative' | 'neutral' }
+    traffic: { percent: number; impact: 'positive' | 'negative' | 'neutral' }
+    cost: { percent: number; impact: 'positive' | 'negative' | 'neutral' }
+    survival: { percent: number; impact: 'positive' | 'negative' | 'neutral' }
+    anchor: { percent: number; impact: 'positive' | 'negative' | 'neutral' }
+    timePattern: { percent: number; impact: 'positive' | 'negative' | 'neutral' }
+  }
+}
+
 // ===== 세부 지표 =====
 export interface CompetitionMetrics {
   total: number              // 반경 내 전체 점포
   sameCategory: number       // 동종 업종
   density: number            // 경쟁 밀도 (0~1)
   densityLevel: 'low' | 'medium' | 'high'
+  hasCategoryData?: boolean  // DB에 해당 업종 데이터 존재 여부
   nearestCompetitor?: {
     name: string
     distance: number

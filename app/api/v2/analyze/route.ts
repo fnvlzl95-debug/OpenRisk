@@ -6,7 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient, SupabaseClient } from '@supabase/supabase-js'
+import { getSupabase, SupabaseClient } from '@/lib/supabase'
 import {
   latLngToH3,
   getH3CellsInRadius,
@@ -47,23 +47,6 @@ import {
   calculateClosureRisk,
   analyzeClosureRiskFactors,
 } from '@/lib/v2/closure-risk'
-
-// Supabase 클라이언트
-let supabaseInstance: SupabaseClient | null = null
-
-function getSupabase(): SupabaseClient {
-  if (supabaseInstance) return supabaseInstance
-
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-  if (!url || !key) {
-    throw new Error('Supabase 환경변수가 설정되지 않았습니다.')
-  }
-
-  supabaseInstance = createClient(url, key)
-  return supabaseInstance
-}
 
 // 카카오 API
 const KAKAO_REST_KEY = process.env.KAKAO_REST_KEY
@@ -116,7 +99,7 @@ export async function POST(request: NextRequest) {
     )
 
     // 5-2. 유동인구 지표
-    const traffic = calculateTraffic(gridTrafficData)
+    const traffic = calculateTraffic(gridTrafficData, lat, lng)
 
     // 5-3. 임대료 지표
     const cost = await calculateCost(supabase, addressInfo.district)
@@ -155,7 +138,8 @@ export async function POST(request: NextRequest) {
       targetCategory,
       riskScore,
       riskLevel,
-      { competition, traffic, cost, survival, anchors }
+      { competition, traffic, cost, survival, anchors },
+      areaType
     )
 
     // 9. 응답 구성
@@ -299,13 +283,26 @@ function calculateCompetition(
 ): CompetitionMetrics {
   let total = 0
   let sameCategory = 0
+  let hasCategoryData = false
 
   for (const grid of gridData) {
+    // H3 셀 중심이 실제 500m 반경 내에 있는지 확인
+    const cellDistance = getDistance(centerLat, centerLng, grid.center_lat, grid.center_lng)
+    if (cellDistance > ANALYSIS_RADIUS) {
+      continue // 500m 반경 밖의 셀은 제외
+    }
+
     total += grid.total_count || 0
 
     // 해당 업종 수
     const counts = grid.store_counts || {}
-    sameCategory += counts[category] || 0
+    const categoryCount = counts[category] || 0
+    sameCategory += categoryCount
+
+    // DB에 해당 카테고리 키가 있는지 확인
+    if (category in counts) {
+      hasCategoryData = true
+    }
   }
 
   // 밀도 계산 (0~1)
@@ -316,13 +313,18 @@ function calculateCompetition(
     sameCategory,
     density,
     densityLevel: getCompetitionLevel(sameCategory),
+    hasCategoryData, // DB에 해당 업종 데이터 존재 여부
   }
 }
 
 /**
  * 유동인구 지표 계산
  */
-function calculateTraffic(gridData: GridTrafficData[]): TrafficMetrics {
+function calculateTraffic(
+  gridData: GridTrafficData[],
+  centerLat: number,
+  centerLng: number
+): TrafficMetrics {
   const TRAFFIC_LEVEL_LABELS: Record<TrafficLevel, string> = {
     very_low: '매우 낮음',
     low: '낮음',
@@ -331,15 +333,18 @@ function calculateTraffic(gridData: GridTrafficData[]): TrafficMetrics {
     very_high: '매우 높음',
   }
 
+  // 기본값 (데이터 없음)
+  const defaultResult: TrafficMetrics = {
+    index: 0,
+    level: 'medium',
+    levelLabel: '데이터 없음',
+    peakTime: 'day',
+    weekendRatio: 0.3,
+    timePattern: { morning: 33, day: 34, night: 33 },
+  }
+
   if (gridData.length === 0) {
-    return {
-      index: 0,
-      level: 'low',
-      levelLabel: '낮음',
-      peakTime: 'day',
-      weekendRatio: 0.3,
-      timePattern: { morning: 33, day: 34, night: 33 },
-    }
+    return defaultResult
   }
 
   let totalTraffic = 0
@@ -350,14 +355,45 @@ function calculateTraffic(gridData: GridTrafficData[]): TrafficMetrics {
   let count = 0
 
   for (const grid of gridData) {
-    if (grid.traffic_index) {
-      totalTraffic += grid.traffic_index
-      totalMorning += grid.time_morning || 33
-      totalDay += grid.time_day || 34
-      totalNight += grid.time_night || 33
-      weekendRatioSum += grid.weekend_ratio || 0.3
+    // DB 필드명: traffic_estimated, traffic_morning 등 (types.ts와 다름)
+    const g = grid as any
+
+    // H3 셀 중심이 실제 500m 반경 내에 있는지 확인
+    if (g.center_lat && g.center_lng) {
+      const cellDistance = getDistance(centerLat, centerLng, g.center_lat, g.center_lng)
+      if (cellDistance > ANALYSIS_RADIUS) {
+        continue // 500m 반경 밖의 셀은 제외
+      }
+    }
+
+    const trafficValue = g.traffic_estimated || g.traffic_index || 0
+    const morningValue = g.traffic_morning || g.time_morning || 33
+    const dayValue = g.traffic_day || g.time_day || 34
+    const nightValue = g.traffic_night || g.time_night || 33
+
+    if (trafficValue > 0) {
+      totalTraffic += trafficValue
+      totalMorning += morningValue
+      totalDay += dayValue
+      totalNight += nightValue
+      // weekend_ratio: 0~1 스케일 또는 0~100 스케일 모두 처리
+      let weekendRatio = g.weekend_ratio ?? 0.3
+      // 만약 1보다 크면 퍼센트로 저장된 것으로 간주 (예: 33 -> 0.33)
+      if (weekendRatio > 1) {
+        weekendRatio = weekendRatio / 100
+      }
+      // 1이면 100%인데, 이는 비정상 데이터이므로 기본값 사용
+      if (weekendRatio >= 1) {
+        weekendRatio = 0.3  // 기본값
+      }
+      weekendRatioSum += weekendRatio
       count++
     }
+  }
+
+  // 유효한 데이터가 없으면 기본값 반환
+  if (count === 0 || totalTraffic === 0) {
+    return defaultResult
   }
 
   const avgWeekendRatio = count > 0 ? weekendRatioSum / count : 0.3
@@ -390,7 +426,7 @@ async function calculateCost(
   district: string
 ): Promise<CostMetrics> {
   // 법정동별 임대료 조회
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('district_rent')
     .select('*')
     .ilike('district_name', `%${district}%`)
@@ -398,9 +434,11 @@ async function calculateCost(
     .single()
 
   if (data) {
+    // DB에 rent_level이 있으면 사용, 없으면 계산
+    const level = data.rent_level || getCostLevel(data.avg_rent_per_pyeong || 100)
     return {
       avgRent: data.avg_rent_per_pyeong || 100,
-      level: getCostLevel(data.avg_rent_per_pyeong || 100),
+      level: level as 'low' | 'medium' | 'high',
       districtAvg: data.avg_rent_per_pyeong,
     }
   }
@@ -493,7 +531,7 @@ async function calculateAnchors(
   const [starbucks, mart, department] = await Promise.all([
     searchStarbucks(lat, lng, 1000),                  // 1km 내 스타벅스
     searchKakaoPOI(lat, lng, '이마트 홈플러스 코스트코 롯데마트', 2000), // 2km 내 대형마트
-    searchKakaoPOI(lat, lng, '백화점', 2000),        // 2km 내 백화점
+    searchDepartmentStore(lat, lng, 2000),            // 2km 내 백화점 (주요 브랜드만)
   ])
 
   const hasAnyAnchor = !!subway || !!starbucks || !!mart || !!department
@@ -587,6 +625,62 @@ async function searchKakaoPOI(
     }
   } catch (error) {
     console.error('Kakao POI search error:', error)
+    return null
+  }
+}
+
+// 주요 백화점 브랜드 목록
+const MAJOR_DEPARTMENT_STORES = [
+  '롯데백화점',
+  '신세계백화점', '신세계 백화점',
+  '현대백화점', '더현대',
+  '갤러리아백화점', '갤러리아',
+  'AK플라자', 'AK 플라자',
+  'NC백화점',
+]
+
+/**
+ * 주요 백화점만 검색
+ */
+async function searchDepartmentStore(
+  lat: number,
+  lng: number,
+  radius: number
+): Promise<{ name: string; distance: number } | null> {
+  if (!KAKAO_REST_KEY) return null
+
+  try {
+    const res = await fetch(
+      `https://dapi.kakao.com/v2/local/search/keyword.json?` +
+        `query=${encodeURIComponent('백화점')}&` +
+        `x=${lng}&y=${lat}&` +
+        `radius=${radius}&` +
+        `size=15&sort=distance`,
+      {
+        headers: { Authorization: `KakaoAK ${KAKAO_REST_KEY}` },
+      }
+    )
+
+    if (!res.ok) return null
+
+    const data = await res.json()
+    const docs = data.documents || []
+
+    // 주요 백화점 브랜드만 필터링
+    const majorDepts = docs.filter((d: any) => {
+      const name = d.place_name || ''
+      return MAJOR_DEPARTMENT_STORES.some(brand => name.includes(brand))
+    })
+
+    if (majorDepts.length === 0) return null
+
+    const nearest = majorDepts[0]
+    return {
+      name: nearest.place_name,
+      distance: parseInt(nearest.distance, 10),
+    }
+  } catch (error) {
+    console.error('Department store search error:', error)
     return null
   }
 }

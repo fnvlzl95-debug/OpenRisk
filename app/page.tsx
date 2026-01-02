@@ -96,6 +96,7 @@ export default function Home() {
 
   const selectSuggestion = (suggestion: SearchSuggestion) => {
     setQuery(suggestion.name)
+    setSuggestions([]) // 자동완성 목록 비우기 (재검색 방지)
     setShowSuggestions(false)
     setSelectedIndex(-1)
     // 검색창에 값만 입력 (자동 이동 안함)
@@ -113,7 +114,7 @@ export default function Home() {
     }
 
     setIsLoading(true)
-    router.push(`/result?query=${encodeURIComponent(query)}&category=${selectedCategory}`)
+    router.push(`/result-v2?query=${encodeURIComponent(query)}&category=${selectedCategory}`)
   }
 
   return (
