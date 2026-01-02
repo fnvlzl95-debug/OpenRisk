@@ -30,10 +30,10 @@ const NORMALIZATION = {
     highThreshold: 20,   // 20개 이상: 높음
   },
   traffic: {
-    // 유동인구 추정치 (지하철+버스 기반, H3 셀당 0~10 범위)
-    // 500m 반경 합계 기준: 0~50+ 범위
-    lowThreshold: 10,    // 10 이하: 낮음
-    highThreshold: 40,   // 40 이상: 높음
+    // 유동인구 추정치 (지하철+버스 기반, H3 500m 반경 합계)
+    // DB 분포: 대부분 셀이 1-10, 합계 시 15~50 범위가 다수
+    lowThreshold: 25,    // 25 이하: 낮음 (리스크 높음)
+    highThreshold: 80,   // 80 이상: 높음 (리스크 낮음)
   },
   cost: {
     // DB 데이터 범위: 10~68만원/평 (서울 기준)
@@ -360,11 +360,13 @@ export function getCompetitionLevel(sameCategoryCount: number): 'low' | 'medium'
  * 추정치 기반 (지하철+버스 데이터, H3 500m 반경 합계)
  */
 export function getTrafficLevel(estimated: number): TrafficLevel {
-  if (estimated <= 5) return 'very_low'
-  if (estimated <= 15) return 'low'
-  if (estimated <= 30) return 'medium'
-  if (estimated <= 50) return 'high'
-  return 'very_high'
+  // 500m 반경 합계 기준 (평균 5개 셀 × 셀당 1~10)
+  // DB 분포: 대부분 셀이 1-10, 합계 시 15~50 범위가 다수
+  if (estimated <= 10) return 'very_low'   // 거의 유동인구 없음
+  if (estimated <= 25) return 'low'        // 적음
+  if (estimated <= 50) return 'medium'     // 보통
+  if (estimated <= 80) return 'high'       // 많음
+  return 'very_high'                       // 매우 많음 (역세권 등)
 }
 
 /**
