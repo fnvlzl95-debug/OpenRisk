@@ -70,14 +70,96 @@ export function calculateRiskScore(
   }
 
   // 가중 합산
-  const totalScore =
+  let totalScore =
     scores.competition * weights.competition +
     scores.cost * weights.cost +
     scores.survival * weights.survival +
     scores.traffic * weights.traffic +
     scores.anchor * weights.anchor
 
+  // 시간대 패턴 보정 (±10점)
+  // 업종별 최적 시간대와 실제 피크타임 매칭 여부
+  const timePatternAdjustment = calculateTimePatternAdjustment(category, metrics.traffic)
+  totalScore += timePatternAdjustment
+
   return Math.round(Math.min(100, Math.max(0, totalScore)))
+}
+
+/**
+ * 시간대 패턴 보정 점수 계산
+ * 업종별 최적 시간대와 실제 피크타임이 맞으면 리스크 감소, 안 맞으면 증가
+ * 반환값: -10 ~ +10 (음수 = 리스크 감소, 양수 = 리스크 증가)
+ */
+function calculateTimePatternAdjustment(
+  category: BusinessCategory,
+  traffic: TrafficMetrics
+): number {
+  // 업종별 최적 시간대 정의
+  const optimalPeakTime: Record<string, 'morning' | 'day' | 'night'> = {
+    // 점심 장사 업종 (낮이 좋음)
+    restaurant_korean: 'day',
+    restaurant_chinese: 'day',
+    restaurant_fastfood: 'day',
+    bakery: 'day',
+    pharmacy: 'day',
+    laundry: 'day',
+
+    // 저녁/야간 업종 (밤이 좋음)
+    restaurant_western: 'night',
+    restaurant_japanese: 'night',
+    bar: 'night',
+    restaurant_chicken: 'night',
+    restaurant_pizza: 'night',
+
+    // 출퇴근 업종 (아침이 좋음)
+    cafe: 'morning',
+    convenience: 'morning',
+
+    // 시간대 무관 (주거 배후 의존)
+    beauty: 'day',
+    nail: 'day',
+    mart: 'day',
+    dessert: 'day',
+    gym: 'night',
+    academy: 'night',
+  }
+
+  const optimal = optimalPeakTime[category] || 'day'
+  const actual = traffic.peakTime
+
+  // 매칭 여부에 따른 보정
+  if (optimal === actual) {
+    // 최적 시간대와 일치 → 리스크 감소
+    return -5
+  }
+
+  // 주말 비중이 너무 높거나 낮으면 추가 보정
+  // 술집은 주말 비중 높아야 유리, 점심 업종은 평일 비중 높아야 유리
+  const weekendSensitive = ['bar', 'restaurant_western', 'dessert', 'cafe']
+  const weekdaySensitive = ['restaurant_korean', 'restaurant_chinese', 'laundry', 'pharmacy']
+
+  if (weekendSensitive.includes(category)) {
+    // 주말 비중 높으면 좋음
+    if (traffic.weekendRatio < 0.3) {
+      return 8 // 주말 비중 너무 낮으면 리스크 증가
+    }
+    if (traffic.weekendRatio > 0.45) {
+      return -3 // 주말 비중 높으면 리스크 감소
+    }
+  }
+
+  if (weekdaySensitive.includes(category)) {
+    // 평일 비중 높으면 좋음
+    if (traffic.weekendRatio > 0.5) {
+      return 8 // 주말 비중 너무 높으면 리스크 증가
+    }
+    if (traffic.weekendRatio < 0.3) {
+      return -3 // 평일 중심이면 리스크 감소
+    }
+  }
+
+  // 시간대 불일치 기본 패널티
+  return 3
 }
 
 /**
