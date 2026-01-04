@@ -27,7 +27,8 @@
       "Bash(npm run build:*)",
       "Bash(git reset:*)",
       "Bash(git merge:*)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(xargs kill:*)"
     ]
   }
 }
