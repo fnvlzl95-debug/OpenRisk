@@ -47,6 +47,8 @@ import {
   calculateClosureRisk,
   analyzeClosureRiskFactors,
 } from '@/lib/v2/closure-risk'
+import { getTopRiskCards } from '@/lib/v2/interpretations/risk-cards'
+import type { MetricContext } from '@/lib/v2/interpretations/types'
 
 // 카카오 API
 const KAKAO_REST_KEY = process.env.KAKAO_REST_KEY
@@ -137,14 +139,18 @@ export async function POST(request: NextRequest) {
       areaType
     )
 
-    // 6. 리스크 점수 계산
-    const riskScore = calculateRiskScore(targetCategory, {
-      competition,
-      traffic,
-      cost,
-      survival,
-      anchors,
-    })
+    // 6. 리스크 점수 계산 (상권 유형 패널티 포함)
+    const riskScore = calculateRiskScore(
+      targetCategory,
+      {
+        competition,
+        traffic,
+        cost,
+        survival,
+        anchors,
+      },
+      areaType  // 상권 유형별 패널티 적용
+    )
     const riskLevel = getRiskLevel(riskScore)
 
     // 8. 해석 문구 생성
@@ -156,7 +162,33 @@ export async function POST(request: NextRequest) {
       areaType
     )
 
-    // 9. 응답 구성
+    // 9. 리스크 카드 생성 (v2.1 신규)
+    const metricContext: MetricContext = {
+      sameCategory: competition.sameCategory,
+      totalStores: competition.total,
+      densityLevel: competition.densityLevel === 'low' ? 'low' : competition.densityLevel === 'medium' ? 'medium' : 'high',
+      trafficLevel: traffic.level === 'very_low' || traffic.level === 'low' ? 'low' :
+                    traffic.level === 'medium' ? 'medium' : 'high',
+      trafficIndex: traffic.index,
+      isEstimated: true,
+      rentLevel: cost.level,
+      avgRent: cost.avgRent,
+      closureRate: survival.closureRate,
+      openingRate: survival.openingRate,
+      netChange: survival.netChange,
+      survivalRisk: survival.risk,
+      peakTime: traffic.peakTime,
+      timePattern: traffic.timePattern,
+      weekendRatio: traffic.weekendRatio,
+      areaType,
+      subwayDistance: anchors.subway?.distance,
+      subwayName: anchors.subway?.name,
+      hasNearbyAnchor: anchors.hasAnyAnchor,
+      categoryName: getCategoryName(targetCategory),
+    }
+    const riskCards = getTopRiskCards(metricContext, 3)
+
+    // 10. 응답 구성
     const response: AnalyzeV2Response = {
       location: {
         lat,
@@ -180,6 +212,7 @@ export async function POST(request: NextRequest) {
       },
       anchors,
       interpretation,
+      riskCards,
       dataQuality: {
         storeDataAge: gridStoreData[0]?.period || 'N/A',
         trafficDataAge: gridTrafficData[0]?.h3_id ? '2025-01' : 'N/A',
@@ -653,8 +686,8 @@ async function calculateAnchors(
   // 2. 카카오 POI API로 앵커 시설 조회
   const [starbucks, mart, department] = await Promise.all([
     searchStarbucks(lat, lng, 1000),                  // 1km 내 스타벅스
-    searchKakaoPOI(lat, lng, '이마트 홈플러스 코스트코 롯데마트', 2000), // 2km 내 대형마트
-    searchDepartmentStore(lat, lng, 2000),            // 2km 내 백화점 (주요 브랜드만)
+    searchMart(lat, lng, 2000),                       // 2km 내 대형마트 (카테고리 검색)
+    searchDepartmentStore(lat, lng, 2000),            // 2km 내 백화점
   ])
 
   const hasAnyAnchor = !!subway || !!starbucks || !!mart || !!department
@@ -712,23 +745,25 @@ async function searchStarbucks(
 }
 
 /**
- * 카카오 로컬 API로 POI 검색 (대형마트/백화점용)
+ * 카카오 카테고리 검색으로 대형마트 찾기 (MT1 = 대형마트)
  */
-async function searchKakaoPOI(
+async function searchMart(
   lat: number,
   lng: number,
-  query: string,
   radius: number
 ): Promise<{ name: string; distance: number } | null> {
   if (!KAKAO_REST_KEY) return null
 
+  // 주요 대형마트 브랜드
+  const majorMarts = ['이마트', '홈플러스', '코스트코', '롯데마트', '하나로마트', '킴스클럽']
+
   try {
     const res = await fetch(
-      `https://dapi.kakao.com/v2/local/search/keyword.json?` +
-        `query=${encodeURIComponent(query)}&` +
+      `https://dapi.kakao.com/v2/local/search/category.json?` +
+        `category_group_code=MT1&` +
         `x=${lng}&y=${lat}&` +
         `radius=${radius}&` +
-        `size=15&sort=distance`,
+        `size=10&sort=distance`,
       {
         headers: { Authorization: `KakaoAK ${KAKAO_REST_KEY}` },
       }
@@ -739,81 +774,84 @@ async function searchKakaoPOI(
     const data = await res.json()
     const docs = data.documents || []
 
-    if (docs.length === 0) return null
+    // 주요 대형마트만 필터링 (익스프레스, 슈퍼 제외)
+    const majorOnly = docs.filter((d: any) => {
+      const name = d.place_name || ''
+      const isMajor = majorMarts.some(brand => name.includes(brand))
+      const isExpress = /익스프레스|슈퍼|프레시/.test(name)
+      return isMajor && !isExpress
+    })
 
-    const nearest = docs[0]
+    if (majorOnly.length === 0) return null
+
+    const nearest = majorOnly[0]
     return {
       name: nearest.place_name,
       distance: parseInt(nearest.distance, 10),
     }
   } catch (error) {
-    console.error('Kakao POI search error:', error)
+    console.error('Mart search error:', error)
     return null
   }
 }
 
-// 주요 백화점 브랜드 목록
-const MAJOR_DEPARTMENT_STORES = [
-  '롯데백화점',
-  '신세계백화점', '신세계 백화점',
-  '현대백화점', '더현대',
-  '갤러리아백화점', '갤러리아',
-  'AK플라자', 'AK 플라자',
-  'NC백화점',
-]
-
-// 제외할 키워드 (주차장, 문화센터 등)
-const EXCLUDE_KEYWORDS = [
-  '주차장', '주차', '문화센터', '아카데미', '면세점',
-  '창고', '물류', '사무실', '본사',
+// 주요 백화점 좌표 (카카오 API 한계로 하드코딩)
+// 서울/경기/인천 주요 백화점 본점 위치
+const DEPARTMENT_STORES: { name: string; lat: number; lng: number }[] = [
+  // 신세계
+  { name: '신세계백화점 본점', lat: 37.5610, lng: 126.9810 },
+  { name: '신세계백화점 강남점', lat: 37.5045, lng: 127.0040 },
+  { name: '신세계백화점 센텀시티점', lat: 35.1692, lng: 129.1311 },
+  // 롯데
+  { name: '롯데백화점 본점', lat: 37.5647, lng: 126.9816 },
+  { name: '롯데백화점 잠실점', lat: 37.5117, lng: 127.0980 },
+  { name: '롯데백화점 강남점', lat: 37.4968, lng: 127.0280 },
+  { name: '롯데백화점 영등포점', lat: 37.5168, lng: 126.9032 },
+  // 현대
+  { name: '현대백화점 본점', lat: 37.5285, lng: 127.0283 },
+  { name: '현대백화점 무역센터점', lat: 37.5087, lng: 127.0604 },
+  { name: '더현대 서울', lat: 37.5261, lng: 126.9281 },
+  { name: '현대백화점 판교점', lat: 37.3942, lng: 127.1118 },
+  // 갤러리아
+  { name: '갤러리아백화점 명품관', lat: 37.5277, lng: 127.0398 },
+  { name: '갤러리아백화점 타임월드', lat: 36.3523, lng: 127.3780 },
+  // AK
+  { name: 'AK플라자 수원점', lat: 37.2664, lng: 127.0013 },
+  { name: 'AK플라자 분당점', lat: 37.3784, lng: 127.1168 },
 ]
 
 /**
- * 주요 백화점만 검색 (주차장 등 제외)
+ * 주요 백화점 검색 - 좌표 기반 (카카오 API 한계로 직접 계산)
  */
-async function searchDepartmentStore(
+function searchDepartmentStore(
   lat: number,
   lng: number,
   radius: number
-): Promise<{ name: string; distance: number } | null> {
-  if (!KAKAO_REST_KEY) return null
+): { name: string; distance: number } | null {
+  // Haversine 거리 계산
+  const R = 6371000 // 지구 반지름 (미터)
+  const toRad = (deg: number) => deg * (Math.PI / 180)
 
-  try {
-    const res = await fetch(
-      `https://dapi.kakao.com/v2/local/search/keyword.json?` +
-        `query=${encodeURIComponent('백화점')}&` +
-        `x=${lng}&y=${lat}&` +
-        `radius=${radius}&` +
-        `size=15&sort=distance`,
-      {
-        headers: { Authorization: `KakaoAK ${KAKAO_REST_KEY}` },
+  let nearest: { name: string; distance: number } | null = null
+
+  for (const store of DEPARTMENT_STORES) {
+    const dLat = toRad(store.lat - lat)
+    const dLng = toRad(store.lng - lng)
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat)) * Math.cos(toRad(store.lat)) *
+      Math.sin(dLng / 2) * Math.sin(dLng / 2)
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+    const distance = Math.round(R * c)
+
+    if (distance <= radius) {
+      if (!nearest || distance < nearest.distance) {
+        nearest = { name: store.name, distance }
       }
-    )
-
-    if (!res.ok) return null
-
-    const data = await res.json()
-    const docs = data.documents || []
-
-    // 주요 백화점 브랜드만 필터링 + 제외 키워드 제거
-    const majorDepts = docs.filter((d: any) => {
-      const name = d.place_name || ''
-      const isMajorBrand = MAJOR_DEPARTMENT_STORES.some(brand => name.includes(brand))
-      const isExcluded = EXCLUDE_KEYWORDS.some(keyword => name.includes(keyword))
-      return isMajorBrand && !isExcluded
-    })
-
-    if (majorDepts.length === 0) return null
-
-    const nearest = majorDepts[0]
-    return {
-      name: nearest.place_name,
-      distance: parseInt(nearest.distance, 10),
     }
-  } catch (error) {
-    console.error('Department store search error:', error)
-    return null
   }
+
+  return nearest
 }
 
 /**
