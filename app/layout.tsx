@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Noto_Sans_KR } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
@@ -11,12 +11,6 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-});
-
-const notoSansKr = Noto_Sans_KR({
-  variable: "--font-noto-sans-kr",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "700"],
 });
 
 export const metadata: Metadata = {
@@ -32,15 +26,27 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
+        {/* Pretendard 폰트 */}
+        <link
+          rel="stylesheet"
+          as="style"
+          crossOrigin="anonymous"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+        />
         {/* Kakao Maps SDK - 전역 로드 */}
         <Script
           src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&autoload=false`}
           strategy="beforeInteractive"
         />
+        {/* Kakao JS SDK - 공유 기능 */}
+        <Script
+          src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js"
+          strategy="afterInteractive"
+        />
       </head>
       <body
-        className={`${notoSansKr.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
-        style={{ fontFamily: 'var(--font-noto-sans-kr), sans-serif' }}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        style={{ fontFamily: '"Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif' }}
       >
         {children}
       </body>
