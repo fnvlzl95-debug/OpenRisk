@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, Link2, Check, MessageCircle, Loader2, Image, Download } from 'lucide-react'
+import { X, Link2, Check, MessageCircle, Loader2 } from 'lucide-react'
 
 const KAKAO_JS_KEY = '3e682108baedad97b96ccde241977838'
 
@@ -11,13 +11,11 @@ interface ShareModalProps {
   title: string
   text: string
   url: string
-  captureTargetId?: string // 캡처할 요소의 ID
 }
 
-export default function ShareModal({ isOpen, onClose, title, text, url, captureTargetId = 'result-content' }: ShareModalProps) {
+export default function ShareModal({ isOpen, onClose, title, text, url }: ShareModalProps) {
   const [copied, setCopied] = useState(false)
   const [kakaoReady, setKakaoReady] = useState(false)
-  const [isCapturing, setIsCapturing] = useState(false)
 
   // 카카오 SDK 로드 확인
   useEffect(() => {
@@ -84,47 +82,6 @@ export default function ShareModal({ isOpen, onClose, title, text, url, captureT
     }
   }
 
-  const handleSaveImage = async () => {
-    setIsCapturing(true)
-
-    try {
-      // 동적 import로 dom-to-image-more 로드
-      const domtoimage = await import('dom-to-image-more')
-
-      const targetElement = document.getElementById(captureTargetId)
-      if (!targetElement) {
-        console.error('캡처 대상 요소를 찾을 수 없습니다:', captureTargetId)
-        setIsCapturing(false)
-        return
-      }
-
-      // 모달 숨기기
-      onClose()
-
-      // 약간의 딜레이 후 캡처 (모달이 닫히는 시간)
-      await new Promise(resolve => setTimeout(resolve, 100))
-
-      const dataUrl = await domtoimage.toPng(targetElement, {
-        quality: 1,
-        bgcolor: '#ffffff',
-        style: {
-          transform: 'scale(1)',
-          transformOrigin: 'top left'
-        }
-      })
-
-      // 다운로드
-      const link = document.createElement('a')
-      link.download = `openrisk-${new Date().toISOString().slice(0,10)}.png`
-      link.href = dataUrl
-      link.click()
-    } catch (error) {
-      console.error('이미지 저장 실패:', error)
-    } finally {
-      setIsCapturing(false)
-    }
-  }
-
   return (
     <>
       {/* Backdrop */}
@@ -167,33 +124,6 @@ export default function ShareModal({ isOpen, onClose, title, text, url, captureT
                 <div className={`text-sm font-medium ${kakaoReady ? '' : 'text-gray-400'}`}>카카오톡</div>
                 <div className="text-[10px] text-gray-400">
                   {kakaoReady ? '친구에게 공유' : '로딩 중...'}
-                </div>
-              </div>
-            </button>
-
-            {/* 이미지 저장 */}
-            <button
-              onClick={handleSaveImage}
-              disabled={isCapturing}
-              className={`w-full flex items-center gap-3 p-3 border transition-colors ${
-                isCapturing
-                  ? 'border-gray-100 bg-gray-50 cursor-wait'
-                  : 'border-gray-200 hover:border-black hover:bg-gray-50'
-              }`}
-            >
-              <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${isCapturing ? 'bg-gray-200' : 'bg-blue-100'}`}>
-                {isCapturing ? (
-                  <Loader2 size={20} className="text-gray-400 animate-spin" />
-                ) : (
-                  <Download size={20} className="text-blue-600" />
-                )}
-              </div>
-              <div className="text-left">
-                <div className={`text-sm font-medium ${isCapturing ? 'text-gray-400' : ''}`}>
-                  {isCapturing ? '저장 중...' : '이미지 저장'}
-                </div>
-                <div className="text-[10px] text-gray-400">
-                  PNG 파일로 저장
                 </div>
               </div>
             </button>

@@ -12,7 +12,6 @@
     "@google/generative-ai": "^0.24.1",
     "@supabase/supabase-js": "^2.89.0",
     "clsx": "^2.1.1",
-    "dom-to-image-more": "^3.7.2",
     "dotenv": "^17.2.3",
     "groq-sdk": "^0.37.0",
     "h3-js": "^4.4.0",
