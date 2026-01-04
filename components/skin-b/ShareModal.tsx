@@ -88,8 +88,8 @@ export default function ShareModal({ isOpen, onClose, title, text, url, captureT
     setIsCapturing(true)
 
     try {
-      // 동적 import로 html2canvas 로드
-      const html2canvas = (await import('html2canvas')).default
+      // 동적 import로 dom-to-image-more 로드
+      const domtoimage = await import('dom-to-image-more')
 
       const targetElement = document.getElementById(captureTargetId)
       if (!targetElement) {
@@ -104,18 +104,19 @@ export default function ShareModal({ isOpen, onClose, title, text, url, captureT
       // 약간의 딜레이 후 캡처 (모달이 닫히는 시간)
       await new Promise(resolve => setTimeout(resolve, 100))
 
-      const canvas = await html2canvas(targetElement, {
-        scale: 2, // 고해상도
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        logging: false,
+      const dataUrl = await domtoimage.toPng(targetElement, {
+        quality: 1,
+        bgcolor: '#ffffff',
+        style: {
+          transform: 'scale(1)',
+          transformOrigin: 'top left'
+        }
       })
 
       // 다운로드
       const link = document.createElement('a')
       link.download = `openrisk-${new Date().toISOString().slice(0,10)}.png`
-      link.href = canvas.toDataURL('image/png')
+      link.href = dataUrl
       link.click()
     } catch (error) {
       console.error('이미지 저장 실패:', error)
