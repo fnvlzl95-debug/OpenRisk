@@ -659,7 +659,7 @@ function ResultBContent() {
       <ShareModal
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
-        title={`${location.address} 상권 분석 - OpenRisk`}
+        title={`${location.address} 창업 리스크 분석 - OpenRisk`}
         text={`위험도 ${analysis.riskScore}점 | ${interpretation.summary}`}
         url={typeof window !== 'undefined' ? window.location.href : ''}
       />
