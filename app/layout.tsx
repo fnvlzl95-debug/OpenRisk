@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     description: "지금, 창업해도 될까? 데이터 기반 창업 리스크 분석 서비스.",
     images: [
       {
-        url: "https://openrisk.kr/MetaImg.png",
+        url: "https://openrisk.info/MetaImg.png",
         width: 1200,
         height: 630,
         alt: "오픈리스크 - 창업 리스크 분석",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "오픈리스크 - 창업 리스크 분석",
     description: "지금, 창업해도 될까? 데이터 기반 창업 리스크 분석 서비스.",
-    images: ["https://openrisk.kr/MetaImg.png"],
+    images: ["https://openrisk.info/MetaImg.png"],
   },
 };
 

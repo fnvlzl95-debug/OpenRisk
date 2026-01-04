@@ -63,7 +63,7 @@ export default function ShareModal({ isOpen, onClose, title, text, url }: ShareM
         content: {
           title,
           description: text,
-          imageUrl: 'https://openrisk.kr/MetaImg.png',
+          imageUrl: 'https://openrisk.info/MetaImg.png',
           link: {
             mobileWebUrl: url,
             webUrl: url,
