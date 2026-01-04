@@ -290,7 +290,7 @@ function ResultBContent() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
+      <main id="result-content" className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
         {/* Hero Section */}
         <section className="mb-6 sm:mb-8">
           {/* 상단 태그 카드 4개 - 동일 크기, 동일 디자인 */}
@@ -613,15 +613,12 @@ function ResultBContent() {
 
       {/* Footer */}
       <footer className="border-t border-gray-200 py-4 sm:py-6 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-3 sm:px-4 text-center space-y-2">
+        <div className="max-w-4xl mx-auto px-3 sm:px-4 text-center">
           <p className="text-[9px] sm:text-[10px] text-gray-500 leading-relaxed">
             ※ 본 분석은 공공데이터 기반 <span className="font-medium">추정치</span>이며, 실제와 다를 수 있습니다.
             <br className="sm:hidden" />
             <span className="hidden sm:inline"> · </span>
             창업 전 반드시 현장 확인을 권장합니다.
-          </p>
-          <p className="text-[8px] sm:text-[9px] text-gray-400">
-            데이터 기준: 점포 2024.12 | 유동인구 2024.10 | 임대료 2024.3Q
           </p>
         </div>
       </footer>
