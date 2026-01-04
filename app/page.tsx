@@ -11,6 +11,8 @@ interface SearchSuggestion {
   name: string
   district: string
   display: string
+  lat?: number
+  lng?: number
 }
 
 const GRADE_DATA = [
@@ -29,6 +31,7 @@ export default function Home() {
   const [isFocused, setIsFocused] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const [showCategoryWarning, setShowCategoryWarning] = useState(false)
+  const skipNextSearchRef = useRef(false) // 자동완성 선택 후 재검색 방지 (ref로 변경)
   const searchContainerRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
@@ -37,6 +40,12 @@ export default function Home() {
     if (query.length < 1) {
       setSuggestions([])
       setShowSuggestions(false)
+      return
+    }
+
+    // 자동완성에서 선택한 경우 재검색 스킵
+    if (skipNextSearchRef.current) {
+      skipNextSearchRef.current = false
       return
     }
 
@@ -94,12 +103,19 @@ export default function Home() {
     }
   }
 
-  const selectSuggestion = (suggestion: SearchSuggestion) => {
+  // 선택된 좌표 저장 (검색 결과에서 선택 시)
+  const [selectedCoords, setSelectedCoords] = useState<{ lat: number; lng: number } | null>(null)
+
+  const selectSuggestion = (suggestion: SearchSuggestion & { lat?: number; lng?: number }) => {
+    skipNextSearchRef.current = true // 재검색 방지
     setQuery(suggestion.name)
-    setSuggestions([]) // 자동완성 목록 비우기 (재검색 방지)
+    // 좌표가 있으면 저장
+    if (suggestion.lat && suggestion.lng) {
+      setSelectedCoords({ lat: suggestion.lat, lng: suggestion.lng })
+    }
+    setSuggestions([]) // 자동완성 목록 비우기
     setShowSuggestions(false)
     setSelectedIndex(-1)
-    // 검색창에 값만 입력 (자동 이동 안함)
   }
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -114,7 +130,17 @@ export default function Home() {
     }
 
     setIsLoading(true)
-    router.push(`/result-v2?query=${encodeURIComponent(query)}&category=${selectedCategory}`)
+
+    // 스킨 선택에 따라 다른 결과 페이지로 이동
+    const skin = typeof window !== 'undefined' ? localStorage.getItem('openrisk-skin') : 'a'
+    const resultPage = skin === 'b' ? '/result-b' : '/result-v2'
+
+    // 좌표가 있으면 함께 전달 (더 정확한 분석 가능)
+    let url = `${resultPage}?query=${encodeURIComponent(query)}&category=${selectedCategory}`
+    if (selectedCoords) {
+      url += `&lat=${selectedCoords.lat}&lng=${selectedCoords.lng}`
+    }
+    router.push(url)
   }
 
   return (
@@ -191,7 +217,10 @@ export default function Home() {
                   <input
                     type="text"
                     value={query}
-                    onChange={(e) => setQuery(e.target.value)}
+                    onChange={(e) => {
+                      setQuery(e.target.value)
+                      setSelectedCoords(null) // 직접 입력 시 기존 좌표 초기화
+                    }}
                     onFocus={() => { setIsFocused(true); if(suggestions.length) setShowSuggestions(true); }}
                     onKeyDown={handleKeyDown}
                     placeholder="지역명, 주소 입력..."
@@ -261,7 +290,21 @@ export default function Home() {
                 {['홍대입구역', '성수동', '강남역', '이태원'].map((tag) => (
                   <button
                     key={tag}
-                    onClick={() => { setQuery(tag); }}
+                    onClick={() => {
+                      skipNextSearchRef.current = true // useEffect 재검색 방지
+                      setQuery(tag)
+                      setSelectedCoords(null) // 새 검색이므로 좌표 초기화
+                      setIsFocused(true)
+                      // 검색 API 직접 호출하여 자동완성 표시
+                      fetch(`/api/search?q=${encodeURIComponent(tag)}`)
+                        .then(res => res.json())
+                        .then(data => {
+                          setSuggestions(data)
+                          setShowSuggestions(data.length > 0)
+                          setSelectedIndex(-1)
+                        })
+                        .catch(console.error)
+                    }}
                     className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium bg-white/5 hover:bg-white/10 border border-white/5 hover:border-white/20 text-white/60 hover:text-white transition-all"
                   >
                     {tag}

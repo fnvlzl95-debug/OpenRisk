@@ -33,6 +33,24 @@ export interface AnalyzeV2Request {
 }
 
 // ===== 분석 응답 =====
+// ===== 리스크 카드 (v2.1 신규) =====
+export type RiskSeverity = 'critical' | 'warning' | 'caution'
+
+export interface EvidenceBadge {
+  label: string        // "경쟁 12개", "유동 낮음"
+  type: 'metric' | 'data' | 'trend'
+}
+
+export interface RiskCard {
+  id: string
+  flag: string              // 레드플래그 타이틀 (7~12자)
+  warning: string           // 경고 한 줄 (30자 이내)
+  evidenceBadges: EvidenceBadge[]  // 근거 뱃지 (최대 3개)
+  fieldQuestion: string     // 현장 확인 질문
+  severity: RiskSeverity
+  priority: number          // 우선순위 (낮을수록 중요)
+}
+
 export interface AnalyzeV2Response {
   location: {
     lat: number
@@ -60,6 +78,9 @@ export interface AnalyzeV2Response {
   anchors: AnchorMetrics
 
   interpretation: InterpretationV2
+
+  // 리스크 카드 (v2.1 신규)
+  riskCards: RiskCard[]
 
   dataQuality: {
     storeDataAge: string
@@ -243,4 +264,14 @@ export interface BusStop {
   route_count: number | null
   normalized_score: number | null
   period: string | null
+}
+
+// ===== AI 분석 응답 =====
+export interface AIAnalysisResponse {
+  headline: string           // 핵심 경고 (50자 이내)
+  riskAnalysis: string       // 리스크 분석 (400자 이내)
+  failureScenario: string    // 실패 시나리오 (150자 이내)
+  fieldChecks: string[]      // 현장 체크리스트 (3-5개)
+  reconsideration: string    // 재고 권유 (100자 이내)
+  disclaimer: string         // 면책 조항
 }

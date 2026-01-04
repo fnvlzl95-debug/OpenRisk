@@ -25,7 +25,9 @@
       "Bash(Remove-Item -Path \"c:\\\\Users\\\\dbvision10\\\\project\\\\새 폴더\\\\OpenRisk\\\\components\\\\AISummaryModal.tsx\" -Force)",
       "Bash(Remove-Item -Path \"c:\\\\Users\\\\dbvision10\\\\project\\\\새 폴더\\\\OpenRisk\\\\components\\\\ui\\\\Tooltip.tsx\" -Force)",
       "Bash(npm run build:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(git merge:*)",
+      "Bash(git stash:*)"
     ]
   }
 }

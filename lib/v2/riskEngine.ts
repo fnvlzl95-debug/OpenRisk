@@ -27,13 +27,14 @@ import {
 const NORMALIZATION = {
   competition: {
     lowThreshold: 5,     // 5개 이하: 낮음
-    highThreshold: 20,   // 20개 이상: 높음
+    highThreshold: 15,   // 15개 이상: 높음 (강화: 20→15)
   },
   traffic: {
     // 유동인구 추정치 (지하철+버스 기반, H3 500m 반경 합계)
     // DB 분포: 대부분 셀이 1-10, 합계 시 15~50 범위가 다수
     lowThreshold: 25,    // 25 이하: 낮음 (리스크 높음)
     highThreshold: 80,   // 80 이상: 높음 (리스크 낮음)
+    minScore: 20,        // 유동인구 많아도 최소 20점 (과도한 감소 방지)
   },
   cost: {
     // DB 데이터 범위: 10~68만원/평 (서울 기준)
@@ -57,7 +58,8 @@ export function calculateRiskScore(
     cost: CostMetrics
     survival: SurvivalMetrics
     anchors: AnchorMetrics
-  }
+  },
+  areaType?: AreaType
 ): number {
   const weights = getCategoryWeights(category)
 
@@ -83,7 +85,29 @@ export function calculateRiskScore(
   const timePatternAdjustment = calculateTimePatternAdjustment(category, metrics.traffic)
   totalScore += timePatternAdjustment
 
+  // 상권 유형 패널티 (상업/특수 상권은 경쟁이 치열하므로 추가 리스크)
+  const areaTypePenalty = getAreaTypePenalty(areaType)
+  totalScore += areaTypePenalty
+
   return Math.round(Math.min(100, Math.max(0, totalScore)))
+}
+
+/**
+ * 상권 유형별 리스크 패널티
+ * 상업/특수 상권은 경쟁이 치열하고 임대료도 높아 추가 리스크 부과
+ */
+function getAreaTypePenalty(areaType?: AreaType): number {
+  switch (areaType) {
+    case 'C_상업':
+      return 10  // 상업 지역: +10점
+    case 'D_특수':
+      return 15  // 특수 상권 (역세권 핫플, 대학가 등): +15점
+    case 'B_혼합':
+      return 3   // 혼합 지역: 약간의 패널티
+    case 'A_주거':
+    default:
+      return 0   // 주거 지역: 패널티 없음
+  }
 }
 
 /**
@@ -211,18 +235,20 @@ function normalizeSurvival(closureRate: number): number {
 
 /**
  * 유동인구 정규화 (낮을수록 위험)
+ * 유동인구가 많아도 최소 minScore 유지 (과도한 리스크 감소 방지)
  */
 function normalizeTraffic(estimated: number): number {
-  const { lowThreshold, highThreshold } = NORMALIZATION.traffic
+  const { lowThreshold, highThreshold, minScore } = NORMALIZATION.traffic
 
   if (estimated >= highThreshold) {
-    return 0  // 유동인구 많으면 리스크 낮음
+    return minScore  // 유동인구 많아도 최소 점수 (0→20으로 강화)
   }
   if (estimated <= lowThreshold) {
     return 100  // 유동인구 적으면 리스크 높음
   }
-  // 역방향: 유동인구 많을수록 점수 낮음
-  return 100 - ((estimated - lowThreshold) / (highThreshold - lowThreshold)) * 100
+  // 역방향: 유동인구 많을수록 점수 낮음 (minScore~100 범위)
+  const range = 100 - minScore
+  return 100 - ((estimated - lowThreshold) / (highThreshold - lowThreshold)) * range
 }
 
 /**

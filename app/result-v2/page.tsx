@@ -9,8 +9,10 @@ import { useSearchParams } from 'next/navigation'
 import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
-import { AnalyzeV2Response, RiskLevel } from '@/lib/v2/types'
+import { AnalyzeV2Response, RiskLevel, RiskCard, AIAnalysisResponse, AREA_TYPE_INFO } from '@/lib/v2/types'
 import { BusinessCategory } from '@/lib/categories'
+import RiskCardStack from '@/components/v2/RiskCardStack'
+import AIAnalysisModal from '@/components/v2/AIAnalysisModal'
 
 // 클라이언트 전용 맵 컴포넌트
 const AnalysisMap = dynamic(() => import('@/components/v2/AnalysisMap'), {
@@ -53,6 +55,44 @@ function ResultV2Content() {
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
     paramLat && paramLng ? { lat: paramLat, lng: paramLng } : null
   )
+
+  // AI 분석 상태
+  const [showAIModal, setShowAIModal] = useState(false)
+  const [aiLoading, setAILoading] = useState(false)
+  const [aiData, setAIData] = useState<AIAnalysisResponse | null>(null)
+  const [aiError, setAIError] = useState<string | null>(null)
+
+  // AI 분석 요청
+  const handleAIAnalysis = async () => {
+    if (!result) return
+
+    setShowAIModal(true)
+    setAILoading(true)
+    setAIError(null)
+
+    try {
+      const res = await fetch('/api/ai/summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: result }),
+      })
+
+      const json = await res.json()
+
+      if (!res.ok) {
+        setAIError(json.error || 'AI 분석 중 오류가 발생했습니다.')
+        setAILoading(false)
+        return
+      }
+
+      setAIData(json.analysis)
+      setAILoading(false)
+    } catch (err) {
+      console.error('AI analysis error:', err)
+      setAIError('AI 서버 연결에 실패했습니다.')
+      setAILoading(false)
+    }
+  }
 
   // query -> 좌표 변환
   useEffect(() => {
@@ -156,7 +196,7 @@ function ResultV2Content() {
     )
   }
 
-  const { location, analysis, metrics, anchors, interpretation, dataQuality } = result
+  const { location, analysis, metrics, anchors, interpretation, riskCards, dataQuality } = result
   const riskColors = RISK_COLORS[analysis.riskLevel]
 
   return (
@@ -176,16 +216,14 @@ function ResultV2Content() {
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-sm sm:text-lg font-bold text-white truncate">{location.address}</h1>
-              <span className={`text-[9px] sm:text-xs font-mono font-bold px-2 py-0.5 rounded ${riskColors.bg} ${riskColors.text}`}>
-                {RISK_LABELS[analysis.riskLevel]}
+              <span className="text-[9px] sm:text-xs font-mono font-bold px-2 py-0.5 rounded bg-white/10 text-white/70">
+                {AREA_TYPE_INFO[analysis.areaType]?.name || analysis.areaType}
               </span>
             </div>
             <div className="flex items-center gap-2 mt-1 text-[11px] sm:text-xs text-white/50">
               <span>{location.district}</span>
               <span>·</span>
               <span>{analysis.categoryName}</span>
-              <span>·</span>
-              <span className="font-mono">{analysis.areaType}</span>
             </div>
           </div>
         </div>
@@ -269,14 +307,16 @@ function ResultV2Content() {
 
             {/* 임대료 */}
             <div className="p-2.5 sm:p-3 rounded-xl bg-[#111] border border-white/10">
-              <div className="text-[9px] sm:text-[10px] font-mono text-white/50 mb-1">임대료/평</div>
-              <div className="text-lg sm:text-xl font-bold text-white">{metrics.cost.avgRent}만</div>
-              <div className={`text-[10px] mt-1 ${
+              <div className="text-[9px] sm:text-[10px] font-mono text-white/50 mb-1">임대료</div>
+              <div className={`text-lg sm:text-xl font-bold ${
                 metrics.cost.level === 'low' ? 'text-emerald-400' :
-                metrics.cost.level === 'medium' ? 'text-amber-400' : 'text-rose-400'
+                metrics.cost.level === 'medium' ? 'text-white' : 'text-rose-400'
               }`}>
-                {metrics.cost.level === 'low' ? '저렴' :
-                 metrics.cost.level === 'medium' ? '평균' : '높음'}
+                {metrics.cost.level === 'low' ? '낮음' :
+                 metrics.cost.level === 'medium' ? '보통' : '높음'}
+              </div>
+              <div className="text-[10px] text-white/40 mt-1">
+                {location.region} 평균 대비
               </div>
             </div>
           </div>
@@ -450,6 +490,7 @@ function ResultV2Content() {
               {dataQuality.storeDataAge}
             </span>
           </div>
+
         </div>
 
         {/* 오른쪽: 지도 + 해석 */}
@@ -461,36 +502,64 @@ function ResultV2Content() {
               locationName={location.address}
               riskLevel={analysis.riskLevel}
               riskScore={analysis.riskScore}
-              className="h-[280px] border border-white/10"
+              className="h-[200px] lg:h-[220px] border border-white/10"
             />
           )}
 
-          {/* 핵심 해석 */}
-          <div className="p-3 rounded-xl bg-[#111] border border-white/10 flex-1">
-            <div className="text-[10px] font-mono text-white/50 mb-3">핵심 해석</div>
-            <div className="space-y-3">
-              <p className="text-[11px] text-white/70 flex">
-                <span className="mr-2 text-blue-400 font-bold">1.</span>
-                {interpretation.easyExplanations.competition}
-              </p>
-              <p className="text-[11px] text-white/70 flex">
-                <span className="mr-2 text-blue-400 font-bold">2.</span>
-                {interpretation.easyExplanations.traffic}
-              </p>
-              <p className="text-[11px] text-white/70 flex">
-                <span className="mr-2 text-blue-400 font-bold">3.</span>
-                {interpretation.easyExplanations.cost}
-              </p>
-              {interpretation.easyExplanations.survival && (
-                <p className="text-[11px] text-white/70 flex">
-                  <span className="mr-2 text-blue-400 font-bold">4.</span>
-                  {interpretation.easyExplanations.survival}
-                </p>
-              )}
-            </div>
+          {/* 핵심 리스크 카드 */}
+          <div className="p-3 rounded-xl bg-[#111] border border-white/10 lg:flex-1">
+            {riskCards && riskCards.length > 0 ? (
+              <RiskCardStack cards={riskCards} title="핵심 리스크" />
+            ) : (
+              <>
+                <div className="text-[10px] font-mono text-white/50 mb-3">핵심 해석</div>
+                <div className="space-y-3">
+                  <p className="text-[11px] text-white/70 flex">
+                    <span className="mr-2 text-blue-400 font-bold">1.</span>
+                    {interpretation.easyExplanations.competition}
+                  </p>
+                  <p className="text-[11px] text-white/70 flex">
+                    <span className="mr-2 text-blue-400 font-bold">2.</span>
+                    {interpretation.easyExplanations.traffic}
+                  </p>
+                  <p className="text-[11px] text-white/70 flex">
+                    <span className="mr-2 text-blue-400 font-bold">3.</span>
+                    {interpretation.easyExplanations.cost}
+                  </p>
+                  {interpretation.easyExplanations.survival && (
+                    <p className="text-[11px] text-white/70 flex">
+                      <span className="mr-2 text-blue-400 font-bold">4.</span>
+                      {interpretation.easyExplanations.survival}
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Floating AI Button */}
+      <div className="fixed bottom-4 right-4 z-50">
+        <button
+          onClick={handleAIAnalysis}
+          className="px-4 py-3 rounded-xl bg-gradient-to-r from-red-500 to-orange-500 shadow-lg shadow-red-500/25 hover:shadow-red-500/40 transition-all flex items-center gap-2"
+        >
+          <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <span className="text-sm font-bold text-white">AI 분석</span>
+        </button>
+      </div>
+
+      {/* AI Analysis Modal */}
+      <AIAnalysisModal
+        isOpen={showAIModal}
+        onClose={() => setShowAIModal(false)}
+        analysis={aiData}
+        isLoading={aiLoading}
+        error={aiError}
+      />
     </div>
   )
 }

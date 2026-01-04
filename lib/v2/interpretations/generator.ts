@@ -373,7 +373,7 @@ export function generateContextualExplanations(input: GeneratorInput): Interpret
   }
 }
 
-// ===== 요약 문장 생성 (3단 구조: 관측→해석→실패메커니즘) =====
+// ===== 요약 문장 생성 =====
 
 export function generateSummary(
   metrics: AllMetrics,
@@ -392,46 +392,46 @@ export function generateSummary(
 
   // 최악 조합: 경쟁 높음 + 유동 낮음 + 임대료 높음
   if (compLevel === 'high' && trafficLevel === 'low' && costLevel === 'high') {
-    return '경쟁은 치열한데 유동인구는 적고 임대료까지 높음 → 구조적으로 손익이 맞기 어려운 조건, 다른 입지와 비교 필요'
+    return '경쟁은 치열한데 유동인구는 적고 임대료까지 높습니다. 구조적으로 손익이 맞기 어려운 조건입니다.'
   }
 
   // 경쟁 낮음 + 유동 낮음 (함정) - 먼저 체크해서 타입 분기
   if (compLevel === 'low' && trafficLevel === 'low') {
-    return '경쟁도 유동도 적은 구조 → 수요 자체가 약할 가능성 있음 → 배후 주거 수요 확인 필수'
+    return '경쟁도 유동도 적은 구조입니다. 수요 자체가 약할 가능성이 있습니다.'
   }
 
   // 양호한 경우도 함정 언급
   if (goodCount >= 3) {
-    return '지표는 양호한 편이나 → 좋은 조건은 경쟁자도 알고 있음 → 현장에서 왜 비어있는지 확인 필요'
+    return '지표는 양호한 편이지만, 좋은 조건은 경쟁자도 알고 있습니다.'
   }
 
   // 위험 신호 3개 이상
   if (badCount >= 3) {
-    return '여러 지표가 부정적 → 진입 시 복합적인 리스크에 노출됨 → 현장 확인 전 신중한 검토 필요'
+    return '여러 지표가 부정적입니다. 진입 시 복합적인 리스크에 노출됩니다.'
   }
 
   // 경쟁 높음 + 유동 높음
   if (trafficLevel === 'high' && compLevel === 'high') {
-    return `유동은 많지만 ${vars.sameCategory}개가 나눠 가지는 구조 → 차별점 없이 들어가면 체력전에서 밀릴 수 있음`
+    return `유동은 많지만 ${vars.sameCategory}개가 나눠 가지는 구조입니다. 차별점 없으면 체력전에서 밀릴 수 있습니다.`
   }
 
   // 임대료 높음 + 폐업률 높음
   if (costLevel === 'high' && survivalLevel === 'high') {
-    return '폐업률이 높고 임대료도 높은 구조 → 이미 많이 망하는 곳인데 비용 부담까지 큼 → 버티다 지치면 손실이 빠르게 누적됨'
+    return '폐업률이 높고 임대료도 높은 구조입니다. 손실이 빠르게 누적될 수 있습니다.'
   }
 
   // 임대료 높음
   if (costLevel === 'high') {
-    return '고정비 부담이 큰 구조 → 매출이 기대치를 밑돌면 고정비 비중이 빠르게 올라감 → 손익분기 달성 전에 자금이 소진될 수 있음'
+    return '고정비 부담이 큰 구조입니다. 매출이 기대치를 밑돌면 자금이 빠르게 소진될 수 있습니다.'
   }
 
   // 유동 낮음
   if (trafficLevel === 'low') {
-    return '유동인구가 적은 구조 → 워킹 유입만으로는 매출이 채워지지 않을 수 있음 → 목적형 방문 또는 배달 의존 필요'
+    return '유동인구가 적은 구조입니다. 워킹 유입만으로는 매출이 채워지지 않을 수 있습니다.'
   }
 
   // 기본
-  return '보통 수준의 상권 → 업종 특성과 타겟 고객층을 고려한 현장 확인 필요'
+  return '보통 수준의 상권입니다. 업종 특성과 타겟 고객층에 따라 달라질 수 있습니다.'
 }
 
 // ===== Top Factors 생성 =====

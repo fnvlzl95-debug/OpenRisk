@@ -15,12 +15,12 @@ const SKINS = [
   },
   {
     id: 'b',
-    name: 'TBD',
-    description: '준비 중입니다',
+    name: 'Editorial',
+    description: '신문 스타일, 화이트 기반',
     preview: '/preview-a.png',
-    gradient: 'from-zinc-800 to-zinc-900',
-    accent: '#666666',
-    disabled: true
+    gradient: 'from-neutral-100 to-neutral-200',
+    accent: '#FF3B30',
+    disabled: false
   }
 ]
 
@@ -31,7 +31,8 @@ export default function SelectPage() {
   const selectSkin = (skin: typeof SKINS[0]) => {
     if (skin.disabled) return
     localStorage.setItem('openrisk-skin', skin.id)
-    router.push('/')
+    // Editorial 스킨 선택 시 Editorial 메인 페이지로 이동
+    router.push(skin.id === 'b' ? '/home-b' : '/')
   }
 
   return (
@@ -106,15 +107,19 @@ export default function SelectPage() {
                       </div>
                     </div>
                   ) : (
-                    // Skin B Preview
-                    <div className="space-y-2">
-                      <div className="text-center mb-4">
-                        <div className="text-3xl font-bold" style={{ color: skin.accent }}>A</div>
+                    // Skin B Preview - Editorial/Newspaper Style
+                    <div className="bg-white rounded-lg p-3 text-black h-full">
+                      <div className="border-b-2 border-black pb-1 mb-2">
+                        <div className="text-[10px] font-bold tracking-wide">RISK REPORT</div>
                       </div>
-                      <div className="h-2 w-full bg-white/20 rounded-full" />
-                      <div className="grid grid-cols-2 gap-2 mt-4">
-                        <div className="h-8 bg-emerald-500/20 rounded-lg border border-emerald-500/30" />
-                        <div className="h-8 bg-rose-500/20 rounded-lg border border-rose-500/30" />
+                      <div className="flex gap-2">
+                        <div className="flex-1">
+                          <div className="h-2 w-full bg-gray-200 rounded mb-1" />
+                          <div className="h-2 w-3/4 bg-gray-200 rounded" />
+                        </div>
+                        <div className="w-8 h-8 rounded-sm flex items-center justify-center" style={{ background: '#FF3B30' }}>
+                          <span className="text-white font-bold text-xs">62</span>
+                        </div>
                       </div>
                     </div>
                   )}

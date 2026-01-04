@@ -7,9 +7,10 @@ interface CategorySelectorProps {
   value: BusinessCategory | null
   onChange: (category: BusinessCategory) => void
   isFocused?: boolean
+  variant?: 'default' | 'editorial'
 }
 
-export default function CategorySelector({ value, onChange, isFocused = false }: CategorySelectorProps) {
+export default function CategorySelector({ value, onChange, isFocused = false, variant = 'default' }: CategorySelectorProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [activeGroup, setActiveGroup] = useState<string | null>(null)
 
@@ -25,13 +26,22 @@ export default function CategorySelector({ value, onChange, isFocused = false }:
     setActiveGroup(null)
   }
 
+  // Editorial variant styles
+  const isEditorial = variant === 'editorial'
+
   return (
     <div className="relative">
       {/* Trigger Button */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`
+        className={isEditorial ? `
+          flex items-center gap-2 px-3 py-2
+          bg-white border border-gray-300
+          transition-all duration-200 min-w-[140px]
+          ${value ? 'border-black text-black' : 'text-gray-400'}
+          hover:border-black
+        ` : `
           flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-3
           bg-[#1a1a1a] border rounded-lg sm:rounded-xl
           transition-all duration-300 min-w-[120px] sm:min-w-[140px]
@@ -40,8 +50,11 @@ export default function CategorySelector({ value, onChange, isFocused = false }:
           ${isFocused ? 'scale-105' : ''}
         `}
       >
-        <div className={`w-2 h-2 rounded-full ${value ? 'bg-blue-500' : 'bg-white/20'}`} />
-        <span className="text-sm sm:text-base font-medium truncate">
+        <div className={isEditorial
+          ? `w-2 h-2 ${value ? 'bg-black' : 'bg-gray-300'}`
+          : `w-2 h-2 rounded-full ${value ? 'bg-blue-500' : 'bg-white/20'}`
+        } />
+        <span className={isEditorial ? 'text-sm font-medium truncate' : 'text-sm sm:text-base font-medium truncate'}>
           {selectedCategory?.name || '업종 선택'}
         </span>
         <svg
@@ -64,10 +77,19 @@ export default function CategorySelector({ value, onChange, isFocused = false }:
           />
 
           {/* Menu - 위로 열림 */}
-          <div className="absolute bottom-full left-0 mb-2 z-50 bg-[#111]/95 backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden shadow-2xl min-w-[280px] sm:min-w-[320px]">
+          <div className={isEditorial
+            ? 'absolute bottom-full left-0 mb-2 z-50 bg-white border-2 border-black overflow-hidden shadow-lg min-w-[280px]'
+            : 'absolute bottom-full left-0 mb-2 z-50 bg-[#111]/95 backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden shadow-2xl min-w-[280px] sm:min-w-[320px]'
+          }>
             {/* Header */}
-            <div className="px-4 py-3 border-b border-white/5">
-              <div className="text-xs font-mono text-white/30 flex justify-between items-center">
+            <div className={isEditorial
+              ? 'px-4 py-3 border-b border-gray-200'
+              : 'px-4 py-3 border-b border-white/5'
+            }>
+              <div className={isEditorial
+                ? 'text-xs font-mono text-gray-500 flex justify-between items-center'
+                : 'text-xs font-mono text-white/30 flex justify-between items-center'
+              }>
                 <span>업종 선택</span>
                 <span className="text-[10px]">필수</span>
               </div>
@@ -76,22 +98,31 @@ export default function CategorySelector({ value, onChange, isFocused = false }:
             {/* Category Groups */}
             <div className="max-h-[300px] sm:max-h-[350px] overflow-y-auto">
               {CATEGORY_GROUPS.map((group) => (
-                <div key={group} className="border-b border-white/5 last:border-b-0">
+                <div key={group} className={isEditorial
+                  ? 'border-b border-gray-200 last:border-b-0'
+                  : 'border-b border-white/5 last:border-b-0'
+                }>
                   {/* Group Header */}
                   <button
                     type="button"
                     onClick={() => setActiveGroup(activeGroup === group ? null : group)}
-                    className="w-full px-4 py-3 flex items-center justify-between hover:bg-white/5 transition-colors"
+                    className={isEditorial
+                      ? 'w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors'
+                      : 'w-full px-4 py-3 flex items-center justify-between hover:bg-white/5 transition-colors'
+                    }
                   >
-                    <span className="text-sm font-medium text-white/70">{group}</span>
+                    <span className={isEditorial
+                      ? 'text-sm font-medium text-gray-700'
+                      : 'text-sm font-medium text-white/70'
+                    }>{group}</span>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-white/30">
+                      <span className={isEditorial ? 'text-xs text-gray-400' : 'text-xs text-white/30'}>
                         {getGroupCategories(group).length}
                       </span>
                       <svg
-                        className={`w-4 h-4 text-white/40 transition-transform ${
+                        className={`w-4 h-4 transition-transform ${
                           activeGroup === group ? 'rotate-180' : ''
-                        }`}
+                        } ${isEditorial ? 'text-gray-400' : 'text-white/40'}`}
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -109,7 +140,14 @@ export default function CategorySelector({ value, onChange, isFocused = false }:
                           key={cat.key}
                           type="button"
                           onClick={() => handleSelect(cat.key)}
-                          className={`
+                          className={isEditorial ? `
+                            w-full px-6 py-2.5 text-left text-sm transition-all
+                            flex items-center gap-3
+                            ${value === cat.key
+                              ? 'bg-gray-100 text-black font-medium'
+                              : 'text-gray-600 hover:bg-gray-50 hover:text-black'
+                            }
+                          ` : `
                             w-full px-6 py-2.5 text-left text-sm transition-all
                             flex items-center gap-3
                             ${value === cat.key
@@ -118,9 +156,10 @@ export default function CategorySelector({ value, onChange, isFocused = false }:
                             }
                           `}
                         >
-                          <div className={`w-1.5 h-1.5 rounded-full ${
-                            value === cat.key ? 'bg-blue-500' : 'bg-white/20'
-                          }`} />
+                          <div className={isEditorial
+                            ? `w-1.5 h-1.5 ${value === cat.key ? 'bg-black' : 'bg-gray-300'}`
+                            : `w-1.5 h-1.5 rounded-full ${value === cat.key ? 'bg-blue-500' : 'bg-white/20'}`
+                          } />
                           {cat.name}
                           {value === cat.key && (
                             <svg className="w-4 h-4 ml-auto" fill="currentColor" viewBox="0 0 20 20">
@@ -136,8 +175,14 @@ export default function CategorySelector({ value, onChange, isFocused = false }:
             </div>
 
             {/* Footer */}
-            <div className="px-4 py-2 border-t border-white/5 bg-white/5">
-              <p className="text-[10px] text-white/30 text-center">
+            <div className={isEditorial
+              ? 'px-4 py-2 border-t border-gray-200 bg-gray-50'
+              : 'px-4 py-2 border-t border-white/5 bg-white/5'
+            }>
+              <p className={isEditorial
+                ? 'text-[10px] text-gray-500 text-center'
+                : 'text-[10px] text-white/30 text-center'
+              }>
                 선택한 업종에 맞춰 리스크 가중치가 적용됩니다
               </p>
             </div>
