@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "오픈리스크 - 상권 리스크 분석",
-  description: "상권의 진짜 리스크를 번역합니다. 초보 창업자를 위한 상권 분석 서비스.",
+  title: "오픈리스크 - 창업 리스크 분석",
+  description: "지금, 창업해도 될까? 데이터 기반 창업 리스크 분석 서비스.",
 };
 
 export default function RootLayout({

@@ -179,8 +179,8 @@ export default function HomeEditorial() {
             창업 실패를 관리하다
           </h2>
           <p className="text-sm sm:text-base text-gray-600 max-w-lg mx-auto leading-relaxed">
-            이 자리에서 창업해도 될까?<br />
-            데이터가 말해주는 진짜 리스크
+            지금, 창업해도 될까?<br />
+            창업 리스크 분석
           </p>
         </div>
 
