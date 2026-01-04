@@ -136,7 +136,7 @@ export default function HomeEditorial() {
   })
 
   return (
-    <div className="min-h-screen bg-[#FAFAF8] text-black selection:bg-black/10">
+    <div className="min-h-screen bg-[#FAFAF8] text-black selection:bg-black/10 overflow-x-hidden">
       {/* Newspaper Header */}
       <header className="border-b-2 border-black">
         <div className="max-w-5xl mx-auto px-3 sm:px-4 py-2 sm:py-3">
@@ -209,7 +209,7 @@ export default function HomeEditorial() {
               </div>
 
               {/* Search Input Row */}
-              <div className="flex items-center">
+              <div className="flex items-center w-full">
                 <input
                   type="text"
                   value={query}
@@ -220,13 +220,13 @@ export default function HomeEditorial() {
                   onFocus={() => { if(suggestions.length) setShowSuggestions(true) }}
                   onKeyDown={handleKeyDown}
                   placeholder="지역명 또는 주소 입력"
-                  className="flex-1 px-3 sm:px-4 py-3 sm:py-4 text-base sm:text-lg outline-none placeholder:text-gray-300"
+                  className="flex-1 min-w-0 px-3 sm:px-4 py-3 sm:py-4 text-base sm:text-lg outline-none placeholder:text-gray-300"
                   autoComplete="off"
                 />
                 <button
                   type="submit"
                   disabled={isLoading || !query.trim()}
-                  className="px-4 sm:px-6 py-3 sm:py-4 bg-black text-white text-sm sm:text-base font-bold hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed whitespace-nowrap"
+                  className="flex-shrink-0 px-4 sm:px-6 py-3 sm:py-4 bg-black text-white text-sm sm:text-base font-bold hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed whitespace-nowrap"
                 >
                   {isLoading ? (
                     <span className="flex items-center gap-2">
