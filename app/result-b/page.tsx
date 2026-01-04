@@ -449,7 +449,7 @@ function ResultBContent() {
                    metrics.survival.trend === 'shrinking' ? '감소' : '유지'}
                 </span>
               </div>
-              <div className="text-[10px] text-gray-400">점포 수 추세</div>
+              <div className="text-[10px] text-gray-400">상권 내 점포 수</div>
             </div>
           </div>
         </section>
@@ -662,6 +662,7 @@ function ResultBContent() {
         title={`${location.address} 창업 리스크 분석 - OpenRisk`}
         text={`위험도 ${analysis.riskScore}점 | ${interpretation.summary}`}
         url={typeof window !== 'undefined' ? window.location.href : ''}
+        analysisData={result}
       />
     </div>
   )
