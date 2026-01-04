@@ -3,46 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { RiskLevel } from '@/lib/v2/types'
 import { X, MapPin } from 'lucide-react'
-
-declare global {
-  interface Window {
-    kakao: {
-      maps: {
-        load: (callback: () => void) => void
-        Map: new (container: HTMLElement, options: { center: unknown; level: number }) => KakaoMap
-        LatLng: new (lat: number, lng: number) => KakaoLatLng
-        Circle: new (options: {
-          center: unknown
-          radius: number
-          strokeWeight: number
-          strokeColor: string
-          strokeOpacity: number
-          strokeStyle: string
-          fillColor: string
-          fillOpacity: number
-          map: KakaoMap
-        }) => unknown
-        CustomOverlay: new (options: {
-          position: unknown
-          content: string
-          yAnchor: number
-          map: KakaoMap
-        }) => unknown
-      }
-    }
-  }
-}
-
-interface KakaoLatLng {
-  getLat: () => number
-  getLng: () => number
-}
-
-interface KakaoMap {
-  setCenter: (latlng: unknown) => void
-  setLevel: (level: number) => void
-  relayout: () => void
-}
+import type { KakaoMap } from '@/lib/kakao-maps.d'
 
 interface MapModalProps {
   isOpen: boolean
