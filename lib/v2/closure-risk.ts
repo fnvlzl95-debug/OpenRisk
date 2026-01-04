@@ -133,12 +133,18 @@ const AREA_TYPE_RISK_MULTIPLIER: Record<AreaType, number> = {
 }
 
 // 유동인구 수준별 위험 조정
+// 2025.01: 백분위 기반 등급으로 변경되어 조정폭 축소
+// - very_high: 상위 1% (강남/명동급)
+// - high: 상위 10% (역세권)
+// - medium: 상위 25% (소규모 상권)
+// - low: 하위 75% (일반 주거지)
+// - very_low: 하위 25% (유동인구 거의 없음)
 const TRAFFIC_RISK_ADJUSTMENT: Record<TrafficLevel, number> = {
-  very_high: -10,  // 유동인구 많으면 위험 감소
-  high: -5,
-  medium: 0,
-  low: 5,
-  very_low: 10,    // 유동인구 적으면 위험 증가
+  very_high: -5,   // 핵심 상권: 위험 소폭 감소
+  high: -3,        // 역세권: 약간 감소
+  medium: 0,       // 소규모 상권: 기준
+  low: 3,          // 일반 주거지: 약간 증가
+  very_low: 5,     // 유동인구 거의 없음: 위험 증가
 }
 
 // 임대료 수준별 위험 조정

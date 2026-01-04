@@ -11,7 +11,7 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { AnalyzeV2Response, RiskLevel, AREA_TYPE_INFO, AIAnalysisResponse } from '@/lib/v2/types'
 import { BusinessCategory } from '@/lib/categories'
-import { AlertTriangle, Check, ArrowRight, Train, TrendingUp, TrendingDown, Sparkles, Search, MapPin, Share2 } from 'lucide-react'
+import { AlertTriangle, Check, ArrowRight, Train, TrendingUp, TrendingDown, Sparkles, Search, MapPin, Share2, HelpCircle } from 'lucide-react'
 import AIAnalysisModal from '@/components/skin-b/AIAnalysisModal'
 import MapModal from '@/components/skin-b/MapModal'
 import ShareModal from '@/components/skin-b/ShareModal'
@@ -54,6 +54,9 @@ function ResultBContent() {
 
   // 공유 모달 상태
   const [showShareModal, setShowShareModal] = useState(false)
+
+  // 상권유형 툴팁 상태
+  const [showAreaTypeTooltip, setShowAreaTypeTooltip] = useState(false)
 
   const today = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })
 
@@ -234,11 +237,16 @@ function ResultBContent() {
   // 레이더 차트 데이터 - 모든 지표를 "리스크" 관점으로 통일 (높을수록 위험)
   // 경쟁: 동종 15개 이상 = 100 (위험)
   const competitionRisk = Math.min(100, (metrics.competition.sameCategory / 15) * 100)
-  // 유동인구: 적으면 위험 (index 범위: 0~1000+, 100 이하면 위험)
-  // 100 이상이면 안전(20점), 0이면 위험(100점)
-  const trafficRisk = metrics.traffic.index >= 100
-    ? 20  // 유동인구 충분 - 최소 리스크
-    : Math.round(100 - (metrics.traffic.index / 100) * 80)  // 0→100, 100→20
+  // 유동인구: 적으면 위험 (백분위 기반: 평균 6, 최대 70)
+  // 2025.01 기준: ≤1 very_low, ≤6 low, ≤13 medium, ≤40 high, >40 very_high
+  // 40 이상이면 안전(20점), 0이면 위험(100점)
+  const trafficRisk = metrics.traffic.index >= 40
+    ? 20  // 상위 1% (핵심 상권) - 최소 리스크
+    : metrics.traffic.index >= 13
+      ? 35  // 상위 10% (역세권) - 낮은 리스크
+      : metrics.traffic.index >= 6
+        ? 50  // 상위 25% (소규모 상권) - 보통
+        : Math.round(100 - (metrics.traffic.index / 6) * 50)  // 0→100, 6→50
   // 임대료: 높으면 위험
   const costRisk = metrics.cost.level === 'high' ? 80 : metrics.cost.level === 'medium' ? 50 : 20
   // 폐업률: 높으면 위험 (20% = 100)
@@ -306,20 +314,57 @@ function ResultBContent() {
               <div className="text-[10px] sm:text-xs font-bold truncate">{analysis.categoryName}</div>
             </div>
             {/* 상권 유형 - Area Type 색상 적용 */}
-            <div className={`border border-black px-2 sm:px-3 py-1.5 sm:py-2 text-center ${
+            <div className={`relative border border-black px-2 sm:px-3 py-1.5 sm:py-2 text-center ${
               analysis.areaType === 'D_특수' ? 'bg-black text-white' :
               analysis.areaType === 'C_상업' ? 'bg-gray-600 text-white' :
               analysis.areaType === 'B_혼합' ? 'bg-gray-400 text-white' :
               'bg-gray-300 text-black'
             }`}>
-              <div className={`text-[8px] sm:text-[9px] mb-0.5 ${
+              <div className={`flex items-center justify-center gap-1 text-[8px] sm:text-[9px] mb-0.5 ${
                 analysis.areaType === 'A_주거' ? 'text-gray-600' : 'text-white/70'
-              }`}>상권유형</div>
+              }`}>
+                <span>상권유형</span>
+                <button
+                  onClick={() => setShowAreaTypeTooltip(!showAreaTypeTooltip)}
+                  className="opacity-60 hover:opacity-100"
+                >
+                  <HelpCircle size={10} />
+                </button>
+              </div>
               <div className="text-[10px] sm:text-xs font-bold">
                 {analysis.areaType === 'A_주거' ? 'A 주거형' :
                  analysis.areaType === 'B_혼합' ? 'B 혼합형' :
                  analysis.areaType === 'C_상업' ? 'C 상업형' : 'D 특수형'}
               </div>
+              {/* 상권유형 설명 툴팁 */}
+              {showAreaTypeTooltip && (
+                <div
+                  className="fixed inset-0 z-50 flex items-center justify-center bg-black/30"
+                  onClick={() => setShowAreaTypeTooltip(false)}
+                >
+                  <div className="bg-white border border-gray-300 shadow-xl mx-6 rounded-lg overflow-hidden">
+                    <div className="px-4 py-2 bg-gray-50 border-b text-sm font-bold text-center">상권유형 안내</div>
+                    <div className="grid grid-cols-2 text-sm">
+                      <div className="px-5 py-4 border-r border-b border-gray-200 bg-gray-100">
+                        <div className="font-bold text-black text-base">A 주거</div>
+                        <div className="text-gray-500">동네 · 단골</div>
+                      </div>
+                      <div className="px-5 py-4 border-b border-gray-200 bg-gray-200">
+                        <div className="font-bold text-black text-base">B 혼합</div>
+                        <div className="text-gray-500">주거+상업</div>
+                      </div>
+                      <div className="px-5 py-4 border-r border-gray-200 bg-gray-400 text-white">
+                        <div className="font-bold text-base">C 상업</div>
+                        <div className="text-white/80">경쟁↑ 임대↑</div>
+                      </div>
+                      <div className="px-5 py-4 bg-black text-white">
+                        <div className="font-bold text-base">D 특수</div>
+                        <div className="text-white/80">관광 · 오피스</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
             {/* 반경 보기 */}
             <button

@@ -30,11 +30,11 @@ const NORMALIZATION = {
     highThreshold: 15,   // 15개 이상: 높음 (강화: 20→15)
   },
   traffic: {
-    // 유동인구 추정치 (지하철+버스 기반, H3 500m 반경 합계)
-    // DB 분포: 대부분 셀이 1-10, 합계 시 15~50 범위가 다수
-    lowThreshold: 25,    // 25 이하: 낮음 (리스크 높음)
-    highThreshold: 80,   // 80 이상: 높음 (리스크 낮음)
-    minScore: 20,        // 유동인구 많아도 최소 20점 (과도한 감소 방지)
+    // 2025.01 백분위 기반 (평균 6, 중앙값 3, 최대 70)
+    // API에서 avgTraffic (셀 평균) 기준
+    lowThreshold: 3,     // 3 이하: 낮음 (하위 50%, 리스크 높음)
+    highThreshold: 20,   // 20 이상: 높음 (상위 5%, 리스크 낮음)
+    minScore: 25,        // 유동인구 많아도 최소 25점
   },
   cost: {
     // DB 데이터 범위: 10~68만원/평 (서울 기준)
@@ -383,16 +383,26 @@ export function getCompetitionLevel(sameCategoryCount: number): 'low' | 'medium'
 
 /**
  * 유동인구 레벨 판별 (5단계)
- * 추정치 기반 (지하철+버스 데이터, H3 500m 반경 합계)
+ * 추정치 기반 (지하철+버스+S-DoT+생활인구 종합)
+ *
+ * 2025.01 기준 실측 분포:
+ * - 평균: 6, 중앙값: 3
+ * - 75%: 6, 90%: 13, 95%: 21, 99%: 44
+ * - 최대: 70 (강남/명동급)
+ *
+ * 백분위 기반 등급:
+ * - very_low: 하위 25% (≤1)
+ * - low: 25~75% (2~6)
+ * - medium: 75~90% (7~13)
+ * - high: 90~99% (14~40)
+ * - very_high: 상위 1% (>40, 강남/명동/가산급)
  */
 export function getTrafficLevel(estimated: number): TrafficLevel {
-  // 500m 반경 합계 기준 (평균 5개 셀 × 셀당 1~10)
-  // DB 분포: 대부분 셀이 1-10, 합계 시 15~50 범위가 다수
-  if (estimated <= 10) return 'very_low'   // 거의 유동인구 없음
-  if (estimated <= 25) return 'low'        // 적음
-  if (estimated <= 50) return 'medium'     // 보통
-  if (estimated <= 80) return 'high'       // 많음
-  return 'very_high'                       // 매우 많음 (역세권 등)
+  if (estimated <= 1) return 'very_low'    // 하위 25%: 거의 유동인구 없음
+  if (estimated <= 6) return 'low'         // 25~75%: 적음 (일반 주거지)
+  if (estimated <= 13) return 'medium'     // 75~90%: 보통 (소규모 상권)
+  if (estimated <= 40) return 'high'       // 90~99%: 많음 (역세권/상업지)
+  return 'very_high'                       // 상위 1%: 매우 많음 (핵심 상권)
 }
 
 /**

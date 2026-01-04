@@ -85,10 +85,22 @@ export function getCompetitionLevel(sameCategory: number): MetricLevel {
   return 'high'
 }
 
+/**
+ * 유동인구 레벨 (해석용, 3단계)
+ *
+ * 2025.01 기준 실측 분포:
+ * - 평균: 6, 중앙값: 3
+ * - 75%: 6, 90%: 13, 95%: 21, 99%: 44, 최대: 70
+ *
+ * 해석 카드용 기준:
+ * - low: ≤6 (하위 75%) - 유동인구 적음
+ * - medium: 7~20 (75~95%) - 보통
+ * - high: >20 (상위 5%) - 유동인구 많음
+ */
 export function getTrafficLevelSimple(index: number): TrafficLevelSimple {
-  if (index < 20) return 'low'
-  if (index < 50) return 'medium'
-  return 'high'
+  if (index <= 6) return 'low'     // 하위 75%: 적음
+  if (index <= 20) return 'medium' // 75~95%: 보통
+  return 'high'                    // 상위 5%: 많음
 }
 
 export function getCostLevelSimple(avgRent: number): MetricLevel {

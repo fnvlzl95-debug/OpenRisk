@@ -443,9 +443,12 @@ function calculateTraffic(
     return defaultResult
   }
 
+  // 평균 유동인구 지수 계산 (합계가 아닌 평균 사용)
+  const avgTraffic = Math.round(totalTraffic / count)
+
   const avgWeekendRatio = count > 0 ? weekendRatioSum / count : 0.3
   const peakTime = getPeakTime(totalMorning, totalDay, totalNight)
-  const level = getTrafficLevel(totalTraffic)
+  const level = getTrafficLevel(avgTraffic)
 
   // 시간대별 패턴 (비율 정규화)
   const totalTimePattern = totalMorning + totalDay + totalNight || 100
@@ -456,7 +459,7 @@ function calculateTraffic(
   }
 
   return {
-    index: totalTraffic,
+    index: avgTraffic,
     level,
     levelLabel: TRAFFIC_LEVEL_LABELS[level],
     peakTime,
@@ -660,25 +663,30 @@ async function calculateAnchors(
   lng: number
 ): Promise<AnchorMetrics> {
   // 1. 가장 가까운 지하철역 (DB)
+  // 2025.01: 1.2km 이내만 "역세권"으로 인정 (도보 15분)
+  const SUBWAY_MAX_DISTANCE = 1200
   const { data: subwayData } = await supabase.rpc('find_nearest_subway', {
     p_lat: lat,
     p_lng: lng,
     p_limit: 1,
   })
 
-  const subway = subwayData?.[0]
+  // 1.2km 초과 시 null 처리 (역세권 아님)
+  const nearestSubway = subwayData?.[0]
+  const subway = nearestSubway && nearestSubway.distance_meters <= SUBWAY_MAX_DISTANCE
     ? {
-        name: subwayData[0].station_name,
-        line: subwayData[0].line,
-        distance: Math.round(subwayData[0].distance_meters),
+        name: nearestSubway.station_name,
+        line: nearestSubway.line,
+        distance: Math.round(nearestSubway.distance_meters),
       }
     : null
 
   // 2. 카카오 POI API로 앵커 시설 조회
+  // 2025.01: 반경 축소 (2km→1.2km, 도보 15분 기준)
   const [starbucks, mart, department] = await Promise.all([
-    searchStarbucks(lat, lng, 1000),                  // 1km 내 스타벅스
-    searchMart(lat, lng, 2000),                       // 2km 내 대형마트 (카테고리 검색)
-    searchDepartmentStore(lat, lng, 2000),            // 2km 내 백화점
+    searchStarbucks(lat, lng, 800),                   // 800m 내 스타벅스 (도보 10분)
+    searchMart(lat, lng, 1200),                       // 1.2km 내 대형마트 (도보 15분)
+    searchDepartmentStore(lat, lng, 1200),            // 1.2km 내 백화점 (도보 15분)
   ])
 
   const hasAnyAnchor = !!subway || !!starbucks || !!mart || !!department

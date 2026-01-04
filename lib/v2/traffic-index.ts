@@ -359,21 +359,25 @@ function determinePeakTime(
 }
 
 /**
- * 지수 레벨 분류
+ * 지수 레벨 분류 (5단계)
  *
- * 기준: 강남역(200점+), 가산디지털단지(120점+) 등 핵심 상권 기준
- * - very_high: 강남역, 홍대입구 급 (상위 5%)
- * - high: 주요 역세권 (상위 15%)
- * - medium: 일반 상업지역 (상위 40%)
- * - low: 주거-상업 혼합 (상위 70%)
- * - very_low: 주거 밀집 지역
+ * 2025.01 기준 실측 분포:
+ * - 평균: 6, 중앙값: 3
+ * - 75%: 6, 90%: 13, 95%: 21, 99%: 44, 최대: 70
+ *
+ * 백분위 기반 등급:
+ * - very_low: 하위 25% (≤1) - 거의 유동인구 없음
+ * - low: 25~75% (2~6) - 적음 (일반 주거지)
+ * - medium: 75~90% (7~13) - 보통 (소규모 상권)
+ * - high: 90~99% (14~40) - 많음 (역세권/상업지)
+ * - very_high: 상위 1% (>40) - 매우 많음 (강남/명동/가산급)
  */
 export function getTrafficLevel(index: number): TrafficLevel {
-  if (index >= 120) return 'very_high'  // 강남역급 핵심 상권
-  if (index >= 80) return 'high'        // 주요 역세권
-  if (index >= 50) return 'medium'      // 일반 상업지역
-  if (index >= 25) return 'low'         // 주거-상업 혼합
-  return 'very_low'                     // 주거 밀집
+  if (index <= 1) return 'very_low'    // 하위 25%: 거의 유동인구 없음
+  if (index <= 6) return 'low'         // 25~75%: 적음 (일반 주거지)
+  if (index <= 13) return 'medium'     // 75~90%: 보통 (소규모 상권)
+  if (index <= 40) return 'high'       // 90~99%: 많음 (역세권/상업지)
+  return 'very_high'                   // 상위 1%: 매우 많음 (핵심 상권)
 }
 
 /**
