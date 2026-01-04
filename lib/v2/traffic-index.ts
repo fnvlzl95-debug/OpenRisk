@@ -360,13 +360,20 @@ function determinePeakTime(
 
 /**
  * 지수 레벨 분류
+ *
+ * 기준: 강남역(200점+), 가산디지털단지(120점+) 등 핵심 상권 기준
+ * - very_high: 강남역, 홍대입구 급 (상위 5%)
+ * - high: 주요 역세권 (상위 15%)
+ * - medium: 일반 상업지역 (상위 40%)
+ * - low: 주거-상업 혼합 (상위 70%)
+ * - very_low: 주거 밀집 지역
  */
 export function getTrafficLevel(index: number): TrafficLevel {
-  if (index >= 80) return 'very_high'
-  if (index >= 60) return 'high'
-  if (index >= 40) return 'medium'
-  if (index >= 20) return 'low'
-  return 'very_low'
+  if (index >= 120) return 'very_high'  // 강남역급 핵심 상권
+  if (index >= 80) return 'high'        // 주요 역세권
+  if (index >= 50) return 'medium'      // 일반 상업지역
+  if (index >= 25) return 'low'         // 주거-상업 혼합
+  return 'very_low'                     // 주거 밀집
 }
 
 /**

@@ -531,8 +531,7 @@ function calculateSurvivalWithEstimation(
       closureRate,
       openingRate,
       netChange,
-      risk,
-      true // 실제 데이터 사용
+      risk
     )
 
     return {
@@ -571,8 +570,7 @@ function calculateSurvivalWithEstimation(
     baseMetrics.closureRate,
     baseMetrics.openingRate,
     baseMetrics.netChange,
-    baseMetrics.risk,
-    false // 추정 데이터
+    baseMetrics.risk
   )
 
   return {
@@ -591,8 +589,7 @@ function buildSurvivalLabels(
   closureRate: number,
   openingRate: number,
   netChange: number,
-  risk: 'low' | 'medium' | 'high',
-  isRealData: boolean
+  risk: 'low' | 'medium' | 'high'
 ): {
   trend: 'growing' | 'stable' | 'shrinking'
   trendLabel: string
@@ -627,33 +624,27 @@ function buildSurvivalLabels(
     riskLabel = '🔴 주의'
   }
 
-  // 3. 한줄 요약 (트렌드 + 이유) - 비율 기반으로 표현
+  // 3. 한줄 요약 (트렌드 + 이유)
   let summary: string
-  const period = isRealData ? '최근 10개월' : '추정치'
-
-  // 순증감 비율 (폐업률 - 개업률)
-  const netRateDiff = Math.abs(Math.round((closureRate - openingRate) * 10) / 10)
 
   if (trend === 'growing') {
     if (risk === 'low') {
-      summary = `${period} 개업이 폐업보다 많아요. 성장하는 상권이에요.`
+      summary = `새 가게가 늘고 있는 상권입니다. 다만 그만큼 경쟁자도 늘어나고 있어요.`
     } else {
-      summary = `${period} 개업이 많지만, 경쟁도 치열해지고 있어요.`
+      summary = `개업은 활발하지만 경쟁도 치열합니다. 차별화 없이 뛰어들면 힘들 수 있어요.`
     }
   } else if (trend === 'shrinking') {
-    // 비율로 표현 (예: "10개 중 1.3개가 폐업")
-    const closedPer10 = Math.round(closureRate) / 10
     if (closureRate > 15) {
-      summary = `${period} 10개 중 ${closedPer10}개꼴로 폐업했어요. 신중하게 접근하세요.`
+      summary = `문 닫는 가게가 많은 상권입니다. 왜 그런지 현장에서 직접 확인해보세요.`
     } else {
-      summary = `${period} 폐업이 개업보다 ${netRateDiff}%p 많아요. 안정화 단계일 수 있어요.`
+      summary = `점포가 줄어드는 추세입니다. 상권이 위축되고 있을 수 있어요.`
     }
   } else {
     // stable
     if (risk === 'low') {
-      summary = `${period} 점포 수 변동이 적어요. 안정적인 상권이에요.`
+      summary = `점포 수가 안정적으로 유지되고 있어요. 큰 변동 없는 상권입니다.`
     } else {
-      summary = `${period} 개업과 폐업이 비슷해요.`
+      summary = `개업과 폐업이 비슷하게 반복되는 상권입니다. 쉽게 들어오고 쉽게 나가는 곳일 수 있어요.`
     }
   }
 

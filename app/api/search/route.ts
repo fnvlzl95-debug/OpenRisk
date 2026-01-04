@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const KAKAO_REST_KEY = process.env.KAKAO_REST_KEY
 
+// 지원 지역 (서울, 경기, 인천만)
+const SUPPORTED_REGIONS = ['서울', '경기', '인천']
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const q = searchParams.get('q')
@@ -17,7 +20,11 @@ export async function GET(request: NextRequest) {
 
   try {
     const results = await searchKakao(q)
-    return NextResponse.json(results.slice(0, 8))
+    // 지원 지역만 필터링
+    const filtered = results.filter(r =>
+      SUPPORTED_REGIONS.some(region => r.district.startsWith(region) || r.name.startsWith(region))
+    )
+    return NextResponse.json(filtered.slice(0, 8))
   } catch (error) {
     console.error('Search error:', error)
     return NextResponse.json([])

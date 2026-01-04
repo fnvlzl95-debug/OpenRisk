@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import CategorySelector from '@/components/CategorySelector'
 import { type BusinessCategory } from '@/lib/categories'
 
@@ -23,6 +22,7 @@ export default function HomeEditorial() {
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const [showCategoryWarning, setShowCategoryWarning] = useState(false)
+  const [noResults, setNoResults] = useState(false)
   const skipNextSearchRef = useRef(false)
   const searchContainerRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
@@ -32,6 +32,7 @@ export default function HomeEditorial() {
     if (query.length < 1) {
       setSuggestions([])
       setShowSuggestions(false)
+      setNoResults(false)
       return
     }
 
@@ -45,11 +46,13 @@ export default function HomeEditorial() {
         const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`)
         const data = await res.json()
         setSuggestions(data)
-        setShowSuggestions(data.length > 0)
+        setNoResults(data.length === 0 && query.length >= 2)
+        setShowSuggestions(data.length > 0 || (data.length === 0 && query.length >= 2))
         setSelectedIndex(-1)
       } catch (error) {
         console.error('Search error:', error)
         setSuggestions([])
+        setNoResults(false)
       }
     }, 200)
 
@@ -141,23 +144,15 @@ export default function HomeEditorial() {
           <div className="flex justify-between items-center text-[9px] sm:text-[10px] font-mono text-gray-500 mb-2">
             <span className="hidden sm:inline">{currentDate}</span>
             <span className="sm:hidden">{new Date().toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })}</span>
-            <div className="flex items-center gap-2 sm:gap-4">
-              <span className="hidden sm:inline">VOL. 2026 NO. 001</span>
-              <Link
-                href="/select"
-                className="px-2 py-1 border border-gray-300 hover:border-black hover:bg-black hover:text-white transition-colors"
-              >
-                SWITCH
-              </Link>
-            </div>
+            <span className="hidden sm:inline">VOL. 2026 NO. 001</span>
           </div>
 
           {/* Masthead */}
-          <div className="text-center py-3 sm:py-4 border-t border-b border-gray-300">
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight" style={{ fontFamily: 'Georgia, serif' }}>
+          <div className="text-center py-4 sm:py-5 border-t border-b border-gray-300">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight">
               OPEN RISK
             </h1>
-            <p className="text-[9px] sm:text-xs font-mono text-gray-500 mt-1 tracking-[0.2em] sm:tracking-[0.3em]">
+            <p className="text-[9px] sm:text-xs font-mono text-gray-500 mt-1.5 sm:mt-2 tracking-[0.2em] sm:tracking-[0.3em]">
               COMMERCIAL DISTRICT RISK ANALYSIS
             </p>
           </div>
@@ -177,31 +172,35 @@ export default function HomeEditorial() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-3 sm:px-4 py-6 sm:py-12">
+      <main className="max-w-5xl mx-auto px-3 sm:px-4 py-8 sm:py-16">
         {/* Headline */}
-        <div className="text-center mb-6 sm:mb-12">
-          <p className="text-[10px] sm:text-sm font-mono text-gray-500 mb-1 sm:mb-2">EDITION 2026</p>
-          <h2 className="text-xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-2 sm:mb-4" style={{ fontFamily: 'Georgia, serif' }}>
+        <div className="text-center mb-8 sm:mb-14">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-3 sm:mb-5">
             창업 실패를 관리하다
           </h2>
-          <p className="text-xs sm:text-base text-gray-600 max-w-lg mx-auto leading-relaxed">
-            소상공인시장진흥공단 공식 데이터 기반<br />
-            상권 리스크를 7대 지표로 정량화합니다
+          <p className="text-sm sm:text-base text-gray-600 max-w-lg mx-auto leading-relaxed">
+            이 자리에서 창업해도 될까?<br />
+            데이터가 말해주는 진짜 리스크
           </p>
         </div>
 
         {/* Search Section */}
         <div
           ref={searchContainerRef}
-          className="max-w-2xl mx-auto mb-8 sm:mb-12"
+          className="max-w-2xl mx-auto mb-10 sm:mb-16"
           style={{ position: 'relative', zIndex: 100 }}
         >
           <form onSubmit={handleSearch} className="relative">
             {/* Search Box */}
             <div className="border-2 border-black bg-white">
               {/* Category Row */}
-              <div className="border-b border-gray-200 p-2 sm:p-3">
-                <div className="text-[9px] sm:text-[10px] font-mono text-gray-400 mb-1.5 sm:mb-2">CATEGORY</div>
+              <div className={`border-b p-2 sm:p-3 transition-colors ${showCategoryWarning ? 'border-red-300 bg-red-50' : 'border-gray-200'}`}>
+                <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+                  <span className="text-[9px] sm:text-[10px] font-mono text-gray-400">CATEGORY</span>
+                  {showCategoryWarning && (
+                    <span className="text-[9px] sm:text-[10px] text-red-500 font-medium">업종을 선택해주세요</span>
+                  )}
+                </div>
                 <CategorySelector
                   value={selectedCategory}
                   onChange={setSelectedCategory}
@@ -241,85 +240,51 @@ export default function HomeEditorial() {
               </div>
             </div>
 
-            {/* Category Warning */}
-            {showCategoryWarning && (
-              <div className="mt-3 text-center">
-                <span className="inline-block px-4 py-2 bg-red-50 border border-red-200 text-red-600 text-sm">
-                  업종을 선택해주세요
-                </span>
-              </div>
-            )}
-
             {/* Suggestions Dropdown */}
             {showSuggestions && (
               <div className="absolute left-0 right-0 bg-white border-2 border-black shadow-lg" style={{ zIndex: 9999, top: '100%', marginTop: '4px' }}>
                 <div className="px-4 py-2 text-[10px] font-mono text-gray-400 border-b border-gray-200">
-                  SUGGESTIONS
+                  {noResults ? 'NO RESULTS' : 'SUGGESTIONS'}
                 </div>
-                {suggestions.map((item, index) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => selectSuggestion(item)}
-                    onMouseEnter={() => setSelectedIndex(index)}
-                    className={`w-full px-4 py-3 flex items-center justify-between text-left transition-colors ${
-                      index === selectedIndex ? 'bg-gray-100' : 'hover:bg-gray-50'
-                    }`}
-                  >
-                    <div>
-                      <div className="font-medium">{item.name}</div>
-                      <div className="text-xs text-gray-500">{item.district}</div>
-                    </div>
-                    <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                ))}
+                {noResults ? (
+                  <div className="px-4 py-4 text-center">
+                    <p className="text-sm text-gray-600 mb-1">검색 결과가 없습니다</p>
+                    <p className="text-xs text-gray-400">서울 · 경기 · 인천 지역만 지원합니다</p>
+                  </div>
+                ) : (
+                  suggestions.map((item, index) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => selectSuggestion(item)}
+                      onMouseEnter={() => setSelectedIndex(index)}
+                      className={`w-full px-4 py-3 flex items-center justify-between text-left transition-colors ${
+                        index === selectedIndex ? 'bg-gray-100' : 'hover:bg-gray-50'
+                      }`}
+                    >
+                      <div>
+                        <div className="font-medium">{item.name}</div>
+                        <div className="text-xs text-gray-500">{item.district}</div>
+                      </div>
+                      <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  ))
+                )}
               </div>
             )}
           </form>
 
-          {/* Quick Tags */}
-          <div className="mt-3 sm:mt-4 flex flex-wrap justify-center gap-1.5 sm:gap-2">
-            {['홍대입구역', '성수동', '강남역', '이태원'].map((tag) => (
-              <button
-                key={tag}
-                onClick={() => {
-                  skipNextSearchRef.current = true
-                  setQuery(tag)
-                  setSelectedCoords(null)
-                  fetch(`/api/search?q=${encodeURIComponent(tag)}`)
-                    .then(res => res.json())
-                    .then(data => {
-                      setSuggestions(data)
-                      setShowSuggestions(data.length > 0)
-                      setSelectedIndex(-1)
-                    })
-                    .catch(console.error)
-                }}
-                className="px-2.5 sm:px-3 py-1 text-xs sm:text-sm border border-gray-300 hover:border-black hover:bg-black hover:text-white transition-colors"
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* Info Columns - Newspaper Style */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 border-t-2 border-black pt-4 sm:pt-6">
-          {/* Column 1 */}
-          <div className="border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pb-0 pr-0 md:pr-6">
-            <h3 className="text-[10px] sm:text-xs font-mono text-gray-500 mb-1.5 sm:mb-2">DATA SOURCE</h3>
-            <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
-              공공데이터 기반
-            </p>
-          </div>
-
-          {/* Column 2 */}
-          <div className="border-b md:border-b-0 md:border-r border-gray-200 pb-4 md:pb-0 pr-0 md:pr-6">
-            <h3 className="text-[10px] sm:text-xs font-mono text-gray-500 mb-1.5 sm:mb-2">7 INDICATORS</h3>
-            <div className="grid grid-cols-4 sm:grid-cols-2 gap-1 text-xs sm:text-sm">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-10 border-t-2 border-black pt-5 sm:pt-8">
+          {/* Column 1 - 7 INDICATORS */}
+          <div className="border-b md:border-b-0 md:border-r border-gray-200 pb-5 md:pb-0 pr-0 md:pr-10">
+            <h3 className="text-[10px] sm:text-xs font-mono text-gray-500 mb-2 sm:mb-3">7 INDICATORS</h3>
+            <div className="grid grid-cols-4 sm:grid-cols-4 gap-1.5 text-xs sm:text-sm">
               <span className="text-gray-600">경쟁밀도</span>
               <span className="text-gray-600">유동인구</span>
               <span className="text-gray-600">임대료</span>
@@ -330,10 +295,10 @@ export default function HomeEditorial() {
             </div>
           </div>
 
-          {/* Column 3 */}
-          <div>
-            <h3 className="text-[10px] sm:text-xs font-mono text-gray-500 mb-1.5 sm:mb-2">AREA TYPES</h3>
-            <div className="grid grid-cols-2 md:grid-cols-1 gap-1 text-xs sm:text-sm">
+          {/* Column 2 - AREA TYPES */}
+          <div className="pl-0 md:pl-10">
+            <h3 className="text-[10px] sm:text-xs font-mono text-gray-500 mb-2 sm:mb-3">AREA TYPES</h3>
+            <div className="grid grid-cols-4 md:grid-cols-2 gap-1.5 text-xs sm:text-sm">
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-gray-300"></span>
                 <span>A 주거형</span>
@@ -359,15 +324,8 @@ export default function HomeEditorial() {
       <footer className="border-t border-gray-200 mt-8 sm:mt-12">
         <div className="max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-4 text-[10px] sm:text-xs text-gray-500">
-            <div className="flex items-center gap-2 sm:gap-4">
-              <span className="font-bold text-black">OPEN RISK</span>
-              <span className="hidden sm:inline">공공데이터 기반 상권 분석</span>
-            </div>
-            <div className="flex items-center gap-2 sm:gap-4">
-              <span>SEOUL DATA 2025.Q3</span>
-              <span className="text-gray-300">|</span>
-              <span>51 DISTRICTS</span>
-            </div>
+            <span className="font-bold text-black">OPEN RISK</span>
+            <span>공공데이터 기반 상권 분석</span>
           </div>
         </div>
       </footer>

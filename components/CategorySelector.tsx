@@ -76,10 +76,10 @@ export default function CategorySelector({ value, onChange, isFocused = false, v
             onClick={() => { setIsOpen(false); setActiveGroup(null); }}
           />
 
-          {/* Menu - 위로 열림 */}
+          {/* Menu - 모바일은 아래로, 데스크톱은 위로 열림 */}
           <div className={isEditorial
-            ? 'absolute bottom-full left-0 mb-2 z-50 bg-white border-2 border-black overflow-hidden shadow-lg min-w-[280px]'
-            : 'absolute bottom-full left-0 mb-2 z-50 bg-[#111]/95 backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden shadow-2xl min-w-[280px] sm:min-w-[320px]'
+            ? 'absolute left-0 z-50 bg-white border-2 border-black overflow-hidden shadow-lg min-w-[280px] top-full mt-2 sm:top-auto sm:bottom-full sm:mt-0 sm:mb-2'
+            : 'absolute left-0 z-50 bg-[#111]/95 backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden shadow-2xl min-w-[280px] sm:min-w-[320px] top-full mt-2 sm:top-auto sm:bottom-full sm:mt-0 sm:mb-2'
           }>
             {/* Header */}
             <div className={isEditorial

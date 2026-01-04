@@ -11,9 +11,10 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { AnalyzeV2Response, RiskLevel, AREA_TYPE_INFO, AIAnalysisResponse } from '@/lib/v2/types'
 import { BusinessCategory } from '@/lib/categories'
-import { AlertTriangle, Check, ArrowRight, Train, TrendingUp, TrendingDown, Sparkles, Search, MapPin } from 'lucide-react'
+import { AlertTriangle, Check, ArrowRight, Train, TrendingUp, TrendingDown, Sparkles, Search, MapPin, Share2 } from 'lucide-react'
 import AIAnalysisModal from '@/components/skin-b/AIAnalysisModal'
 import MapModal from '@/components/skin-b/MapModal'
+import ShareModal from '@/components/skin-b/ShareModal'
 
 // 차트 컴포넌트 (클라이언트 전용)
 const GaugeChart = dynamic(() => import('@/components/skin-b/GaugeChart'), { ssr: false })
@@ -50,6 +51,9 @@ function ResultBContent() {
 
   // 지도 모달 상태
   const [showMapModal, setShowMapModal] = useState(false)
+
+  // 공유 모달 상태
+  const [showShareModal, setShowShareModal] = useState(false)
 
   const today = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })
 
@@ -163,22 +167,62 @@ function ResultBContent() {
       <div className="flex flex-col items-center justify-center min-h-screen bg-white">
         <div className="w-10 h-10 border-2 border-gray-200 border-t-black rounded-full animate-spin mb-4" />
         <p className="text-gray-900 font-medium">분석 중...</p>
-        <p className="text-gray-400 text-xs mt-1 font-mono">반경 500m 데이터 수집</p>
+        <p className="text-gray-400 text-xs mt-1">반경 500m 데이터 수집</p>
       </div>
     )
   }
 
   if (error || !result) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-white">
-        <div className="p-6 border border-gray-200 max-w-sm text-center">
-          <AlertTriangle size={32} className="mx-auto mb-3 text-red-500" />
-          <h2 className="font-bold mb-2">분석 실패</h2>
-          <p className="text-gray-500 text-sm mb-4">{error}</p>
-          <Link href="/" className="inline-block px-4 py-2 bg-black text-white text-sm font-medium hover:bg-gray-800">
-            다시 검색
-          </Link>
-        </div>
+      <div className="min-h-screen bg-[#FAFAF8]">
+        {/* Header */}
+        <header className="border-b-2 border-black">
+          <div className="max-w-4xl mx-auto px-4 py-3">
+            <div className="text-center py-4 border-t border-b border-gray-300">
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight">OPEN RISK</h1>
+              <p className="text-[9px] sm:text-[10px] font-mono text-gray-500 mt-1 tracking-[0.2em]">
+                COMMERCIAL DISTRICT RISK ANALYSIS
+              </p>
+            </div>
+          </div>
+        </header>
+
+        {/* Error Content */}
+        <main className="max-w-2xl mx-auto px-4 py-12 sm:py-20">
+          <div className="border-2 border-black bg-white p-6 sm:p-10">
+            <div className="text-center mb-6">
+              <div className="inline-block px-3 py-1 bg-black text-white text-[10px] font-mono mb-4">
+                SERVICE NOTICE
+              </div>
+              <h2 className="text-xl sm:text-2xl font-bold mb-3">분석할 수 없는 지역입니다</h2>
+              <div className="w-12 h-0.5 bg-black mx-auto mb-4"></div>
+            </div>
+
+            <div className="text-center space-y-3 mb-8">
+              <p className="text-sm sm:text-base text-gray-600">
+                현재 <span className="font-bold">서울 · 경기 · 인천</span> 지역만 지원합니다.
+              </p>
+              <p className="text-xs text-gray-400">
+                다른 지역은 데이터 확보 후 순차적으로 오픈 예정입니다.
+              </p>
+            </div>
+
+            <div className="flex justify-center">
+              <Link
+                href="/home-b"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white text-sm font-medium hover:bg-gray-800 transition-colors"
+              >
+                <Search size={14} />
+                다시 검색하기
+              </Link>
+            </div>
+          </div>
+
+          {/* Footer note */}
+          <p className="text-center text-[10px] text-gray-400 mt-6">
+            문의: openrisk.kr@gmail.com
+          </p>
+        </main>
       </div>
     )
   }
@@ -211,11 +255,11 @@ function ResultBContent() {
   const anchorRisk = Math.max(20, Math.min(100, 100 - (anchorCount * 8)))
 
   const radarData = [
-    { subject: '경쟁', score: Math.round(competitionRisk), fullMark: 100 },
-    { subject: '유동', score: trafficRisk, fullMark: 100 },
-    { subject: '임대료', score: costRisk, fullMark: 100 },
-    { subject: '폐업률', score: Math.round(closureRisk), fullMark: 100 },
-    { subject: '앵커', score: Math.round(anchorRisk), fullMark: 100 },
+    { subject: '경쟁 위험', score: Math.round(competitionRisk), fullMark: 100 },
+    { subject: '유동 위험', score: trafficRisk, fullMark: 100 },
+    { subject: '임대료 위험', score: costRisk, fullMark: 100 },
+    { subject: '폐업 위험', score: Math.round(closureRisk), fullMark: 100 },
+    { subject: '앵커 위험', score: Math.round(anchorRisk), fullMark: 100 },
   ]
 
   return (
@@ -226,8 +270,15 @@ function ResultBContent() {
           <Link href="/home-b" className="font-bold text-lg sm:text-xl tracking-tight">
             OpenRisk<span className="text-gray-400">.</span>
           </Link>
-          <div className="flex items-center gap-3">
-            <div className="text-[9px] sm:text-[10px] font-mono text-gray-400 hidden sm:block">{today}</div>
+          <div className="flex items-center gap-2">
+            <div className="text-[9px] sm:text-[10px] text-gray-400 hidden sm:block">{today}</div>
+            <button
+              onClick={() => setShowShareModal(true)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 border border-gray-300 hover:border-black hover:bg-black hover:text-white transition-colors text-xs font-medium"
+            >
+              <Share2 size={12} />
+              <span className="hidden sm:inline">공유</span>
+            </button>
             <Link
               href="/home-b"
               className="flex items-center gap-1.5 px-2.5 py-1.5 border border-gray-300 hover:border-black hover:bg-black hover:text-white transition-colors text-xs font-medium"
@@ -246,12 +297,12 @@ function ResultBContent() {
           <div className="grid grid-cols-4 gap-1.5 sm:gap-2 mb-3 sm:mb-4">
             {/* 지역 */}
             <div className="border border-black px-2 sm:px-3 py-1.5 sm:py-2 text-center">
-              <div className="text-[8px] sm:text-[9px] font-mono text-gray-500 mb-0.5">DISTRICT</div>
+              <div className="text-[8px] sm:text-[9px] text-gray-500 mb-0.5">지역</div>
               <div className="text-[10px] sm:text-xs font-bold truncate">{location.district}</div>
             </div>
             {/* 업종 */}
             <div className="border border-black px-2 sm:px-3 py-1.5 sm:py-2 text-center">
-              <div className="text-[8px] sm:text-[9px] font-mono text-gray-500 mb-0.5">CATEGORY</div>
+              <div className="text-[8px] sm:text-[9px] text-gray-500 mb-0.5">업종</div>
               <div className="text-[10px] sm:text-xs font-bold truncate">{analysis.categoryName}</div>
             </div>
             {/* 상권 유형 - Area Type 색상 적용 */}
@@ -261,9 +312,9 @@ function ResultBContent() {
               analysis.areaType === 'B_혼합' ? 'bg-gray-400 text-white' :
               'bg-gray-300 text-black'
             }`}>
-              <div className={`text-[8px] sm:text-[9px] font-mono mb-0.5 ${
+              <div className={`text-[8px] sm:text-[9px] mb-0.5 ${
                 analysis.areaType === 'A_주거' ? 'text-gray-600' : 'text-white/70'
-              }`}>AREA TYPE</div>
+              }`}>상권유형</div>
               <div className="text-[10px] sm:text-xs font-bold">
                 {analysis.areaType === 'A_주거' ? 'A 주거형' :
                  analysis.areaType === 'B_혼합' ? 'B 혼합형' :
@@ -275,7 +326,7 @@ function ResultBContent() {
               onClick={() => setShowMapModal(true)}
               className="border border-black px-2 sm:px-3 py-1.5 sm:py-2 text-center hover:bg-black hover:text-white transition-colors"
             >
-              <div className="text-[8px] sm:text-[9px] font-mono text-gray-500 group-hover:text-white/70 mb-0.5">MAP</div>
+              <div className="text-[8px] sm:text-[9px] text-gray-500 group-hover:text-white/70 mb-0.5">지도</div>
               <div className="flex items-center justify-center gap-1 text-[10px] sm:text-xs font-bold">
                 <MapPin size={10} />
                 <span>반경 보기</span>
@@ -292,7 +343,7 @@ function ResultBContent() {
         <section className="grid grid-cols-12 gap-3 sm:gap-4 mb-6 sm:mb-8">
           {/* Gauge */}
           <div className="col-span-12 sm:col-span-3 md:col-span-2 border border-gray-200 p-3 sm:p-4 flex flex-col sm:justify-between">
-            <div className="text-[10px] font-mono text-gray-400 mb-2">리스크</div>
+            <div className="text-[10px] text-gray-400 mb-2">위험도</div>
             <div className="flex sm:flex-col items-center sm:items-center gap-3 sm:gap-0">
               <div className="text-4xl sm:text-5xl font-black">{analysis.riskScore}</div>
               <div className={`text-xs font-bold ${
@@ -317,7 +368,7 @@ function ResultBContent() {
           <div className="col-span-12 sm:col-span-9 md:col-span-10 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
             {/* 경쟁 */}
             <div className="border border-gray-200 p-3 sm:p-4">
-              <div className="text-[10px] font-mono text-gray-400 mb-2">경쟁</div>
+              <div className="text-[10px] text-gray-400 mb-2">경쟁</div>
               <div className="text-2xl sm:text-3xl font-bold mb-3 whitespace-nowrap">
                 {metrics.competition.sameCategory >= 16 ? '과포화' :
                  metrics.competition.sameCategory >= 11 ? '포화' :
@@ -334,7 +385,7 @@ function ResultBContent() {
 
             {/* 유동인구 */}
             <div className="border border-gray-200 p-3 sm:p-4">
-              <div className="text-[10px] font-mono text-gray-400 mb-2">유동인구</div>
+              <div className="text-[10px] text-gray-400 mb-2">유동인구 <span className="text-gray-300">(추정)</span></div>
               <div className="text-2xl sm:text-3xl font-bold mb-3 whitespace-nowrap">
                 {metrics.traffic.level === 'very_high' ? '매우 많음' :
                  metrics.traffic.level === 'high' ? '많음' :
@@ -361,7 +412,7 @@ function ResultBContent() {
 
             {/* 임대료 */}
             <div className="border border-gray-200 p-3 sm:p-4">
-              <div className="text-[10px] font-mono text-gray-400 mb-2">임대료</div>
+              <div className="text-[10px] text-gray-400 mb-2">임대료</div>
               <div className="text-2xl sm:text-3xl font-bold mb-3 whitespace-nowrap">
                 {metrics.cost.level === 'high' ? '높음' : metrics.cost.level === 'medium' ? '보통' : '낮음'}
               </div>
@@ -384,7 +435,7 @@ function ResultBContent() {
 
             {/* 상권 트렌드 */}
             <div className="border border-gray-200 p-3 sm:p-4">
-              <div className="text-[10px] font-mono text-gray-400 mb-2">트렌드</div>
+              <div className="text-[10px] text-gray-400 mb-2">추세</div>
               <div className="flex items-center gap-2 mb-3">
                 {metrics.survival.trend === 'growing' ? (
                   <TrendingUp size={24} className="text-black flex-shrink-0" />
@@ -408,8 +459,8 @@ function ResultBContent() {
           {/* Radar - 5개 지표 리스크 */}
           <div className="border border-gray-200 p-4 sm:p-5">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-xs sm:text-sm font-bold">리스크 분석</span>
-              <span className="text-[9px] sm:text-[10px] font-mono text-gray-400 px-2 py-0.5 bg-gray-100">{areaTypeInfo?.name || analysis.areaType}</span>
+              <span className="text-xs sm:text-sm font-bold">위험도 분석</span>
+              <span className="text-[9px] sm:text-[10px] text-gray-400 px-2 py-0.5 bg-gray-100">{areaTypeInfo?.name || analysis.areaType}</span>
             </div>
             <div className="h-56 sm:h-64">
               <RiskRadar data={radarData} />
@@ -420,7 +471,7 @@ function ResultBContent() {
           <div className="border border-gray-200 p-4 sm:p-5 flex flex-col">
             <div className="flex justify-between items-center mb-2 sm:mb-3">
               <span className="text-xs sm:text-sm font-bold">시간대별 유동</span>
-              <span className="text-[9px] sm:text-[10px] font-mono text-gray-400">
+              <span className="text-[9px] sm:text-[10px] text-gray-400">
                 피크: {metrics.traffic.peakTime === 'morning' ? '오전' : metrics.traffic.peakTime === 'day' ? '낮' : '저녁'}
               </span>
             </div>
@@ -438,13 +489,13 @@ function ResultBContent() {
         {/* Insights */}
         <section className="mb-6 sm:mb-8">
           <div className="border-b border-black pb-1.5 sm:pb-2 mb-3 sm:mb-4">
-            <h3 className="text-xs sm:text-sm font-bold">핵심 인사이트</h3>
+            <h3 className="text-xs sm:text-sm font-bold">핵심 요약</h3>
           </div>
           <div className="space-y-2 sm:space-y-3">
             {riskCards && riskCards.length > 0 ? (
               riskCards.slice(0, 3).map((card, idx) => (
                 <div key={card.id} className="flex gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-50 border-l-2 border-black">
-                  <span className="text-[10px] sm:text-xs font-mono text-gray-400 font-bold">0{idx + 1}</span>
+                  <span className="text-[10px] sm:text-xs text-gray-400 font-bold">0{idx + 1}</span>
                   <div>
                     <div className="font-bold text-xs sm:text-sm mb-0.5 sm:mb-1">{card.flag}</div>
                     <div className="text-[10px] sm:text-xs text-gray-600 leading-relaxed">{card.warning}</div>
@@ -454,21 +505,21 @@ function ResultBContent() {
             ) : (
               <>
                 <div className="flex gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-50 border-l-2 border-black">
-                  <span className="text-[10px] sm:text-xs font-mono text-gray-400">01</span>
+                  <span className="text-[10px] sm:text-xs text-gray-400 font-bold">01</span>
                   <div>
                     <div className="font-bold text-xs sm:text-sm mb-0.5 sm:mb-1">경쟁 현황</div>
                     <div className="text-[10px] sm:text-xs text-gray-600 leading-relaxed">{interpretation.easyExplanations.competition}</div>
                   </div>
                 </div>
                 <div className="flex gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-50 border-l-2 border-black">
-                  <span className="text-[10px] sm:text-xs font-mono text-gray-400">02</span>
+                  <span className="text-[10px] sm:text-xs text-gray-400 font-bold">02</span>
                   <div>
                     <div className="font-bold text-xs sm:text-sm mb-0.5 sm:mb-1">유동인구</div>
                     <div className="text-[10px] sm:text-xs text-gray-600 leading-relaxed">{interpretation.easyExplanations.traffic}</div>
                   </div>
                 </div>
                 <div className="flex gap-2 sm:gap-3 p-2 sm:p-3 bg-gray-50 border-l-2 border-black">
-                  <span className="text-[10px] sm:text-xs font-mono text-gray-400">03</span>
+                  <span className="text-[10px] sm:text-xs text-gray-400 font-bold">03</span>
                   <div>
                     <div className="font-bold text-xs sm:text-sm mb-0.5 sm:mb-1">비용 효율</div>
                     <div className="text-[10px] sm:text-xs text-gray-600 leading-relaxed">{interpretation.easyExplanations.cost}</div>
@@ -483,13 +534,13 @@ function ResultBContent() {
         <section className="mb-6 sm:mb-8 p-3 sm:p-4 bg-gray-50 border border-gray-200">
           <div className="flex justify-between items-center mb-3 sm:mb-4">
             <span className="text-[11px] sm:text-xs font-bold">상권 안정성</span>
-            <span className="text-[9px] sm:text-[10px] font-mono text-gray-400">{metrics.survival.riskLabel?.replace(/^[^\s]+\s/, '')}</span>
+            <span className="text-[9px] sm:text-[10px] text-gray-400">{metrics.survival.riskLabel?.replace(/^[^\s]+\s/, '')}</span>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:gap-4">
             <div>
               <div className="flex justify-between text-[10px] sm:text-xs mb-1">
                 <span className="text-gray-500">연간 폐업률</span>
-                <span className="font-mono font-bold text-black">{metrics.survival.closureRate}%</span>
+                <span className="font-bold text-black">{metrics.survival.closureRate}%</span>
               </div>
               <div className="w-full bg-gray-200 h-1 sm:h-1.5">
                 <div className="bg-black h-1 sm:h-1.5" style={{ width: `${Math.min(metrics.survival.closureRate * 3, 100)}%` }}></div>
@@ -498,7 +549,7 @@ function ResultBContent() {
             <div>
               <div className="flex justify-between text-[10px] sm:text-xs mb-1">
                 <span className="text-gray-500">주말 매출 비중</span>
-                <span className="font-mono font-bold">{Math.round(metrics.traffic.weekendRatio * 100)}%</span>
+                <span className="font-bold">{Math.round(metrics.traffic.weekendRatio * 100)}%</span>
               </div>
               <div className="w-full bg-gray-200 h-1 sm:h-1.5">
                 <div className="bg-black h-1 sm:h-1.5" style={{ width: `${metrics.traffic.weekendRatio * 100}%` }}></div>
@@ -522,7 +573,7 @@ function ResultBContent() {
                     <div className="text-xs sm:text-sm font-medium truncate">{anchors.subway.name}역</div>
                     <div className="text-[9px] sm:text-[10px] text-gray-400">{anchors.subway.line}</div>
                   </div>
-                  <div className="text-[10px] sm:text-xs font-mono text-gray-500">{anchors.subway.distance}m</div>
+                  <div className="text-[10px] sm:text-xs text-gray-500">{anchors.subway.distance}m</div>
                 </div>
               )}
               {anchors.starbucks && (
@@ -532,7 +583,7 @@ function ResultBContent() {
                     <div className="text-xs sm:text-sm font-medium">스타벅스</div>
                     <div className="text-[9px] sm:text-[10px] text-gray-400">반경 내 {anchors.starbucks.count}개</div>
                   </div>
-                  <div className="text-[10px] sm:text-xs font-mono text-gray-500">{anchors.starbucks.distance}m</div>
+                  <div className="text-[10px] sm:text-xs text-gray-500">{anchors.starbucks.distance}m</div>
                 </div>
               )}
               {anchors.mart && (
@@ -542,7 +593,7 @@ function ResultBContent() {
                     <div className="text-xs sm:text-sm font-medium truncate">{anchors.mart.name}</div>
                     <div className="text-[9px] sm:text-[10px] text-gray-400">대형마트</div>
                   </div>
-                  <div className="text-[10px] sm:text-xs font-mono text-gray-500">{anchors.mart.distance}m</div>
+                  <div className="text-[10px] sm:text-xs text-gray-500">{anchors.mart.distance}m</div>
                 </div>
               )}
               {anchors.department && (
@@ -552,7 +603,7 @@ function ResultBContent() {
                     <div className="text-xs sm:text-sm font-medium truncate">{anchors.department.name}</div>
                     <div className="text-[9px] sm:text-[10px] text-gray-400">백화점</div>
                   </div>
-                  <div className="text-[10px] sm:text-xs font-mono text-gray-500">{anchors.department.distance}m</div>
+                  <div className="text-[10px] sm:text-xs text-gray-500">{anchors.department.distance}m</div>
                 </div>
               )}
             </div>
@@ -569,7 +620,7 @@ function ResultBContent() {
             <span className="hidden sm:inline"> · </span>
             창업 전 반드시 현장 확인을 권장합니다.
           </p>
-          <p className="text-[8px] sm:text-[9px] text-gray-400 font-mono">
+          <p className="text-[8px] sm:text-[9px] text-gray-400">
             데이터 기준: 점포 2024.12 | 유동인구 2024.10 | 임대료 2024.3Q
           </p>
         </div>
@@ -606,6 +657,15 @@ function ResultBContent() {
           riskScore={analysis.riskScore}
         />
       )}
+
+      {/* Share Modal */}
+      <ShareModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        title={`${location.address} 상권 분석 - OpenRisk`}
+        text={`위험도 ${analysis.riskScore}점 | ${interpretation.summary}`}
+        url={typeof window !== 'undefined' ? window.location.href : ''}
+      />
     </div>
   )
 }

@@ -65,24 +65,22 @@ function buildSurvivalLabels(
 
   if (trend === 'growing') {
     if (risk === 'low') {
-      summary = `${period} 개업이 폐업보다 많은 구조 → 시장이 성장 중이나 신규 경쟁자도 늘어나는 중`
+      summary = `새 가게가 늘고 있는 상권입니다. 다만 그만큼 경쟁자도 늘어나고 있어요.`
     } else {
-      summary = `${period} 개업이 많지만 경쟁도 치열해지는 구조 → 후발 진입 시 기존 업체와 경쟁 불가피`
+      summary = `개업은 활발하지만 경쟁도 치열합니다. 차별화 없이 뛰어들면 힘들 수 있어요.`
     }
   } else if (trend === 'shrinking') {
-    // 비율로 표현 (예: "10개 중 1.3개가 폐업")
-    const closedPer10 = Math.round(closureRate) / 10
     if (closureRate > 15) {
-      summary = `${period} 10개 중 ${closedPer10}개꼴로 폐업 → 상권이 축소 국면일 수 있음 → 신중한 접근 필요`
+      summary = `문 닫는 가게가 많은 상권입니다. 왜 그런지 현장에서 직접 확인해보세요.`
     } else {
-      summary = `${period} 폐업이 개업보다 ${netRateDiff}%p 많음 → 시장 안정화 또는 축소 진행 중`
+      summary = `점포가 줄어드는 추세입니다. 상권이 위축되고 있을 수 있어요.`
     }
   } else {
     // stable
     if (risk === 'low') {
-      summary = `${period} 점포 수 변동이 적음 → 안정적이나 성장 여력도 제한적일 수 있음`
+      summary = `점포 수가 안정적으로 유지되고 있어요. 큰 변동 없는 상권입니다.`
     } else {
-      summary = `${period} 개업과 폐업이 비슷함 → 정체된 시장일 가능성 있음`
+      summary = `개업과 폐업이 비슷하게 반복되는 상권입니다. 쉽게 들어오고 쉽게 나가는 곳일 수 있어요.`
     }
   }
 
