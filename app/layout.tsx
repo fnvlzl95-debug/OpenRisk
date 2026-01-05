@@ -104,6 +104,18 @@ export default function RootLayout({
             gtag('config', 'G-6SLW36N6YY');
           `}
         </Script>
+        {/* Naver Analytics */}
+        <Script
+          src="//wcs.naver.net/wcslog.js"
+          strategy="afterInteractive"
+        />
+        <Script id="naver-analytics" strategy="afterInteractive">
+          {`
+            if(!wcs_add) var wcs_add = {};
+            wcs_add["wa"] = "621ea5aa7ae878";
+            if(window.wcs) { wcs_do(); }
+          `}
+        </Script>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
