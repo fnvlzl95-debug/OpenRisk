@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, Link2, Check, MessageCircle, Loader2, FileText } from 'lucide-react'
-import type { AnalyzeV2Response } from '@/lib/v2/types'
+import { X, Link2, Check, MessageCircle, Loader2 } from 'lucide-react'
 
 const KAKAO_JS_KEY = '3e682108baedad97b96ccde241977838'
 
@@ -12,13 +11,11 @@ interface ShareModalProps {
   title: string
   text: string
   url: string
-  analysisData?: AnalyzeV2Response  // PDF 생성용 데이터
 }
 
-export default function ShareModal({ isOpen, onClose, title, text, url, analysisData }: ShareModalProps) {
+export default function ShareModal({ isOpen, onClose, title, text, url }: ShareModalProps) {
   const [copied, setCopied] = useState(false)
   const [kakaoReady, setKakaoReady] = useState(false)
-  const [pdfGenerating, setPdfGenerating] = useState(false)
 
   // 카카오 SDK 로드 확인
   useEffect(() => {
@@ -82,20 +79,6 @@ export default function ShareModal({ isOpen, onClose, title, text, url, analysis
           },
         ],
       })
-    }
-  }
-
-  const handlePdfDownload = async () => {
-    if (!analysisData) return
-
-    setPdfGenerating(true)
-    try {
-      const { generatePdf } = await import('@/lib/generatePdf')
-      await generatePdf({ data: analysisData })
-    } catch (error) {
-      console.error('PDF generation error:', error)
-    } finally {
-      setPdfGenerating(false)
     }
   }
 
@@ -163,36 +146,6 @@ export default function ShareModal({ isOpen, onClose, title, text, url, analysis
               </div>
             </button>
 
-            {/* PDF 다운로드 - 개발 중 (배포 시 숨김) */}
-            {/* TODO: PDF 기능 완성 후 활성화
-            {analysisData && (
-              <button
-                onClick={handlePdfDownload}
-                disabled={pdfGenerating}
-                className={`w-full flex items-center gap-3 p-3 border transition-colors ${
-                  pdfGenerating
-                    ? 'border-gray-100 bg-gray-50 cursor-wait'
-                    : 'border-gray-200 hover:border-black hover:bg-gray-50'
-                }`}
-              >
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${pdfGenerating ? 'bg-gray-200' : 'bg-gray-100'}`}>
-                  {pdfGenerating ? (
-                    <Loader2 size={20} className="text-gray-400 animate-spin" />
-                  ) : (
-                    <FileText size={20} className="text-gray-600" />
-                  )}
-                </div>
-                <div className="text-left">
-                  <div className={`text-sm font-medium ${pdfGenerating ? 'text-gray-400' : ''}`}>
-                    {pdfGenerating ? '생성 중...' : 'PDF 저장'}
-                  </div>
-                  <div className="text-[10px] text-gray-400">
-                    분석 리포트 다운로드
-                  </div>
-                </div>
-              </button>
-            )}
-            */}
           </div>
 
           {/* Footer */}

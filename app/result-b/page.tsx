@@ -11,10 +11,11 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { AnalyzeV2Response, RiskLevel, AREA_TYPE_INFO, AIAnalysisResponse } from '@/lib/v2/types'
 import { BusinessCategory } from '@/lib/categories'
-import { AlertTriangle, Check, ArrowRight, Train, TrendingUp, TrendingDown, Sparkles, Search, MapPin, Share2, HelpCircle } from 'lucide-react'
+import { AlertTriangle, Check, ArrowRight, Train, TrendingUp, TrendingDown, Sparkles, Search, MapPin, Share2, HelpCircle, MessageSquare } from 'lucide-react'
 import AIAnalysisModal from '@/components/skin-b/AIAnalysisModal'
 import MapModal from '@/components/skin-b/MapModal'
 import ShareModal from '@/components/skin-b/ShareModal'
+import FeedbackModal from '@/components/skin-b/FeedbackModal'
 
 // 차트 컴포넌트 (클라이언트 전용)
 const GaugeChart = dynamic(() => import('@/components/skin-b/GaugeChart'), { ssr: false })
@@ -57,6 +58,9 @@ function ResultBContent() {
 
   // 상권유형 툴팁 상태
   const [showAreaTypeTooltip, setShowAreaTypeTooltip] = useState(false)
+
+  // 피드백 모달 상태
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false)
 
   const today = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })
 
@@ -280,6 +284,13 @@ function ResultBContent() {
           </Link>
           <div className="flex items-center gap-2">
             <div className="text-[9px] sm:text-[10px] text-gray-400 hidden sm:block">{today}</div>
+            <button
+              onClick={() => setShowFeedbackModal(true)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 border border-gray-300 hover:border-black hover:bg-black hover:text-white transition-colors text-xs font-medium"
+            >
+              <MessageSquare size={12} />
+              <span className="hidden sm:inline">피드백</span>
+            </button>
             <button
               onClick={() => setShowShareModal(true)}
               className="flex items-center gap-1.5 px-2.5 py-1.5 border border-gray-300 hover:border-black hover:bg-black hover:text-white transition-colors text-xs font-medium"
@@ -707,7 +718,15 @@ function ResultBContent() {
         title={`${location.address} 창업 리스크 분석 - OpenRisk`}
         text={`위험도 ${analysis.riskScore}점 | ${interpretation.summary}`}
         url={typeof window !== 'undefined' ? window.location.href : ''}
-        analysisData={result}
+      />
+
+      {/* Feedback Modal */}
+      <FeedbackModal
+        isOpen={showFeedbackModal}
+        onClose={() => setShowFeedbackModal(false)}
+        address={location.address}
+        category={analysis.categoryName}
+        riskScore={analysis.riskScore}
       />
     </div>
   )
