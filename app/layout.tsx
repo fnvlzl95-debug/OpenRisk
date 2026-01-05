@@ -17,10 +17,18 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "오픈리스크 - 창업 리스크 분석",
-  description: "지금, 창업해도 될까? 데이터 기반 창업 리스크 분석 서비스.",
+  description: "지금, 창업해도 될까? 서울/경기/인천 상권 데이터 기반 창업 리스크 분석. 경쟁 밀도, 유동인구, 임대료, 생존율 등 7대 지표로 창업 위험도를 분석합니다.",
+  keywords: ["창업", "상권분석", "창업리스크", "소상공인", "상권", "오픈리스크", "서울상권", "경기상권", "인천상권", "폐업률", "유동인구"],
+  authors: [{ name: "OpenRisk" }],
+  creator: "OpenRisk",
+  metadataBase: new URL("https://openrisk.info"),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "오픈리스크 - 창업 리스크 분석",
     description: "지금, 창업해도 될까? 데이터 기반 창업 리스크 분석 서비스.",
+    url: "https://openrisk.info",
     images: [
       {
         url: "https://openrisk.info/MetaImg.png",
@@ -31,12 +39,30 @@ export const metadata: Metadata = {
     ],
     type: "website",
     siteName: "오픈리스크",
+    locale: "ko_KR",
   },
   twitter: {
     card: "summary_large_image",
     title: "오픈리스크 - 창업 리스크 분석",
     description: "지금, 창업해도 될까? 데이터 기반 창업 리스크 분석 서비스.",
     images: ["https://openrisk.info/MetaImg.png"],
+  },
+  verification: {
+    google: "YOUR_GOOGLE_VERIFICATION_CODE",
+    other: {
+      "naver-site-verification": "YOUR_NAVER_VERIFICATION_CODE",
+    },
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
