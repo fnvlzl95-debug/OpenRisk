@@ -48,9 +48,9 @@ export const metadata: Metadata = {
     images: ["https://openrisk.info/MetaImg.png"],
   },
   verification: {
-    google: "YOUR_GOOGLE_VERIFICATION_CODE",
+    google: "googlef46ef2ec33b32a3b",
     other: {
-      "naver-site-verification": "YOUR_NAVER_VERIFICATION_CODE",
+      "naver-site-verification": "767917a638abb8c3e577eaca057a35a60463b1eb",
     },
   },
   robots: {
