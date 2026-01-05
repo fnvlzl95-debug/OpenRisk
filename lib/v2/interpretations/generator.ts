@@ -392,59 +392,59 @@ export function generateSummary(
 
   // 최악 조합: 경쟁 높음 + 유동 낮음 + 임대료 높음
   if (compLevel === 'high' && trafficLevel === 'low' && costLevel === 'high') {
-    return '경쟁은 치열한데 손님은 적고 임대료는 높습니다. 진입 전 면밀한 검토가 필요합니다.'
+    return '전문가 검토와 철저한 조사가 필요한 구간입니다.'
   }
 
   // 경쟁 낮음 + 유동 낮음 (함정)
   if (compLevel === 'low' && trafficLevel === 'low') {
-    return '경쟁자가 적은 이유를 확인해야 합니다. 수요 부족 가능성이 있어 현장 검증이 필수입니다.'
+    return '경쟁이 적은 이유가 수요 부족일 수 있습니다.'
   }
 
   // 양호한 경우
   if (goodCount >= 3) {
     if (metrics.anchors.subway && metrics.anchors.subway.distance <= 300) {
-      return '역세권에 조건도 좋습니다. 그만큼 임대인도 알고 있고, 대기자도 있습니다.'
+      return '매출 잠재력은 높지만 경험이 없다면 고위험 구간입니다.'
     }
-    return '지표상 조건은 좋습니다. 다만 좋은 자리는 이미 누군가 노리고 있습니다.'
+    return '지표는 무난하나 판단에 따라 결과 차이가 큽니다.'
   }
 
-  // 위험 신호 3개 이상
+  // 위험 신호 3개 이상 (복합 리스크)
   if (badCount >= 3) {
-    return '경쟁, 비용, 생존율 지표가 불리합니다. 추가 검증 없이 진입하면 손실 가능성이 큽니다.'
+    return '여러 리스크가 동시에 작용할 수 있습니다.'
   }
 
-  // 경쟁 높음 + 유동 높음
+  // 경쟁 높음 + 유동 높음 (경쟁·유동)
   if (trafficLevel === 'high' && compLevel === 'high') {
-    return '유동인구는 많지만 경쟁도 치열합니다. 차별화 전략 없이는 체력전이 될 수 있습니다.'
+    return '유동은 있으나 포지셔닝이 불명확하면 불리합니다.'
   }
 
-  // 임대료 높음 + 폐업률 높음
+  // 임대료 높음 + 폐업률 높음 (임대료·폐업률)
   if (costLevel === 'high' && survivalLevel === 'high') {
-    return '폐업률이 높은 구간입니다. 임대료 대비 매출 구조를 반드시 확인하세요.'
+    return '임대료와 폐업 이력에 대한 확인이 필요합니다.'
   }
 
   // 임대료 높음
   if (costLevel === 'high') {
-    return '고정비 부담이 큰 편입니다. 예상 매출로 감당 가능한지 면밀히 검토하세요.'
+    return '임대료가 수익성을 크게 좌우합니다.'
   }
 
   // 유동 낮음
   if (trafficLevel === 'low') {
-    return '유동인구가 적은 편입니다. 자체 집객력이 있는지 전략 검토가 필요합니다.'
+    return '자연 유입이 약할 수 있어 추가 전략이 필요합니다.'
   }
 
   // 경쟁 높음
   if (compLevel === 'high') {
-    return '기존 점포들과의 경쟁이 예상됩니다. 차별화 포인트를 먼저 확보하세요.'
+    return '후발자 포지션으로 차별화가 없으면 위험합니다.'
   }
 
   // 폐업률 높음
   if (survivalLevel === 'high') {
-    return '주변 점포 변동이 잦은 구간입니다. 장기 생존 전략을 먼저 점검하세요.'
+    return '폐업이 잦은 상권은 신중한 접근이 필요합니다.'
   }
 
   // 기본
-  return '지표상 특별한 리스크는 없습니다. 실행력과 현장 검증이 관건입니다.'
+  return '전반적 밸런스는 있으나 임장 확인이 필요합니다.'
 }
 
 // ===== Top Factors 생성 =====
