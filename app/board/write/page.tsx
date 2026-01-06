@@ -1,8 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import AuthButton from '@/components/board/AuthButton'
+import { createClient } from '@/lib/supabase/client'
+
+interface Profile {
+  is_admin: boolean
+}
 
 export default function WritePostPage() {
   const router = useRouter()
@@ -10,24 +16,63 @@ export default function WritePostPage() {
   const [content, setContent] = useState('')
   const [isNotice, setIsNotice] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState('')
+  const [isAdmin, setIsAdmin] = useState(false)
 
-  // 더미 로그인 상태 (관리자 여부 포함)
-  const isLoggedIn = true // 글 작성 페이지는 로그인 상태로 가정
-  const isAdmin = true // 관리자 확인용
+  // 관리자 여부 확인
+  useEffect(() => {
+    const supabase = createClient()
+
+    const checkAdmin = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+
+      if (session?.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('is_admin')
+          .eq('id', session.user.id)
+          .single()
+
+        setIsAdmin(profile?.is_admin || false)
+      }
+    }
+
+    checkAdmin()
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!title.trim() || !content.trim()) {
-      alert('제목과 내용을 입력해주세요.')
+      setError('제목과 내용을 입력해주세요.')
       return
     }
 
     setIsSubmitting(true)
-    // TODO: API 호출
-    await new Promise((r) => setTimeout(r, 500)) // 시뮬레이션
-    alert('글 작성 기능은 준비 중입니다.')
-    setIsSubmitting(false)
-    // router.push('/board')
+    setError('')
+
+    try {
+      const res = await fetch('/api/board/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: title.trim(),
+          content: content.trim(),
+          is_notice: isAdmin && isNotice
+        })
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || '글 작성에 실패했습니다.')
+      }
+
+      router.push(`/board/${data.post.id}`)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '글 작성에 실패했습니다.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -40,13 +85,7 @@ export default function WritePostPage() {
               <span className="text-lg sm:text-xl font-black">OPEN RISK</span>
               <span className="text-[9px] sm:text-[10px] font-mono text-gray-500">BOARD</span>
             </Link>
-
-            <div className="flex items-center gap-2 sm:gap-3">
-              <span className="text-xs sm:text-sm text-gray-600">관리자</span>
-              <button className="text-xs sm:text-sm text-gray-500 hover:text-black">
-                로그아웃
-              </button>
-            </div>
+            <AuthButton />
           </div>
         </div>
       </header>
@@ -70,6 +109,13 @@ export default function WritePostPage() {
           <div className="px-3 sm:px-4 py-2.5 sm:py-3 border-b-2 border-black bg-gray-50">
             <h1 className="text-base sm:text-lg font-bold">글쓰기</h1>
           </div>
+
+          {/* 에러 메시지 */}
+          {error && (
+            <div className="px-3 sm:px-4 py-2.5 sm:py-3 bg-red-50 border-b border-red-200">
+              <p className="text-xs sm:text-sm text-red-600">{error}</p>
+            </div>
+          )}
 
           {/* 공지글 체크박스 (관리자만) */}
           {isAdmin && (
@@ -108,8 +154,12 @@ export default function WritePostPage() {
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="내용을 입력하세요..."
+              maxLength={5000}
               className="w-full h-60 sm:h-80 text-[13px] sm:text-sm outline-none resize-none placeholder:text-gray-300 leading-relaxed"
             />
+            <div className="text-right text-[9px] sm:text-[10px] text-gray-400 mt-1">
+              {content.length}/5000
+            </div>
           </div>
 
           {/* 도움말 */}
