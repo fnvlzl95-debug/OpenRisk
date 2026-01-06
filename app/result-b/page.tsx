@@ -39,6 +39,7 @@ function ResultBContent() {
 
   const [result, setResult] = useState<AnalyzeV2Response | null>(null)
   const [loading, setLoading] = useState(true)
+  const [loadingStep, setLoadingStep] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
     paramLat && paramLng ? { lat: paramLat, lng: paramLng } : null
@@ -63,6 +64,28 @@ function ResultBContent() {
   const [showFeedbackModal, setShowFeedbackModal] = useState(false)
 
   const today = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })
+
+  // 로딩 단계별 메시지
+  const LOADING_STEPS = [
+    { text: '상권 데이터 수집 중...', sub: '반경 500m 점포 검색' },
+    { text: '경쟁업체 분석 중...', sub: '동종 업종 밀도 계산' },
+    { text: '유동인구 분석 중...', sub: '지하철·버스 데이터 연동' },
+    { text: '리스크 점수 계산 중...', sub: '7개 지표 종합 평가' },
+  ]
+
+  // 로딩 단계 자동 진행
+  useEffect(() => {
+    if (!loading) {
+      setLoadingStep(0)
+      return
+    }
+
+    const interval = setInterval(() => {
+      setLoadingStep((prev) => (prev + 1) % LOADING_STEPS.length)
+    }, 800)
+
+    return () => clearInterval(interval)
+  }, [loading])
 
   // AI 분석 요청
   const handleAIAnalysis = async () => {
@@ -170,11 +193,27 @@ function ResultBContent() {
   }, [coords, category])
 
   if (loading) {
+    const currentStep = LOADING_STEPS[loadingStep]
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-white">
         <div className="w-10 h-10 border-2 border-gray-200 border-t-black rounded-full animate-spin mb-4" />
-        <p className="text-gray-900 font-medium">분석 중...</p>
-        <p className="text-gray-400 text-xs mt-1">반경 500m 데이터 수집</p>
+        <p className="text-gray-900 font-medium transition-opacity duration-300">
+          {currentStep.text}
+        </p>
+        <p className="text-gray-400 text-xs mt-1 transition-opacity duration-300">
+          {currentStep.sub}
+        </p>
+        {/* 진행 인디케이터 */}
+        <div className="flex gap-1.5 mt-4">
+          {LOADING_STEPS.map((_, idx) => (
+            <div
+              key={idx}
+              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                idx === loadingStep ? 'bg-black scale-125' : 'bg-gray-300'
+              }`}
+            />
+          ))}
+        </div>
       </div>
     )
   }
