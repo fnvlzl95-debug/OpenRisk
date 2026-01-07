@@ -17,40 +17,60 @@ export default function AuthButton() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    let mounted = true
     const supabase = createClient()
 
+    // 타임아웃과 함께 세션 체크 (3초 후 자동 해제)
+    const timeout = setTimeout(() => {
+      if (mounted) setLoading(false)
+    }, 3000)
+
     // 초기 세션 체크
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      clearTimeout(timeout)
+      if (!mounted) return
+
       setUser(session?.user ?? null)
+
       if (session?.user) {
-        supabase
+        const { data } = await supabase
           .from('profiles')
           .select('nickname, profile_image, is_admin')
           .eq('id', session.user.id)
           .single()
-          .then(({ data }) => setProfile(data))
+        if (mounted) setProfile(data)
       }
-      setLoading(false)
+
+      if (mounted) setLoading(false)
+    }).catch(() => {
+      clearTimeout(timeout)
+      if (mounted) setLoading(false)
     })
 
     // 인증 상태 변경 구독
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
+        if (!mounted) return
+
         setUser(session?.user ?? null)
         if (session?.user) {
-          supabase
+          const { data } = await supabase
             .from('profiles')
             .select('nickname, profile_image, is_admin')
             .eq('id', session.user.id)
             .single()
-            .then(({ data }) => setProfile(data))
+          if (mounted) setProfile(data)
         } else {
           setProfile(null)
         }
       }
     )
 
-    return () => subscription.unsubscribe()
+    return () => {
+      mounted = false
+      clearTimeout(timeout)
+      subscription.unsubscribe()
+    }
   }, [])
 
   const handleLogin = async () => {
@@ -65,8 +85,17 @@ export default function AuthButton() {
 
   const handleLogout = async () => {
     const supabase = createClient()
-    await supabase.auth.signOut()
-    window.location.reload()
+    setLoading(true)
+    try {
+      await supabase.auth.signOut({ scope: 'local' })
+      setUser(null)
+      setProfile(null)
+    } catch (error) {
+      console.error('Logout error:', error)
+    } finally {
+      setLoading(false)
+      window.location.href = '/board'
+    }
   }
 
   if (loading) {
