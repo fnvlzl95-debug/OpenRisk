@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useSyncExternalStore } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { User } from '@supabase/supabase-js'
-import { LogIn, LogOut, Loader2 } from 'lucide-react'
+import { User, Session } from '@supabase/supabase-js'
+import { LogIn, LogOut, Loader2, UserCircle, Settings } from 'lucide-react'
+import Link from 'next/link'
 
 interface Profile {
   nickname: string
@@ -11,67 +12,69 @@ interface Profile {
   is_admin: boolean
 }
 
+// 전역 세션 캐시
+let cachedSession: Session | null = null
+let sessionLoaded = false
+let listeners: Set<() => void> = new Set()
+let cachedSnapshot = { session: cachedSession, loaded: sessionLoaded }
+
+function subscribe(callback: () => void) {
+  listeners.add(callback)
+  return () => listeners.delete(callback)
+}
+
+function getSnapshot() {
+  return cachedSnapshot
+}
+
+// 서버에서는 항상 로딩 상태 반환 (hydration mismatch 방지)
+const serverSnapshot = { session: null, loaded: false }
+function getServerSnapshot() {
+  return serverSnapshot
+}
+
+function updateSnapshot(session: Session | null, loaded: boolean) {
+  cachedSession = session
+  sessionLoaded = loaded
+  cachedSnapshot = { session, loaded }
+  listeners.forEach(l => l())
+}
+
+// 앱 시작 시 세션 로드
+if (typeof window !== 'undefined') {
+  const supabase = createClient()
+
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    updateSnapshot(session, true)
+  })
+
+  supabase.auth.onAuthStateChange((event, session) => {
+    updateSnapshot(session, true)
+  })
+}
+
 export default function AuthButton() {
-  const [user, setUser] = useState<User | null>(null)
+  const { session, loaded } = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+  const user = session?.user ?? null
   const [profile, setProfile] = useState<Profile | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [showMenu, setShowMenu] = useState(false)
 
   useEffect(() => {
-    let mounted = true
-    const supabase = createClient()
-
-    // 타임아웃과 함께 세션 체크 (3초 후 자동 해제)
-    const timeout = setTimeout(() => {
-      if (mounted) setLoading(false)
-    }, 3000)
-
-    // 초기 세션 체크
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      clearTimeout(timeout)
-      if (!mounted) return
-
-      setUser(session?.user ?? null)
-
-      if (session?.user) {
-        const { data } = await supabase
-          .from('profiles')
-          .select('nickname, profile_image, is_admin')
-          .eq('id', session.user.id)
-          .single()
-        if (mounted) setProfile(data)
-      }
-
-      if (mounted) setLoading(false)
-    }).catch(() => {
-      clearTimeout(timeout)
-      if (mounted) setLoading(false)
-    })
-
-    // 인증 상태 변경 구독
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (!mounted) return
-
-        setUser(session?.user ?? null)
-        if (session?.user) {
-          const { data } = await supabase
-            .from('profiles')
-            .select('nickname, profile_image, is_admin')
-            .eq('id', session.user.id)
-            .single()
-          if (mounted) setProfile(data)
-        } else {
-          setProfile(null)
-        }
-      }
-    )
-
-    return () => {
-      mounted = false
-      clearTimeout(timeout)
-      subscription.unsubscribe()
+    if (!user) {
+      setProfile(null)
+      return
     }
-  }, [])
+
+    const supabase = createClient()
+    supabase
+      .from('profiles')
+      .select('nickname, profile_image, is_admin')
+      .eq('id', user.id)
+      .single()
+      .then(({ data }) => setProfile(data))
+  }, [user?.id])
+
+  const [loggingOut, setLoggingOut] = useState(false)
 
   const handleLogin = async () => {
     const supabase = createClient()
@@ -84,26 +87,33 @@ export default function AuthButton() {
   }
 
   const handleLogout = async () => {
+    setShowMenu(false)
     const supabase = createClient()
-    setLoading(true)
+    setLoggingOut(true)
     try {
-      await supabase.auth.signOut({ scope: 'local' })
-      setUser(null)
-      setProfile(null)
+      await supabase.auth.signOut()
+      window.location.reload()
     } catch (error) {
       console.error('Logout error:', error)
-    } finally {
-      setLoading(false)
-      window.location.href = '/board'
+      setLoggingOut(false)
     }
   }
 
-  if (loading) {
+  // 메뉴 외부 클릭 시 닫기
+  useEffect(() => {
+    if (!showMenu) return
+
+    const handleClickOutside = () => setShowMenu(false)
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [showMenu])
+
+  // 세션 로드 중이면 로딩 표시
+  if (!loaded || loggingOut) {
     return (
-      <button disabled className="flex items-center gap-2 px-3 py-1.5 text-xs border border-gray-200 text-gray-400">
+      <div className="flex items-center gap-1.5 px-2 py-1 text-[10px] sm:text-xs text-gray-400">
         <Loader2 size={14} className="animate-spin" />
-        로딩 중...
-      </button>
+      </div>
     )
   }
 
@@ -112,33 +122,63 @@ export default function AuthButton() {
     const displayImage = profile?.profile_image || user.user_metadata?.avatar_url || null
 
     return (
-      <div className="flex items-center gap-2">
-        <div className="flex items-center gap-2">
+      <div className="relative">
+        {/* 모바일: 프로필 이미지만 표시 */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation()
+            setShowMenu(!showMenu)
+          }}
+          className="flex items-center gap-1.5 sm:gap-2"
+        >
           {displayImage ? (
             <img
               src={displayImage}
               alt={displayName}
-              className="w-6 h-6 rounded-full"
+              className="w-7 h-7 sm:w-6 sm:h-6 rounded-full border border-gray-200"
             />
           ) : (
-            <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs">
+            <div className="w-7 h-7 sm:w-6 sm:h-6 rounded-full bg-gray-200 flex items-center justify-center text-[10px] sm:text-xs font-medium">
               {displayName[0]}
             </div>
           )}
-          <span className="text-xs font-medium">
+          {/* 데스크톱: 닉네임 표시 */}
+          <span className="hidden sm:flex items-center text-xs font-medium">
             {displayName}
             {profile?.is_admin && (
               <span className="ml-1 text-[10px] text-red-500">[관리자]</span>
             )}
           </span>
-        </div>
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-1 px-2 py-1 text-[10px] border border-gray-200 hover:bg-gray-50 transition-colors"
-        >
-          <LogOut size={12} />
-          로그아웃
         </button>
+
+        {/* 드롭다운 메뉴 */}
+        {showMenu && (
+          <div className="absolute right-0 top-full mt-2 w-40 bg-white border border-gray-200 shadow-lg z-50">
+            {/* 모바일에서만 닉네임 표시 */}
+            <div className="sm:hidden px-3 py-2 border-b border-gray-100">
+              <p className="text-xs font-medium text-gray-900 truncate">{displayName}</p>
+              {profile?.is_admin && (
+                <span className="text-[10px] text-red-500">[관리자]</span>
+              )}
+            </div>
+
+            <Link
+              href="/board/profile"
+              className="flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 active:bg-gray-100"
+              onClick={() => setShowMenu(false)}
+            >
+              <Settings size={14} />
+              프로필 설정
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 active:bg-gray-100 border-t border-gray-100"
+            >
+              <LogOut size={14} />
+              로그아웃
+            </button>
+          </div>
+        )}
       </div>
     )
   }
@@ -146,10 +186,11 @@ export default function AuthButton() {
   return (
     <button
       onClick={handleLogin}
-      className="flex items-center gap-2 px-3 py-1.5 text-xs bg-[#FEE500] hover:bg-[#FDD800] transition-colors font-medium"
+      className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs bg-[#FEE500] hover:bg-[#FDD800] active:bg-[#FCCC00] transition-colors font-medium rounded-sm"
     >
       <LogIn size={14} />
-      카카오 로그인
+      <span className="hidden sm:inline">카카오 로그인</span>
+      <span className="sm:hidden">로그인</span>
     </button>
   )
 }

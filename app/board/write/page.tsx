@@ -79,11 +79,11 @@ export default function WritePostPage() {
     <div className="min-h-screen bg-[#FAFAF8] text-black">
       {/* Header */}
       <header className="border-b-2 border-black sticky top-0 bg-[#FAFAF8] z-50">
-        <div className="max-w-3xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3">
-          <div className="flex justify-between items-center">
-            <Link href="/home-b" className="flex items-center gap-1.5 sm:gap-2">
-              <span className="text-lg sm:text-xl font-black">OPEN RISK</span>
-              <span className="text-[9px] sm:text-[10px] font-mono text-gray-500">BOARD</span>
+        <div className="max-w-3xl mx-auto px-3 sm:px-4 py-2 sm:py-3">
+          <div className="flex justify-between items-center gap-2">
+            <Link href="/home-b" className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+              <span className="text-base sm:text-xl font-black">OPEN RISK</span>
+              <span className="text-[8px] sm:text-[10px] font-mono text-gray-500">BOARD</span>
             </Link>
             <AuthButton />
           </div>

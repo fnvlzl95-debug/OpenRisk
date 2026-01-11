@@ -110,11 +110,11 @@ function BoardContent() {
     <div className="min-h-screen bg-[#FAFAF8] text-black">
       {/* Header */}
       <header className="border-b-2 border-black sticky top-0 bg-[#FAFAF8] z-50">
-        <div className="max-w-3xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3">
-          <div className="flex justify-between items-center">
-            <Link href="/home-b" className="flex items-center gap-1.5 sm:gap-2">
-              <span className="text-lg sm:text-xl font-black">OPEN RISK</span>
-              <span className="text-[9px] sm:text-[10px] font-mono text-gray-500">BOARD</span>
+        <div className="max-w-3xl mx-auto px-3 sm:px-4 py-2 sm:py-3">
+          <div className="flex justify-between items-center gap-2">
+            <Link href="/home-b" className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+              <span className="text-base sm:text-xl font-black">OPEN RISK</span>
+              <span className="text-[8px] sm:text-[10px] font-mono text-gray-500">BOARD</span>
             </Link>
             <AuthButton />
           </div>
@@ -170,31 +170,38 @@ function BoardContent() {
                 className="block border-b border-gray-200 last:border-b-0 hover:bg-gray-50 transition-colors"
               >
                 {/* 모바일 레이아웃 */}
-                <div className="sm:hidden px-3 py-2.5 active:bg-gray-100">
-                  <div className="flex items-center gap-1.5 mb-1">
-                    {post.is_notice && (
-                      <span className="px-1.5 py-0.5 bg-black text-white text-[8px] font-bold">
-                        공지
-                      </span>
+                <div className="sm:hidden px-3 py-2 active:bg-gray-100">
+                  <div className="flex items-start gap-1.5">
+                    {/* 뱃지 */}
+                    {(post.is_notice || post.author_is_admin) && (
+                      <div className="flex-shrink-0 pt-0.5">
+                        {post.is_notice ? (
+                          <span className="px-1 py-0.5 bg-black text-white text-[8px] font-bold leading-none">
+                            공지
+                          </span>
+                        ) : (
+                          <span className="px-1 py-0.5 border border-black text-[8px] leading-none">
+                            관리자
+                          </span>
+                        )}
+                      </div>
                     )}
-                    {post.author_is_admin && !post.is_notice && (
-                      <span className="px-1.5 py-0.5 border border-black text-[8px]">
-                        관리자
-                      </span>
-                    )}
-                  </div>
-                  <h3 className="font-medium text-[13px] line-clamp-2 mb-1 leading-snug">
-                    {post.title}
-                    {post.comment_count > 0 && (
-                      <span className="ml-1 text-blue-500 text-[11px]">[{post.comment_count}]</span>
-                    )}
-                  </h3>
-                  <div className="flex items-center gap-1.5 text-[10px] text-gray-400">
-                    <span>{post.author_nickname}</span>
-                    <span>·</span>
-                    <span>조회 {post.view_count}</span>
-                    <span>·</span>
-                    <span>{formatDate(post.created_at)}</span>
+                    {/* 제목 + 메타 */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-medium text-[13px] line-clamp-1 leading-tight">
+                        {post.title}
+                        {post.comment_count > 0 && (
+                          <span className="ml-1 text-blue-500 text-[11px]">[{post.comment_count}]</span>
+                        )}
+                      </h3>
+                      <div className="flex items-center gap-1 text-[10px] text-gray-400 mt-0.5">
+                        <span className="truncate max-w-[60px]">{post.author_nickname}</span>
+                        <span>·</span>
+                        <span>{post.view_count}</span>
+                        <span>·</span>
+                        <span>{formatDate(post.created_at)}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 

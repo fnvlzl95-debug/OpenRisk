@@ -11,7 +11,23 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      // 로그인 성공 - 원래 가려던 페이지로 리다이렉트
+      // 사용자 프로필 확인 - 닉네임 설정 여부 체크
+      const { data: { user } } = await supabase.auth.getUser()
+
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('nickname')
+          .eq('id', user.id)
+          .single()
+
+        // 닉네임이 없거나 카카오 기본값(kakao_*)이면 닉네임 설정 페이지로
+        if (!profile?.nickname || profile.nickname.startsWith('kakao_')) {
+          return NextResponse.redirect(`${origin}/board/setup-nickname`)
+        }
+      }
+
+      // 닉네임이 이미 있으면 원래 가려던 페이지로
       return NextResponse.redirect(`${origin}${next}`)
     }
   }
