@@ -2,10 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
 import AuthButton from '@/components/board/AuthButton'
-import { createClient } from '@/lib/supabase/client'
-import { User } from '@supabase/supabase-js'
 
 interface Post {
   id: number
@@ -27,38 +24,11 @@ interface Pagination {
 }
 
 function BoardContent() {
-  const searchParams = useSearchParams()
   const [posts, setPosts] = useState<Post[]>([])
   const [pagination, setPagination] = useState<Pagination | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(true)
-  const [user, setUser] = useState<User | null>(null)
 
-  // 인증 상태 확인
-  useEffect(() => {
-    const supabase = createClient()
-
-    const getUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setUser(session?.user ?? null)
-    }
-    getUser()
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setUser(session?.user ?? null)
-      }
-    )
-
-    return () => subscription.unsubscribe()
-  }, [])
-
-  // 로그인 필요 알림
-  useEffect(() => {
-    if (searchParams.get('login') === 'required') {
-      alert('로그인이 필요합니다.')
-    }
-  }, [searchParams])
 
   // 게시글 목록 조회
   useEffect(() => {
@@ -114,7 +84,7 @@ function BoardContent() {
           <div className="flex justify-between items-center gap-2">
             <Link href="/home-b" className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
               <span className="text-base sm:text-xl font-black">OPEN RISK</span>
-              <span className="text-[8px] sm:text-[10px] font-mono text-gray-500">BOARD</span>
+              <span className="text-[8px] sm:text-[10px] font-mono text-gray-500">커뮤니티</span>
             </Link>
             <AuthButton />
           </div>
@@ -125,22 +95,13 @@ function BoardContent() {
       <main className="max-w-3xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
         {/* 페이지 타이틀 + 글쓰기 버튼 */}
         <div className="flex justify-between items-center mb-3 sm:mb-4">
-          <h1 className="text-base sm:text-lg font-bold">게시판</h1>
-          {user ? (
-            <Link
-              href="/board/write"
-              className="px-3 sm:px-4 py-1.5 sm:py-2 bg-black text-white text-xs sm:text-sm font-bold hover:bg-gray-800 transition-colors"
-            >
-              글쓰기
-            </Link>
-          ) : (
-            <button
-              onClick={() => alert('로그인이 필요합니다.')}
-              className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-200 text-gray-500 text-xs sm:text-sm font-bold cursor-not-allowed"
-            >
-              글쓰기
-            </button>
-          )}
+          <h1 className="text-base sm:text-lg font-bold">자유게시판</h1>
+          <Link
+            href="/board/write"
+            className="px-3 sm:px-4 py-1.5 sm:py-2 bg-black text-white text-xs sm:text-sm font-bold hover:bg-gray-800 transition-colors"
+          >
+            글쓰기
+          </Link>
         </div>
 
         {/* 게시글 목록 */}

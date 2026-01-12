@@ -30,17 +30,18 @@ export async function middleware(request: NextRequest) {
   // 세션 갱신 - getSession으로 토큰 갱신 후 user 확인
   const { data: { session } } = await supabase.auth.getSession()
 
-  // 보호된 경로 체크
-  const protectedPaths = ['/board/write']
-  const isProtectedPath = protectedPaths.some(path =>
-    request.nextUrl.pathname.startsWith(path)
-  )
+  const pathname = request.nextUrl.pathname
 
-  if (isProtectedPath && !session?.user) {
-    // 로그인 페이지로 리다이렉트 (게시판 메인으로)
-    const redirectUrl = new URL('/board', request.url)
-    redirectUrl.searchParams.set('login', 'required')
-    return NextResponse.redirect(redirectUrl)
+  // 게시판 전체 로그인 필수 (auth 경로, API 제외)
+  const isBoardPath = pathname.startsWith('/board')
+  const isAuthPath = pathname.startsWith('/auth/')
+  const isApiPath = pathname.startsWith('/api/')
+
+  if (isBoardPath && !isAuthPath && !isApiPath && !session?.user) {
+    // 로그인 페이지로 리다이렉트 (클라이언트에서 OAuth 처리)
+    const loginUrl = new URL('/auth/login', request.url)
+    loginUrl.searchParams.set('next', pathname)
+    return NextResponse.redirect(loginUrl)
   }
 
   return supabaseResponse

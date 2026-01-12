@@ -230,7 +230,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
           <div className="flex justify-between items-center gap-2">
             <Link href="/home-b" className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
               <span className="text-base sm:text-xl font-black">OPEN RISK</span>
-              <span className="text-[8px] sm:text-[10px] font-mono text-gray-500">BOARD</span>
+              <span className="text-[8px] sm:text-[10px] font-mono text-gray-500">커뮤니티</span>
             </Link>
             <AuthButton />
           </div>
@@ -363,7 +363,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
                       )}
                     </div>
                   </div>
-                  <p className="text-[13px] sm:text-sm text-gray-700 leading-relaxed">{comment.content}</p>
+                  <p className="text-[13px] sm:text-sm text-gray-700 leading-relaxed break-words whitespace-pre-wrap">{comment.content}</p>
                 </div>
               ))
             )}

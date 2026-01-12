@@ -83,7 +83,7 @@ export default function WritePostPage() {
           <div className="flex justify-between items-center gap-2">
             <Link href="/home-b" className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
               <span className="text-base sm:text-xl font-black">OPEN RISK</span>
-              <span className="text-[8px] sm:text-[10px] font-mono text-gray-500">BOARD</span>
+              <span className="text-[8px] sm:text-[10px] font-mono text-gray-500">커뮤니티</span>
             </Link>
             <AuthButton />
           </div>
