@@ -16,7 +16,7 @@ interface Profile {
 let cachedSession: Session | null = null
 let sessionLoaded = false
 let listeners: Set<() => void> = new Set()
-let cachedSnapshot = { session: cachedSession, loaded: sessionLoaded }
+let cachedSnapshot: { session: Session | null; loaded: boolean } = { session: null, loaded: false }
 
 function subscribe(callback: () => void) {
   listeners.add(callback)

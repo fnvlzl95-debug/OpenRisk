@@ -8,18 +8,29 @@ import { cookies } from 'next/headers'
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const page = parseInt(searchParams.get('page') || '1')
-  const limit = 20
+  const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 50) // 최대 50개
+  const sort = searchParams.get('sort') || 'latest' // 'latest' | 'views'
   const offset = (page - 1) * limit
 
   const supabase = await createClient()
 
   // active_posts 뷰에서 조회 (soft delete 제외됨)
-  const { data: posts, error, count } = await supabase
+  let query = supabase
     .from('active_posts')
     .select('*', { count: 'exact' })
-    .order('is_notice', { ascending: false })
-    .order('created_at', { ascending: false })
-    .range(offset, offset + limit - 1)
+
+  // 정렬 옵션
+  if (sort === 'views') {
+    // 조회수 순 정렬 (공지글 우선 X)
+    query = query.order('view_count', { ascending: false })
+  } else {
+    // 기본: 공지글 우선, 최신순
+    query = query
+      .order('is_notice', { ascending: false })
+      .order('created_at', { ascending: false })
+  }
+
+  const { data: posts, error, count } = await query.range(offset, offset + limit - 1)
 
   if (error) {
     return NextResponse.json({ error: '게시글 조회 실패' }, { status: 500 })
