@@ -106,7 +106,7 @@ export default function TestLoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <div className="w-full max-w-sm bg-white p-6 border-2 border-black">
-        <h1 className="text-lg font-bold text-center mb-1">테스트 계정</h1>
+        <h1 className="text-lg font-bold text-center mb-1 text-black">테스트 계정</h1>
         <p className="text-xs text-gray-500 text-center mb-4">
           개발/테스트 전용 로그인
         </p>
