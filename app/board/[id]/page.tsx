@@ -103,6 +103,8 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
     message: string
     onConfirm: () => void
   }>({ isOpen: false, title: '', message: '', onConfirm: () => {} })
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null)
+  const [editingCommentText, setEditingCommentText] = useState('')
 
   // 인증 상태 확인
   useEffect(() => {
@@ -268,6 +270,43 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
     })
   }
 
+  const handleEditComment = (comment: Comment) => {
+    setEditingCommentId(comment.id)
+    setEditingCommentText(comment.content)
+  }
+
+  const handleCancelEditComment = () => {
+    setEditingCommentId(null)
+    setEditingCommentText('')
+  }
+
+  const handleSaveComment = async (commentId: number) => {
+    if (!editingCommentText.trim()) return
+
+    setSubmitting(true)
+    try {
+      const res = await fetch(`/api/board/comments/${commentId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: editingCommentText.trim() })
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || '수정에 실패했습니다.')
+      }
+
+      setComments(comments.map(c => c.id === commentId ? data.comment : c))
+      setEditingCommentId(null)
+      setEditingCommentText('')
+    } catch (err) {
+      alert(err instanceof Error ? err.message : '수정에 실패했습니다.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   const canEditPost = user && post && (user.id === post.author_id || profile?.is_admin)
   const canDeleteComment = (comment: Comment) =>
     user && (user.id === comment.author_id || profile?.is_admin)
@@ -391,6 +430,12 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
           {/* 버튼 영역 */}
           {canEditPost && (
             <div className="px-3 sm:px-4 py-2.5 sm:py-3 border-t border-gray-200 flex justify-end gap-2">
+              <Link
+                href={`/board/${id}/edit`}
+                className="px-2.5 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm text-gray-600 hover:text-black active:bg-gray-50 border border-gray-300 hover:border-black transition-colors"
+              >
+                수정
+              </Link>
               <button
                 onClick={handleDeletePost}
                 className="px-2.5 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm text-red-500 hover:text-red-700 active:bg-red-50"
@@ -431,17 +476,57 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
                       <span className="text-[9px] sm:text-[10px] text-gray-400">
                         {new Date(comment.created_at).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })}
                       </span>
-                      {canDeleteComment(comment) && (
-                        <button
-                          onClick={() => handleDeleteComment(comment.id)}
-                          className="text-[9px] sm:text-[10px] text-red-400 hover:text-red-600"
-                        >
-                          삭제
-                        </button>
+                      {canDeleteComment(comment) && editingCommentId !== comment.id && (
+                        <>
+                          <button
+                            onClick={() => handleEditComment(comment)}
+                            className="text-[9px] sm:text-[10px] text-gray-400 hover:text-gray-600"
+                          >
+                            수정
+                          </button>
+                          <button
+                            onClick={() => handleDeleteComment(comment.id)}
+                            className="text-[9px] sm:text-[10px] text-red-400 hover:text-red-600"
+                          >
+                            삭제
+                          </button>
+                        </>
                       )}
                     </div>
                   </div>
-                  <p className="text-[13px] sm:text-sm text-gray-700 leading-relaxed break-words whitespace-pre-wrap">{comment.content}</p>
+                  {editingCommentId === comment.id ? (
+                    <div>
+                      <textarea
+                        value={editingCommentText}
+                        onChange={(e) => setEditingCommentText(e.target.value)}
+                        maxLength={500}
+                        className="w-full h-16 sm:h-20 p-2.5 sm:p-3 border border-gray-300 text-[13px] sm:text-sm resize-none outline-none focus:border-black"
+                      />
+                      <div className="flex justify-between items-center mt-2">
+                        <span className="text-[9px] sm:text-[10px] text-gray-400">
+                          {editingCommentText.length}/500
+                        </span>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={handleCancelEditComment}
+                            disabled={submitting}
+                            className="px-2.5 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm text-gray-500 hover:text-black border border-gray-300 hover:border-black transition-colors disabled:opacity-50"
+                          >
+                            취소
+                          </button>
+                          <button
+                            onClick={() => handleSaveComment(comment.id)}
+                            disabled={submitting || !editingCommentText.trim()}
+                            className="px-2.5 sm:px-3 py-1 sm:py-1.5 bg-black text-white text-xs sm:text-sm font-bold disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-gray-800 active:bg-gray-900 transition-colors"
+                          >
+                            {submitting ? '저장 중...' : '저장'}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-[13px] sm:text-sm text-gray-700 leading-relaxed break-words whitespace-pre-wrap">{comment.content}</p>
+                  )}
                 </div>
               ))
             )}
