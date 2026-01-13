@@ -59,23 +59,27 @@ export default function TestLoginPage() {
           throw signUpError
         }
 
-        if (data.user) {
-          // 프로필 생성
-          const { error: profileError } = await supabase
-            .from('profiles')
-            .insert({
-              id: data.user.id,
-              kakao_id: `test_${username}`,
-              nickname: nickname.trim(),
-              is_admin: false
-            })
+        // 이미 존재하는 유저인 경우 (identities가 비어있음)
+        if (!data.user || data.user.identities?.length === 0) {
+          throw new Error('이미 사용 중인 아이디입니다.')
+        }
 
-          if (profileError) {
-            console.error('Profile creation error:', profileError)
-            if (profileError.message.includes('duplicate')) {
-              throw new Error('이미 사용 중인 닉네임입니다.')
-            }
+        // 프로필 생성
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: data.user.id,
+            kakao_id: `test_${username}`,
+            nickname: nickname.trim(),
+            is_admin: false
+          })
+
+        if (profileError) {
+          console.error('Profile creation error:', profileError)
+          if (profileError.message.includes('duplicate') || profileError.message.includes('unique')) {
+            throw new Error('이미 사용 중인 닉네임입니다.')
           }
+          throw new Error('프로필 생성에 실패했습니다.')
         }
 
         alert('계정이 생성되었습니다!')
