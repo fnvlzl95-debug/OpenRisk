@@ -146,7 +146,7 @@ export default function TestLoginPage() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="영문, 숫자 조합"
-              className="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black"
+              className="w-full px-3 py-2 border border-gray-300 text-sm text-black focus:outline-none focus:border-black"
               pattern="[a-zA-Z0-9_]+"
               minLength={3}
               required
@@ -162,7 +162,7 @@ export default function TestLoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="6자 이상"
-              className="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black"
+              className="w-full px-3 py-2 border border-gray-300 text-sm text-black focus:outline-none focus:border-black"
               minLength={6}
               required
             />
@@ -178,7 +178,7 @@ export default function TestLoginPage() {
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
                 placeholder="게시판에 표시될 이름"
-                className="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black"
+                className="w-full px-3 py-2 border border-gray-300 text-sm text-black focus:outline-none focus:border-black"
                 required
               />
             </div>
