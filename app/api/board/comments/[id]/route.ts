@@ -51,6 +51,7 @@ export async function DELETE(
     .eq('id', commentId)
 
   if (error) {
+    console.error('Comment delete error:', error)
     return NextResponse.json({ error: '댓글 삭제에 실패했습니다.' }, { status: 500 })
   }
 

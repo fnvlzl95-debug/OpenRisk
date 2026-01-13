@@ -8,6 +8,56 @@ import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { hasViewedPost, markPostAsViewed } from '@/lib/board/view-tracker'
 
+// 커스텀 확인 모달
+function ConfirmModal({
+  isOpen,
+  title,
+  message,
+  onConfirm,
+  onCancel
+}: {
+  isOpen: boolean
+  title: string
+  message: string
+  onConfirm: () => void
+  onCancel: () => void
+}) {
+  if (!isOpen) return null
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center">
+      {/* 배경 오버레이 */}
+      <div
+        className="absolute inset-0 bg-black/50"
+        onClick={onCancel}
+      />
+      {/* 모달 */}
+      <div className="relative bg-white border-2 border-black w-[280px] sm:w-[320px] mx-4">
+        <div className="px-4 py-3 border-b-2 border-black">
+          <h3 className="text-sm sm:text-base font-bold">{title}</h3>
+        </div>
+        <div className="px-4 py-4">
+          <p className="text-xs sm:text-sm text-gray-600">{message}</p>
+        </div>
+        <div className="flex border-t-2 border-black">
+          <button
+            onClick={onCancel}
+            className="flex-1 px-4 py-2.5 text-xs sm:text-sm font-medium hover:bg-gray-100 active:bg-gray-200 transition-colors border-r border-black"
+          >
+            취소
+          </button>
+          <button
+            onClick={onConfirm}
+            className="flex-1 px-4 py-2.5 text-xs sm:text-sm font-bold text-white bg-black hover:bg-gray-800 active:bg-gray-900 transition-colors"
+          >
+            확인
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 interface Post {
   id: number
   title: string
@@ -47,26 +97,32 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
   const [error, setError] = useState('')
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean
+    title: string
+    message: string
+    onConfirm: () => void
+  }>({ isOpen: false, title: '', message: '', onConfirm: () => {} })
 
   // 인증 상태 확인
   useEffect(() => {
     const supabase = createClient()
 
-    const getUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setUser(session?.user ?? null)
+    const loadUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      setUser(user)
 
-      if (session?.user) {
+      if (user) {
         const { data: profile } = await supabase
           .from('profiles')
           .select('is_admin')
-          .eq('id', session.user.id)
+          .eq('id', user.id)
           .single()
         setProfile(profile)
       }
     }
 
-    getUser()
+    loadUser()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -95,6 +151,11 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
         const postId = parseInt(id)
         const shouldIncrement = !hasViewedPost(postId)
 
+        // Strict Mode 중복 방지: API 호출 전에 먼저 마킹
+        if (shouldIncrement) {
+          markPostAsViewed(postId)
+        }
+
         const res = await fetch(`/api/board/posts/${id}`, {
           headers: shouldIncrement ? { 'x-increment-view': 'true' } : {}
         })
@@ -106,10 +167,6 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
         const data = await res.json()
         setPost(data.post)
         setComments(data.comments || [])
-
-        if (shouldIncrement) {
-          markPostAsViewed(postId)
-        }
       } catch (err) {
         setError(err instanceof Error ? err.message : '게시글을 불러오는 데 실패했습니다.')
       } finally {
@@ -165,38 +222,50 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
     }
   }
 
-  const handleDeletePost = async () => {
-    if (!confirm('정말 삭제하시겠습니까?')) return
+  const handleDeletePost = () => {
+    setConfirmModal({
+      isOpen: true,
+      title: '게시글 삭제',
+      message: '정말 삭제하시겠습니까? 삭제된 글은 복구할 수 없습니다.',
+      onConfirm: async () => {
+        setConfirmModal(prev => ({ ...prev, isOpen: false }))
+        try {
+          const res = await fetch(`/api/board/posts/${id}`, { method: 'DELETE' })
+          const data = await res.json()
 
-    try {
-      const res = await fetch(`/api/board/posts/${id}`, { method: 'DELETE' })
-      const data = await res.json()
+          if (!res.ok) {
+            throw new Error(data.error || '삭제에 실패했습니다.')
+          }
 
-      if (!res.ok) {
-        throw new Error(data.error || '삭제에 실패했습니다.')
+          router.push('/board')
+        } catch (err) {
+          alert(err instanceof Error ? err.message : '삭제에 실패했습니다.')
+        }
       }
-
-      router.push('/board')
-    } catch (err) {
-      alert(err instanceof Error ? err.message : '삭제에 실패했습니다.')
-    }
+    })
   }
 
-  const handleDeleteComment = async (commentId: number) => {
-    if (!confirm('댓글을 삭제하시겠습니까?')) return
+  const handleDeleteComment = (commentId: number) => {
+    setConfirmModal({
+      isOpen: true,
+      title: '댓글 삭제',
+      message: '댓글을 삭제하시겠습니까?',
+      onConfirm: async () => {
+        setConfirmModal(prev => ({ ...prev, isOpen: false }))
+        try {
+          const res = await fetch(`/api/board/comments/${commentId}`, { method: 'DELETE' })
+          const data = await res.json()
 
-    try {
-      const res = await fetch(`/api/board/comments/${commentId}`, { method: 'DELETE' })
-      const data = await res.json()
+          if (!res.ok) {
+            throw new Error(data.error || '삭제에 실패했습니다.')
+          }
 
-      if (!res.ok) {
-        throw new Error(data.error || '삭제에 실패했습니다.')
+          setComments(comments.filter(c => c.id !== commentId))
+        } catch (err) {
+          alert(err instanceof Error ? err.message : '삭제에 실패했습니다.')
+        }
       }
-
-      setComments(comments.filter(c => c.id !== commentId))
-    } catch (err) {
-      alert(err instanceof Error ? err.message : '삭제에 실패했습니다.')
-    }
+    })
   }
 
   const canEditPost = user && post && (user.id === post.author_id || profile?.is_admin)
@@ -224,6 +293,15 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
 
   return (
     <div className="min-h-screen bg-[#FAFAF8] text-black">
+      {/* 확인 모달 */}
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        onConfirm={confirmModal.onConfirm}
+        onCancel={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+      />
+
       {/* Header */}
       <header className="border-b-2 border-black sticky top-0 bg-[#FAFAF8] z-50">
         <div className="max-w-3xl mx-auto px-3 sm:px-4 py-2 sm:py-3">
