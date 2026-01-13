@@ -8,7 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 // URL: /auth/test-login?key=openrisk2025
 export default function TestLoginPage() {
   const router = useRouter()
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -27,22 +27,37 @@ export default function TestLoginPage() {
     )
   }
 
+  // 아이디로 가짜 이메일 생성
+  const toEmail = (id: string) => `${id}@openrisk.test`
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setLoading(true)
 
     const supabase = createClient()
+    const email = toEmail(username.trim().toLowerCase())
 
     try {
       if (mode === 'signup') {
+        if (!nickname.trim()) {
+          setError('닉네임을 입력해주세요.')
+          setLoading(false)
+          return
+        }
+
         // 회원가입
         const { data, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
         })
 
-        if (signUpError) throw signUpError
+        if (signUpError) {
+          if (signUpError.message.includes('already registered')) {
+            throw new Error('이미 사용 중인 아이디입니다.')
+          }
+          throw signUpError
+        }
 
         if (data.user) {
           // 프로필 생성
@@ -50,17 +65,20 @@ export default function TestLoginPage() {
             .from('profiles')
             .insert({
               id: data.user.id,
-              kakao_id: `test_${Date.now()}`,
-              nickname: nickname || `테스트유저_${Date.now().toString().slice(-4)}`,
+              kakao_id: `test_${username}`,
+              nickname: nickname.trim(),
               is_admin: false
             })
 
           if (profileError) {
             console.error('Profile creation error:', profileError)
+            if (profileError.message.includes('duplicate')) {
+              throw new Error('이미 사용 중인 닉네임입니다.')
+            }
           }
         }
 
-        alert('테스트 계정이 생성되었습니다. 로그인해주세요.')
+        alert('계정이 생성되었습니다!')
         setMode('login')
       } else {
         // 로그인
@@ -69,7 +87,12 @@ export default function TestLoginPage() {
           password,
         })
 
-        if (signInError) throw signInError
+        if (signInError) {
+          if (signInError.message.includes('Invalid login')) {
+            throw new Error('아이디 또는 비밀번호가 올바르지 않습니다.')
+          }
+          throw signInError
+        }
 
         router.push('/board')
       }
@@ -90,6 +113,7 @@ export default function TestLoginPage() {
 
         <div className="flex mb-4 border-b border-gray-200">
           <button
+            type="button"
             onClick={() => setMode('login')}
             className={`flex-1 py-2 text-sm font-medium ${
               mode === 'login'
@@ -100,6 +124,7 @@ export default function TestLoginPage() {
             로그인
           </button>
           <button
+            type="button"
             onClick={() => setMode('signup')}
             className={`flex-1 py-2 text-sm font-medium ${
               mode === 'signup'
@@ -114,14 +139,16 @@ export default function TestLoginPage() {
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label className="block text-xs font-medium text-gray-700 mb-1">
-              이메일
+              아이디
             </label>
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="test@example.com"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="영문, 숫자 조합"
               className="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black"
+              pattern="[a-zA-Z0-9_]+"
+              minLength={3}
               required
             />
           </div>
@@ -144,7 +171,7 @@ export default function TestLoginPage() {
           {mode === 'signup' && (
             <div className="mb-3">
               <label className="block text-xs font-medium text-gray-700 mb-1">
-                닉네임
+                닉네임 <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -152,6 +179,7 @@ export default function TestLoginPage() {
                 onChange={(e) => setNickname(e.target.value)}
                 placeholder="게시판에 표시될 이름"
                 className="w-full px-3 py-2 border border-gray-300 text-sm focus:outline-none focus:border-black"
+                required
               />
             </div>
           )}
