@@ -2,8 +2,19 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import CategorySelector from '@/components/CategorySelector'
 import { type BusinessCategory } from '@/lib/categories'
+
+interface Post {
+  id: number
+  title: string
+  is_notice: boolean
+  created_at: string
+  author_nickname: string
+  comment_count: number
+  view_count: number
+}
 
 interface SearchSuggestion {
   id: string
@@ -70,6 +81,22 @@ export default function HomeEditorial() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
+  // 인기 게시글 로드 (조회수 순)
+  useEffect(() => {
+    const fetchPopularPosts = async () => {
+      try {
+        const res = await fetch('/api/board/posts?limit=5&sort=views')
+        const data = await res.json()
+        if (data.posts) {
+          setRecentPosts(data.posts.slice(0, 5))
+        }
+      } catch (error) {
+        console.error('Failed to fetch posts:', error)
+      }
+    }
+    fetchPopularPosts()
+  }, [])
+
   // 키보드 네비게이션
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!showSuggestions || suggestions.length === 0) return
@@ -97,6 +124,7 @@ export default function HomeEditorial() {
   }
 
   const [selectedCoords, setSelectedCoords] = useState<{ lat: number; lng: number } | null>(null)
+  const [recentPosts, setRecentPosts] = useState<Post[]>([])
 
   const selectSuggestion = (suggestion: SearchSuggestion & { lat?: number; lng?: number }) => {
     skipNextSearchRef.current = true
@@ -135,6 +163,19 @@ export default function HomeEditorial() {
     weekday: 'long',
   })
 
+  const formatPostDate = (dateString: string) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diff = now.getTime() - date.getTime()
+    const hours = Math.floor(diff / (1000 * 60 * 60))
+
+    if (hours < 24) {
+      if (hours < 1) return '방금'
+      return `${hours}시간 전`
+    }
+    return date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })
+  }
+
   return (
     <div className="min-h-screen bg-[#FAFAF8] text-black selection:bg-black/10 overflow-x-hidden">
       {/* Newspaper Header */}
@@ -157,7 +198,7 @@ export default function HomeEditorial() {
             </p>
           </div>
 
-          {/* Tagline */}
+          {/* Tagline + Navigation */}
           <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-4 py-2 text-[11px] sm:text-xs text-gray-600">
             <span className="flex items-center gap-1">
               <span className="w-1.5 h-1.5 bg-black rounded-full"></span>
@@ -167,6 +208,13 @@ export default function HomeEditorial() {
             <span>7대 지표 분석</span>
             <span className="text-gray-300 hidden sm:inline">|</span>
             <span>서울 · 경기 · 인천</span>
+            <span className="text-gray-300">|</span>
+            <Link
+              href="/board"
+              className="font-medium text-black hover:underline underline-offset-2"
+            >
+              커뮤니티
+            </Link>
           </div>
         </div>
       </header>
@@ -279,12 +327,74 @@ export default function HomeEditorial() {
 
         </div>
 
-        {/* Info Columns - Newspaper Style */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-10 border-t-2 border-black pt-5 sm:pt-8">
-          {/* Column 1 - 7 INDICATORS */}
-          <div className="border-b md:border-b-0 md:border-r border-gray-200 pb-5 md:pb-0 pr-0 md:pr-10">
-            <h3 className="text-[10px] sm:text-xs font-mono text-gray-500 mb-2 sm:mb-3">7 INDICATORS</h3>
-            <div className="grid grid-cols-4 sm:grid-cols-4 gap-1.5 text-xs sm:text-sm">
+        {/* Info Columns - 3 Column Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-6 border-t-2 border-black pt-4 sm:pt-8">
+          {/* Column 1 - 인기글 (모바일에서 첫번째) */}
+          <div className="order-1 md:order-2 border-b md:border-b-0 md:border-l md:border-r border-gray-200 pb-3 md:pb-0 px-0 md:px-6">
+            <div className="flex justify-between items-center mb-2 sm:mb-3">
+              <h3 className="text-xs sm:text-sm font-bold text-black">인기글</h3>
+              <Link
+                href="/board"
+                className="text-[10px] text-gray-400 hover:text-black transition-colors"
+              >
+                더보기 →
+              </Link>
+            </div>
+            {recentPosts.length > 0 ? (
+              <div className="space-y-1">
+                {recentPosts.slice(0, 5).map((post, index) => (
+                  <Link
+                    key={post.id}
+                    href={`/board/${post.id}`}
+                    className="block group"
+                  >
+                    <div className="flex items-center gap-2 text-[11px] sm:text-xs">
+                      {/* 순위 번호 */}
+                      <span className={`flex-shrink-0 w-4 text-center font-bold ${
+                        index < 3 ? 'text-black' : 'text-gray-400'
+                      }`}>
+                        {index + 1}
+                      </span>
+                      {/* 제목 */}
+                      <span className="flex-1 min-w-0 text-gray-600 group-hover:text-black truncate transition-colors">
+                        {post.title}
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <p className="text-[11px] text-gray-400">게시글이 없습니다</p>
+            )}
+          </div>
+
+          {/* Column 2 - 상권유형 (모바일에서 두번째) */}
+          <div className="order-2 md:order-3 border-b md:border-b-0 border-gray-200 pb-3 md:pb-0 pl-0 md:pl-6">
+            <h3 className="text-xs sm:text-sm font-bold text-black mb-2 sm:mb-3">상권유형</h3>
+            <div className="grid grid-cols-4 md:grid-cols-2 gap-1 text-[11px] sm:text-xs">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-gray-300"></span>
+                <span>A 주거형</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-gray-400"></span>
+                <span>B 혼합형</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-gray-600"></span>
+                <span>C 상업형</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-black"></span>
+                <span>D 특수형</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Column 3 - 7대 지표 (모바일에서 마지막) */}
+          <div className="order-3 md:order-1 pr-0 md:pr-6">
+            <h3 className="text-xs sm:text-sm font-bold text-black mb-2 sm:mb-3">7대 지표</h3>
+            <div className="grid grid-cols-4 md:grid-cols-2 gap-1 text-[11px] sm:text-xs">
               <span className="text-gray-600">경쟁밀도</span>
               <span className="text-gray-600">유동인구</span>
               <span className="text-gray-600">임대료</span>
@@ -292,29 +402,6 @@ export default function HomeEditorial() {
               <span className="text-gray-600">앵커시설</span>
               <span className="text-gray-600">시간특성</span>
               <span className="text-gray-600">상권성격</span>
-            </div>
-          </div>
-
-          {/* Column 2 - AREA TYPES */}
-          <div className="pl-0 md:pl-10">
-            <h3 className="text-[10px] sm:text-xs font-mono text-gray-500 mb-2 sm:mb-3">AREA TYPES</h3>
-            <div className="grid grid-cols-4 md:grid-cols-2 gap-1.5 text-xs sm:text-sm">
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-gray-300"></span>
-                <span>A 주거형</span>
-              </div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-gray-400"></span>
-                <span>B 혼합형</span>
-              </div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-gray-600"></span>
-                <span>C 상업형</span>
-              </div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-black"></span>
-                <span>D 특수형</span>
-              </div>
             </div>
           </div>
         </div>

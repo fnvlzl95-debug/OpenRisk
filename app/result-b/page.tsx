@@ -11,7 +11,7 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { AnalyzeV2Response, RiskLevel, AREA_TYPE_INFO, AIAnalysisResponse } from '@/lib/v2/types'
 import { BusinessCategory } from '@/lib/categories'
-import { AlertTriangle, Check, ArrowRight, Train, TrendingUp, TrendingDown, Sparkles, Search, MapPin, Share2, HelpCircle, MessageSquare } from 'lucide-react'
+import { AlertTriangle, Check, ArrowRight, Train, TrendingUp, TrendingDown, Sparkles, Search, MapPin, Share2, HelpCircle, MessageSquare, Users, ThumbsUp } from 'lucide-react'
 import AIAnalysisModal from '@/components/skin-b/AIAnalysisModal'
 import MapModal from '@/components/skin-b/MapModal'
 import ShareModal from '@/components/skin-b/ShareModal'
@@ -327,9 +327,16 @@ function ResultBContent() {
               onClick={() => setShowFeedbackModal(true)}
               className="flex items-center gap-1.5 px-2.5 py-1.5 border border-gray-300 hover:border-black hover:bg-black hover:text-white transition-colors text-xs font-medium"
             >
-              <MessageSquare size={12} />
+              <ThumbsUp size={12} />
               <span className="hidden sm:inline">피드백</span>
             </button>
+            <Link
+              href="/board"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 border border-gray-300 hover:border-black hover:bg-black hover:text-white transition-colors text-xs font-medium"
+            >
+              <Users size={12} />
+              <span className="hidden sm:inline">커뮤니티</span>
+            </Link>
             <button
               onClick={() => setShowShareModal(true)}
               className="flex items-center gap-1.5 px-2.5 py-1.5 border border-gray-300 hover:border-black hover:bg-black hover:text-white transition-colors text-xs font-medium"

@@ -18,6 +18,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "오픈리스크 - 창업 리스크 분석",
   description: "지금, 창업해도 될까? 서울/경기/인천 상권 데이터 기반 창업 리스크 분석. 경쟁 밀도, 유동인구, 임대료, 생존율 등 7대 지표로 창업 위험도를 분석합니다.",
+  icons: {
+    icon: "/favicon.ico",
+  },
   keywords: ["창업", "상권분석", "창업리스크", "소상공인", "상권", "오픈리스크", "서울상권", "경기상권", "인천상권", "폐업률", "유동인구"],
   authors: [{ name: "OpenRisk" }],
   creator: "OpenRisk",
