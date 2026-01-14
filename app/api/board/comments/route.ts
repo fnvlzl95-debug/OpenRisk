@@ -25,11 +25,40 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json()
-  const { post_id, content } = body
+  const { post_id, content, parent_id } = body
 
   // post_id 검증
   if (!post_id || typeof post_id !== 'number') {
     return NextResponse.json({ error: '잘못된 요청입니다.' }, { status: 400 })
+  }
+
+  // parent_id 검증 (대댓글인 경우)
+  if (parent_id !== undefined && parent_id !== null) {
+    if (typeof parent_id !== 'number') {
+      return NextResponse.json({ error: '잘못된 요청입니다.' }, { status: 400 })
+    }
+
+    // 부모 댓글 존재 확인
+    const { data: parentComment } = await supabase
+      .from('comments')
+      .select('id, post_id, parent_id')
+      .eq('id', parent_id)
+      .is('deleted_at', null)
+      .single()
+
+    if (!parentComment) {
+      return NextResponse.json({ error: '부모 댓글을 찾을 수 없습니다.' }, { status: 404 })
+    }
+
+    // 부모 댓글이 같은 게시글에 속하는지 확인
+    if (parentComment.post_id !== post_id) {
+      return NextResponse.json({ error: '잘못된 요청입니다.' }, { status: 400 })
+    }
+
+    // 대대댓글 방지 (1단계 대댓글만 허용)
+    if (parentComment.parent_id !== null) {
+      return NextResponse.json({ error: '대댓글에는 답글을 달 수 없습니다.' }, { status: 400 })
+    }
   }
 
   // 입력값 검증
@@ -56,7 +85,8 @@ export async function POST(request: NextRequest) {
     .insert({
       post_id,
       author_id: user.id,
-      content: sanitizeHtml(content.trim())
+      content: sanitizeHtml(content.trim()),
+      parent_id: parent_id || null
     })
     .select(`
       *,

@@ -80,6 +80,8 @@ interface Comment {
   author_nickname: string
   author_profile_image: string | null
   author_is_admin: boolean
+  parent_id: number | null
+  replies?: Comment[]
 }
 
 interface Profile {
@@ -92,6 +94,8 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
   const [post, setPost] = useState<Post | null>(null)
   const [comments, setComments] = useState<Comment[]>([])
   const [commentText, setCommentText] = useState('')
+  const [replyingTo, setReplyingTo] = useState<number | null>(null)
+  const [replyText, setReplyText] = useState('')
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -188,13 +192,42 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
     })
   }
 
-  const handleCommentSubmit = async (e: React.FormEvent) => {
+  // 댓글을 계층 구조로 정리
+  const organizeComments = (flatComments: Comment[]): Comment[] => {
+    const commentMap = new Map<number, Comment>()
+    const rootComments: Comment[] = []
+
+    // 먼저 모든 댓글을 맵에 저장
+    flatComments.forEach(comment => {
+      commentMap.set(comment.id, { ...comment, replies: [] })
+    })
+
+    // 부모-자식 관계 설정
+    flatComments.forEach(comment => {
+      const mappedComment = commentMap.get(comment.id)!
+      if (comment.parent_id === null) {
+        rootComments.push(mappedComment)
+      } else {
+        const parent = commentMap.get(comment.parent_id)
+        if (parent) {
+          parent.replies = parent.replies || []
+          parent.replies.push(mappedComment)
+        }
+      }
+    })
+
+    return rootComments
+  }
+
+  const handleCommentSubmit = async (e: React.FormEvent, parentId?: number) => {
     e.preventDefault()
     if (!user) {
       alert('로그인이 필요합니다.')
       return
     }
-    if (!commentText.trim()) return
+
+    const content = parentId ? replyText : commentText
+    if (!content.trim()) return
 
     setSubmitting(true)
     try {
@@ -203,7 +236,8 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           post_id: parseInt(id),
-          content: commentText.trim()
+          content: content.trim(),
+          parent_id: parentId || null
         })
       })
 
@@ -214,7 +248,12 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
       }
 
       setComments([...comments, data.comment])
-      setCommentText('')
+      if (parentId) {
+        setReplyText('')
+        setReplyingTo(null)
+      } else {
+        setCommentText('')
+      }
     } catch (err) {
       alert(err instanceof Error ? err.message : '댓글 작성에 실패했습니다.')
     } finally {
@@ -416,39 +455,112 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
                 아직 댓글이 없습니다.
               </div>
             ) : (
-              comments.map((comment) => (
-                <div key={comment.id} className="px-3 sm:px-4 py-3 sm:py-4">
-                  <div className="flex items-center justify-between mb-1.5 sm:mb-2">
-                    <div className="flex items-center gap-1.5 sm:gap-2">
-                      <span className="font-medium text-xs sm:text-sm">{comment.author_nickname}</span>
-                      {comment.author_is_admin && (
-                        <span className="px-1 sm:px-1.5 py-0.5 border border-black text-[8px] sm:text-[9px]">
-                          관리자
+              organizeComments(comments).map((comment) => (
+                <div key={comment.id}>
+                  {/* 부모 댓글 */}
+                  <div className="px-3 sm:px-4 py-3 sm:py-4">
+                    <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+                      <div className="flex items-center gap-1.5 sm:gap-2">
+                        <span className="font-medium text-xs sm:text-sm">{comment.author_nickname}</span>
+                        {comment.author_is_admin && (
+                          <span className="px-1 sm:px-1.5 py-0.5 border border-black text-[8px] sm:text-[9px]">
+                            관리자
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[9px] sm:text-[10px] text-gray-400">
+                          {new Date(comment.created_at).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })}
                         </span>
-                      )}
+                        {canDeleteComment(comment) && (
+                          <button
+                            onClick={() => handleDeleteComment(comment.id)}
+                            className="text-[9px] sm:text-[10px] text-red-400 hover:text-red-600"
+                          >
+                            삭제
+                          </button>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[9px] sm:text-[10px] text-gray-400">
-                        {new Date(comment.created_at).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })}
-                      </span>
-                      {canDeleteComment(comment) && (
-                        <button
-                          onClick={() => handleDeleteComment(comment.id)}
-                          className="text-[9px] sm:text-[10px] text-red-400 hover:text-red-600"
-                        >
-                          삭제
-                        </button>
-                      )}
-                    </div>
+                    <p className="text-[13px] sm:text-sm text-gray-700 leading-relaxed break-words whitespace-pre-wrap">{comment.content}</p>
+
+                    {/* 답글 버튼 */}
+                    {user && (
+                      <button
+                        onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
+                        className="mt-2 text-[10px] sm:text-xs text-gray-500 hover:text-black"
+                      >
+                        {replyingTo === comment.id ? '취소' : '답글'}
+                      </button>
+                    )}
+
+                    {/* 답글 입력 폼 */}
+                    {replyingTo === comment.id && (
+                      <form onSubmit={(e) => handleCommentSubmit(e, comment.id)} className="mt-3">
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={replyText}
+                            onChange={(e) => setReplyText(e.target.value)}
+                            placeholder="답글을 입력하세요..."
+                            maxLength={500}
+                            className="flex-1 px-2.5 py-1.5 border border-gray-300 text-xs sm:text-sm outline-none focus:border-black"
+                          />
+                          <button
+                            type="submit"
+                            disabled={!replyText.trim() || submitting}
+                            className="px-3 py-1.5 bg-black text-white text-xs font-bold disabled:bg-gray-300 hover:bg-gray-800"
+                          >
+                            {submitting ? '...' : '등록'}
+                          </button>
+                        </div>
+                      </form>
+                    )}
                   </div>
-                  <p className="text-[13px] sm:text-sm text-gray-700 leading-relaxed break-words whitespace-pre-wrap">{comment.content}</p>
+
+                  {/* 대댓글 목록 */}
+                  {comment.replies && comment.replies.length > 0 && (
+                    <div className="bg-gray-50 border-t border-gray-100">
+                      {comment.replies.map((reply) => (
+                        <div key={reply.id} className="px-3 sm:px-4 py-2.5 sm:py-3 pl-6 sm:pl-8 border-b border-gray-100 last:border-b-0">
+                          <div className="flex items-center justify-between mb-1">
+                            <div className="flex items-center gap-1.5 sm:gap-2">
+                              <svg className="w-3 h-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                              </svg>
+                              <span className="font-medium text-[11px] sm:text-xs">{reply.author_nickname}</span>
+                              {reply.author_is_admin && (
+                                <span className="px-1 py-0.5 border border-black text-[7px] sm:text-[8px]">
+                                  관리자
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-[8px] sm:text-[9px] text-gray-400">
+                                {new Date(reply.created_at).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })}
+                              </span>
+                              {canDeleteComment(reply) && (
+                                <button
+                                  onClick={() => handleDeleteComment(reply.id)}
+                                  className="text-[8px] sm:text-[9px] text-red-400 hover:text-red-600"
+                                >
+                                  삭제
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                          <p className="text-[12px] sm:text-[13px] text-gray-600 leading-relaxed pl-5">{reply.content}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))
             )}
           </div>
 
           {/* 댓글 작성 */}
-          <form onSubmit={handleCommentSubmit} className="border-t-2 border-black">
+          <form onSubmit={(e) => handleCommentSubmit(e)} className="border-t-2 border-black">
             <div className="px-3 sm:px-4 py-3">
               <textarea
                 value={commentText}
