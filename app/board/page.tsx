@@ -28,6 +28,18 @@ function BoardContent() {
   const [pagination, setPagination] = useState<Pagination | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState<{ id: string } | null>(null)
+
+  // 로그인 상태 확인
+  useEffect(() => {
+    const checkUser = async () => {
+      const { createClient } = await import('@/lib/supabase/client')
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      setUser(user)
+    }
+    checkUser()
+  }, [])
 
 
   // 게시글 목록 조회
@@ -96,12 +108,21 @@ function BoardContent() {
         {/* 페이지 타이틀 + 글쓰기 버튼 */}
         <div className="flex justify-between items-center mb-3 sm:mb-4">
           <h1 className="text-base sm:text-lg font-bold">자유게시판</h1>
-          <Link
-            href="/board/write"
-            className="px-3 sm:px-4 py-1.5 sm:py-2 bg-black text-white text-xs sm:text-sm font-bold hover:bg-gray-800 transition-colors"
-          >
-            글쓰기
-          </Link>
+          {user ? (
+            <Link
+              href="/board/write"
+              className="px-3 sm:px-4 py-1.5 sm:py-2 bg-black text-white text-xs sm:text-sm font-bold hover:bg-gray-800 transition-colors"
+            >
+              글쓰기
+            </Link>
+          ) : (
+            <Link
+              href="/auth/login?next=/board/write"
+              className="px-3 sm:px-4 py-1.5 sm:py-2 bg-black text-white text-xs sm:text-sm font-bold hover:bg-gray-800 transition-colors"
+            >
+              글쓰기
+            </Link>
+          )}
         </div>
 
         {/* 게시글 목록 */}
