@@ -147,11 +147,11 @@ function BoardContent() {
               <Link
                 key={post.id}
                 href={`/board/${post.id}`}
-                className="group block py-4 sm:py-6 lg:py-7 -mx-4 sm:-mx-2 px-4 sm:px-2 hover:bg-gray-50 active:bg-gray-100 transition-colors sm:rounded-lg"
+                className="group block py-4 sm:py-5 lg:py-5 -mx-4 sm:-mx-2 px-4 sm:px-2 hover:bg-gray-50 active:bg-gray-100 transition-colors sm:rounded-lg"
               >
-                <article className="flex gap-4 sm:gap-6 lg:gap-8">
+                <article className="flex gap-4 sm:gap-6 lg:gap-6">
                   {/* 좌측: 날짜 (PC only) */}
-                  <div className="hidden md:block w-16 lg:w-20 flex-shrink-0 pt-1">
+                  <div className="hidden md:block w-16 lg:w-18 flex-shrink-0 pt-0.5">
                     <time className="text-xs lg:text-sm font-mono text-gray-300 group-hover:text-gray-400 transition-colors">
                       {formatFullDate(post.created_at)}
                     </time>
@@ -160,14 +160,14 @@ function BoardContent() {
                   {/* 우측: 콘텐츠 */}
                   <div className="flex-1 min-w-0">
                     {/* 뱃지 + 날짜 (모바일) */}
-                    <div className="flex items-center gap-2 mb-1.5 sm:mb-2 lg:mb-3">
+                    <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
                       {post.is_notice && (
-                        <span className="px-1.5 sm:px-2 lg:px-2.5 py-0.5 lg:py-1 text-[9px] sm:text-[10px] lg:text-xs font-bold text-orange-600 bg-orange-50 rounded-full">
+                        <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] lg:text-xs font-bold text-orange-600 bg-orange-50 rounded-full">
                           NOTICE
                         </span>
                       )}
                       {post.author_is_admin && !post.is_notice && (
-                        <span className="px-1.5 sm:px-2 lg:px-2.5 py-0.5 lg:py-1 text-[9px] sm:text-[10px] lg:text-xs font-medium text-blue-600 bg-blue-50 rounded-full">
+                        <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] lg:text-xs font-medium text-blue-600 bg-blue-50 rounded-full">
                           ADMIN
                         </span>
                       )}
@@ -178,25 +178,25 @@ function BoardContent() {
                     </div>
 
                     {/* 제목 */}
-                    <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 group-hover:text-gray-600 transition-colors mb-1 lg:mb-2 line-clamp-2 sm:line-clamp-1">
+                    <h2 className="text-base sm:text-lg lg:text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors mb-1 line-clamp-2 sm:line-clamp-1">
                       {post.title}
                       {post.comment_count > 0 && (
-                        <span className="ml-1.5 sm:ml-2 text-xs sm:text-sm lg:text-base font-normal text-blue-500">
+                        <span className="ml-1.5 sm:ml-2 text-xs sm:text-sm font-normal text-blue-500">
                           [{post.comment_count}]
                         </span>
                       )}
                     </h2>
 
                     {/* 본문 미리보기 */}
-                    <p className="text-xs sm:text-sm lg:text-base text-gray-400 line-clamp-1 lg:line-clamp-2 mb-2 sm:mb-3">
-                      {post.content.replace(/<[^>]*>/g, '').substring(0, 120)}
+                    <p className="text-xs sm:text-sm lg:text-sm text-gray-400 line-clamp-1 mb-2 sm:mb-2">
+                      {post.content.replace(/<[^>]*>/g, '').substring(0, 100)}
                     </p>
 
                     {/* 메타 정보 */}
-                    <div className="flex items-center gap-2 sm:gap-4 text-[10px] sm:text-xs lg:text-sm text-gray-400">
+                    <div className="flex items-center gap-2 sm:gap-4 text-[10px] sm:text-xs text-gray-400">
                       <span className="font-medium truncate max-w-[80px] sm:max-w-none">{post.author_nickname}</span>
-                      <span className="flex items-center gap-1 lg:gap-1.5">
-                        <svg className="w-3 h-3 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <span className="flex items-center gap-1">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                         </svg>
