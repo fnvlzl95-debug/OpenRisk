@@ -107,6 +107,8 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
     message: string
     onConfirm: () => void
   }>({ isOpen: false, title: '', message: '', onConfirm: () => {} })
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null)
+  const [editingCommentText, setEditingCommentText] = useState('')
 
   // 인증 상태 확인
   useEffect(() => {
@@ -307,6 +309,43 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
     })
   }
 
+  const handleEditComment = (comment: Comment) => {
+    setEditingCommentId(comment.id)
+    setEditingCommentText(comment.content)
+  }
+
+  const handleCancelEditComment = () => {
+    setEditingCommentId(null)
+    setEditingCommentText('')
+  }
+
+  const handleSaveComment = async (commentId: number) => {
+    if (!editingCommentText.trim()) return
+
+    setSubmitting(true)
+    try {
+      const res = await fetch(`/api/board/comments/${commentId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: editingCommentText.trim() })
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || '수정에 실패했습니다.')
+      }
+
+      setComments(comments.map(c => c.id === commentId ? data.comment : c))
+      setEditingCommentId(null)
+      setEditingCommentText('')
+    } catch (err) {
+      alert(err instanceof Error ? err.message : '수정에 실패했습니다.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   const canEditPost = user && post && (user.id === post.author_id || profile?.is_admin)
   const canDeleteComment = (comment: Comment) =>
     user && (user.id === comment.author_id || profile?.is_admin)
@@ -326,6 +365,119 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
         <Link href="/board" className="text-sm text-blue-500 hover:underline">
           목록으로 돌아가기
         </Link>
+      </div>
+    )
+  }
+
+  // 댓글 렌더링 함수 (부모/대댓글 공통)
+  const renderComment = (comment: Comment, isReply: boolean = false) => {
+    const isEditing = editingCommentId === comment.id
+
+    return (
+      <div key={comment.id} className={isReply ? "px-3 sm:px-4 py-2.5 sm:py-3 pl-6 sm:pl-8 border-b border-gray-100 last:border-b-0" : "px-3 sm:px-4 py-3 sm:py-4"}>
+        <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            {isReply && (
+              <svg className="w-3 h-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+              </svg>
+            )}
+            <span className={`font-medium ${isReply ? 'text-[11px] sm:text-xs' : 'text-xs sm:text-sm'}`}>{comment.author_nickname}</span>
+            {comment.author_is_admin && (
+              <span className={`px-1 ${isReply ? 'py-0.5 text-[7px] sm:text-[8px]' : 'sm:px-1.5 py-0.5 text-[8px] sm:text-[9px]'} border border-black`}>
+                관리자
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <span className={`${isReply ? 'text-[8px] sm:text-[9px]' : 'text-[9px] sm:text-[10px]'} text-gray-400`}>
+              {new Date(comment.created_at).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })}
+            </span>
+            {canDeleteComment(comment) && !isEditing && (
+              <>
+                <button
+                  onClick={() => handleEditComment(comment)}
+                  className={`${isReply ? 'text-[8px] sm:text-[9px]' : 'text-[9px] sm:text-[10px]'} text-gray-400 hover:text-gray-600`}
+                >
+                  수정
+                </button>
+                <button
+                  onClick={() => handleDeleteComment(comment.id)}
+                  className={`${isReply ? 'text-[8px] sm:text-[9px]' : 'text-[9px] sm:text-[10px]'} text-red-400 hover:text-red-600`}
+                >
+                  삭제
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+
+        {isEditing ? (
+          <div>
+            <textarea
+              value={editingCommentText}
+              onChange={(e) => setEditingCommentText(e.target.value)}
+              maxLength={500}
+              className="w-full h-16 sm:h-20 p-2.5 sm:p-3 border border-gray-300 text-[13px] sm:text-sm resize-none outline-none focus:border-black"
+            />
+            <div className="flex justify-between items-center mt-2">
+              <span className="text-[9px] sm:text-[10px] text-gray-400">
+                {editingCommentText.length}/500
+              </span>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleCancelEditComment}
+                  disabled={submitting}
+                  className="px-2.5 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm text-gray-500 hover:text-black border border-gray-300 hover:border-black transition-colors disabled:opacity-50"
+                >
+                  취소
+                </button>
+                <button
+                  onClick={() => handleSaveComment(comment.id)}
+                  disabled={submitting || !editingCommentText.trim()}
+                  className="px-2.5 sm:px-3 py-1 sm:py-1.5 bg-black text-white text-xs sm:text-sm font-bold disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-gray-800 active:bg-gray-900 transition-colors"
+                >
+                  {submitting ? '저장 중...' : '저장'}
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <p className={`${isReply ? 'text-[12px] sm:text-[13px] text-gray-600 pl-5' : 'text-[13px] sm:text-sm text-gray-700'} leading-relaxed break-words whitespace-pre-wrap`}>{comment.content}</p>
+        )}
+
+        {/* 답글 버튼 (부모 댓글에만 표시) */}
+        {!isReply && user && !isEditing && (
+          <button
+            onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
+            className="mt-2 text-[10px] sm:text-xs text-gray-500 hover:text-black"
+          >
+            {replyingTo === comment.id ? '취소' : '답글'}
+          </button>
+        )}
+
+        {/* 답글 입력 폼 */}
+        {!isReply && replyingTo === comment.id && (
+          <form onSubmit={(e) => handleCommentSubmit(e, comment.id)} className="mt-3">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                placeholder="답글을 입력하세요..."
+                maxLength={500}
+                className="flex-1 px-2.5 py-1.5 border border-gray-300 text-xs sm:text-sm outline-none focus:border-black"
+              />
+              <button
+                type="submit"
+                disabled={!replyText.trim() || submitting}
+                className="px-3 py-1.5 bg-black text-white text-xs font-bold disabled:bg-gray-300 hover:bg-gray-800"
+              >
+                {submitting ? '...' : '등록'}
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     )
   }
@@ -430,6 +582,12 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
           {/* 버튼 영역 */}
           {canEditPost && (
             <div className="px-3 sm:px-4 py-2.5 sm:py-3 border-t border-gray-200 flex justify-end gap-2">
+              <Link
+                href={`/board/${id}/edit`}
+                className="px-2.5 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm text-gray-600 hover:text-black active:bg-gray-50 border border-gray-300 hover:border-black transition-colors"
+              >
+                수정
+              </Link>
               <button
                 onClick={handleDeletePost}
                 className="px-2.5 sm:px-3 py-1 sm:py-1.5 text-xs sm:text-sm text-red-500 hover:text-red-700 active:bg-red-50"
@@ -458,100 +616,12 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
               organizeComments(comments).map((comment) => (
                 <div key={comment.id}>
                   {/* 부모 댓글 */}
-                  <div className="px-3 sm:px-4 py-3 sm:py-4">
-                    <div className="flex items-center justify-between mb-1.5 sm:mb-2">
-                      <div className="flex items-center gap-1.5 sm:gap-2">
-                        <span className="font-medium text-xs sm:text-sm">{comment.author_nickname}</span>
-                        {comment.author_is_admin && (
-                          <span className="px-1 sm:px-1.5 py-0.5 border border-black text-[8px] sm:text-[9px]">
-                            관리자
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[9px] sm:text-[10px] text-gray-400">
-                          {new Date(comment.created_at).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })}
-                        </span>
-                        {canDeleteComment(comment) && (
-                          <button
-                            onClick={() => handleDeleteComment(comment.id)}
-                            className="text-[9px] sm:text-[10px] text-red-400 hover:text-red-600"
-                          >
-                            삭제
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                    <p className="text-[13px] sm:text-sm text-gray-700 leading-relaxed break-words whitespace-pre-wrap">{comment.content}</p>
-
-                    {/* 답글 버튼 */}
-                    {user && (
-                      <button
-                        onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
-                        className="mt-2 text-[10px] sm:text-xs text-gray-500 hover:text-black"
-                      >
-                        {replyingTo === comment.id ? '취소' : '답글'}
-                      </button>
-                    )}
-
-                    {/* 답글 입력 폼 */}
-                    {replyingTo === comment.id && (
-                      <form onSubmit={(e) => handleCommentSubmit(e, comment.id)} className="mt-3">
-                        <div className="flex gap-2">
-                          <input
-                            type="text"
-                            value={replyText}
-                            onChange={(e) => setReplyText(e.target.value)}
-                            placeholder="답글을 입력하세요..."
-                            maxLength={500}
-                            className="flex-1 px-2.5 py-1.5 border border-gray-300 text-xs sm:text-sm outline-none focus:border-black"
-                          />
-                          <button
-                            type="submit"
-                            disabled={!replyText.trim() || submitting}
-                            className="px-3 py-1.5 bg-black text-white text-xs font-bold disabled:bg-gray-300 hover:bg-gray-800"
-                          >
-                            {submitting ? '...' : '등록'}
-                          </button>
-                        </div>
-                      </form>
-                    )}
-                  </div>
+                  {renderComment(comment, false)}
 
                   {/* 대댓글 목록 */}
                   {comment.replies && comment.replies.length > 0 && (
                     <div className="bg-gray-50 border-t border-gray-100">
-                      {comment.replies.map((reply) => (
-                        <div key={reply.id} className="px-3 sm:px-4 py-2.5 sm:py-3 pl-6 sm:pl-8 border-b border-gray-100 last:border-b-0">
-                          <div className="flex items-center justify-between mb-1">
-                            <div className="flex items-center gap-1.5 sm:gap-2">
-                              <svg className="w-3 h-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-                              </svg>
-                              <span className="font-medium text-[11px] sm:text-xs">{reply.author_nickname}</span>
-                              {reply.author_is_admin && (
-                                <span className="px-1 py-0.5 border border-black text-[7px] sm:text-[8px]">
-                                  관리자
-                                </span>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-[8px] sm:text-[9px] text-gray-400">
-                                {new Date(reply.created_at).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })}
-                              </span>
-                              {canDeleteComment(reply) && (
-                                <button
-                                  onClick={() => handleDeleteComment(reply.id)}
-                                  className="text-[8px] sm:text-[9px] text-red-400 hover:text-red-600"
-                                >
-                                  삭제
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                          <p className="text-[12px] sm:text-[13px] text-gray-600 leading-relaxed pl-5">{reply.content}</p>
-                        </div>
-                      ))}
+                      {comment.replies.map((reply) => renderComment(reply, true))}
                     </div>
                   )}
                 </div>

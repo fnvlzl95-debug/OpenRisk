@@ -39,9 +39,14 @@ export async function GET(
   const shouldIncrementView = request.headers.get('x-increment-view') === 'true'
 
   if (shouldIncrementView) {
-    // service_role로 조회수 증가 (RPC 사용)
-    const adminClient = createAdminClient()
-    await adminClient.rpc('increment_view_count', { p_post_id: postId })
+    try {
+      // service_role로 조회수 증가 (RPC 사용)
+      const adminClient = createAdminClient()
+      await adminClient.rpc('increment_view_count', { p_post_id: postId })
+    } catch (err) {
+      // 조회수 증가 실패해도 게시글 조회는 정상 진행
+      console.error('View count increment error:', err)
+    }
   }
 
   return NextResponse.json({
