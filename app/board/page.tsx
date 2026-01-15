@@ -98,9 +98,9 @@ function BoardContent() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header - 모바일 최적화 */}
+      {/* Header */}
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
+        <div className="max-w-4xl lg:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
           <div className="flex justify-between items-center">
             <Link href="/home-b" className="group">
               <span className="text-lg sm:text-xl font-black tracking-tight text-gray-900 group-hover:text-gray-600 transition-colors">
@@ -113,7 +113,7 @@ function BoardContent() {
       </header>
 
       {/* Main */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6">
+      <main className="max-w-4xl lg:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* 타이틀 영역 - 모바일에서 컴팩트하게 */}
         <div className="py-6 sm:py-12 border-b border-gray-100">
           <div className="flex justify-between items-center sm:items-start">
@@ -147,12 +147,12 @@ function BoardContent() {
               <Link
                 key={post.id}
                 href={`/board/${post.id}`}
-                className="group block py-4 sm:py-6 -mx-4 sm:-mx-2 px-4 sm:px-2 hover:bg-gray-50 active:bg-gray-100 transition-colors sm:rounded-lg"
+                className="group block py-4 sm:py-6 lg:py-7 -mx-4 sm:-mx-2 px-4 sm:px-2 hover:bg-gray-50 active:bg-gray-100 transition-colors sm:rounded-lg"
               >
-                <article className="flex gap-4 sm:gap-6">
+                <article className="flex gap-4 sm:gap-6 lg:gap-8">
                   {/* 좌측: 날짜 (PC only) */}
-                  <div className="hidden md:block w-16 flex-shrink-0 pt-1">
-                    <time className="text-xs font-mono text-gray-300 group-hover:text-gray-400 transition-colors">
+                  <div className="hidden md:block w-16 lg:w-20 flex-shrink-0 pt-1">
+                    <time className="text-xs lg:text-sm font-mono text-gray-300 group-hover:text-gray-400 transition-colors">
                       {formatFullDate(post.created_at)}
                     </time>
                   </div>
@@ -160,14 +160,14 @@ function BoardContent() {
                   {/* 우측: 콘텐츠 */}
                   <div className="flex-1 min-w-0">
                     {/* 뱃지 + 날짜 (모바일) */}
-                    <div className="flex items-center gap-2 mb-1.5 sm:mb-2">
+                    <div className="flex items-center gap-2 mb-1.5 sm:mb-2 lg:mb-3">
                       {post.is_notice && (
-                        <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold text-orange-600 bg-orange-50 rounded-full">
+                        <span className="px-1.5 sm:px-2 lg:px-2.5 py-0.5 lg:py-1 text-[9px] sm:text-[10px] lg:text-xs font-bold text-orange-600 bg-orange-50 rounded-full">
                           NOTICE
                         </span>
                       )}
                       {post.author_is_admin && !post.is_notice && (
-                        <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-medium text-blue-600 bg-blue-50 rounded-full">
+                        <span className="px-1.5 sm:px-2 lg:px-2.5 py-0.5 lg:py-1 text-[9px] sm:text-[10px] lg:text-xs font-medium text-blue-600 bg-blue-50 rounded-full">
                           ADMIN
                         </span>
                       )}
@@ -178,25 +178,25 @@ function BoardContent() {
                     </div>
 
                     {/* 제목 */}
-                    <h2 className="text-base sm:text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors mb-1 line-clamp-2 sm:line-clamp-1">
+                    <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 group-hover:text-gray-600 transition-colors mb-1 lg:mb-2 line-clamp-2 sm:line-clamp-1">
                       {post.title}
                       {post.comment_count > 0 && (
-                        <span className="ml-1.5 sm:ml-2 text-xs sm:text-sm font-normal text-blue-500">
+                        <span className="ml-1.5 sm:ml-2 text-xs sm:text-sm lg:text-base font-normal text-blue-500">
                           [{post.comment_count}]
                         </span>
                       )}
                     </h2>
 
                     {/* 본문 미리보기 */}
-                    <p className="text-xs sm:text-sm text-gray-400 line-clamp-1 mb-2 sm:mb-3">
-                      {post.content.replace(/<[^>]*>/g, '').substring(0, 80)}
+                    <p className="text-xs sm:text-sm lg:text-base text-gray-400 line-clamp-1 lg:line-clamp-2 mb-2 sm:mb-3">
+                      {post.content.replace(/<[^>]*>/g, '').substring(0, 120)}
                     </p>
 
                     {/* 메타 정보 */}
-                    <div className="flex items-center gap-2 sm:gap-4 text-[10px] sm:text-xs text-gray-400">
+                    <div className="flex items-center gap-2 sm:gap-4 text-[10px] sm:text-xs lg:text-sm text-gray-400">
                       <span className="font-medium truncate max-w-[80px] sm:max-w-none">{post.author_nickname}</span>
-                      <span className="flex items-center gap-1">
-                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <span className="flex items-center gap-1 lg:gap-1.5">
+                        <svg className="w-3 h-3 lg:w-4 lg:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                         </svg>
@@ -217,23 +217,23 @@ function BoardContent() {
           </div>
         )}
 
-        {/* 페이지네이션 - 모바일 터치 최적화 */}
+        {/* 페이지네이션 */}
         {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-1 py-8 sm:py-12 border-t border-gray-100 mt-4 sm:mt-6">
+          <div className="flex justify-center items-center gap-1 lg:gap-2 py-8 sm:py-12 border-t border-gray-100 mt-4 sm:mt-6">
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="px-3 py-2 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 text-xs text-gray-400 disabled:opacity-30 disabled:cursor-not-allowed hover:text-gray-600 active:text-gray-800 transition-colors flex items-center justify-center"
+              className="px-3 py-2 min-w-[44px] min-h-[44px] lg:min-w-[48px] lg:min-h-[48px] text-xs lg:text-sm text-gray-400 disabled:opacity-30 disabled:cursor-not-allowed hover:text-gray-600 active:text-gray-800 transition-colors flex items-center justify-center"
             >
               ←
             </button>
 
-            <div className="flex items-center gap-0.5 sm:gap-1 mx-2 sm:mx-4">
+            <div className="flex items-center gap-0.5 sm:gap-1 lg:gap-2 mx-2 sm:mx-4">
               {pageNumbers.map((page) => (
                 <button
                   key={page}
                   onClick={() => setCurrentPage(page)}
-                  className={`min-w-[40px] min-h-[40px] sm:w-8 sm:h-8 text-xs font-medium rounded-full transition-all flex items-center justify-center ${
+                  className={`min-w-[40px] min-h-[40px] lg:min-w-[44px] lg:min-h-[44px] text-xs lg:text-sm font-medium rounded-full transition-all flex items-center justify-center ${
                     currentPage === page
                       ? 'bg-gray-900 text-white'
                       : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100 active:bg-gray-200'
@@ -247,7 +247,7 @@ function BoardContent() {
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="px-3 py-2 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 text-xs text-gray-400 disabled:opacity-30 disabled:cursor-not-allowed hover:text-gray-600 active:text-gray-800 transition-colors flex items-center justify-center"
+              className="px-3 py-2 min-w-[44px] min-h-[44px] lg:min-w-[48px] lg:min-h-[48px] text-xs lg:text-sm text-gray-400 disabled:opacity-30 disabled:cursor-not-allowed hover:text-gray-600 active:text-gray-800 transition-colors flex items-center justify-center"
             >
               →
             </button>
@@ -255,10 +255,10 @@ function BoardContent() {
         )}
       </main>
 
-      {/* Footer - 모바일 최적화 */}
+      {/* Footer */}
       <footer className="border-t border-gray-100 mt-auto">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-4 text-[10px] sm:text-xs text-gray-300">
+        <div className="max-w-4xl lg:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-4 text-[10px] sm:text-xs lg:text-sm text-gray-300">
             <Link href="/home-b" className="font-black text-gray-400 hover:text-gray-600 transition-colors">
               OPEN RISK
             </Link>
