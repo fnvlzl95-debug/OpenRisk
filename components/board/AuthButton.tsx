@@ -186,7 +186,7 @@ export default function AuthButton() {
   return (
     <button
       onClick={handleLogin}
-      className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs bg-[#FEE500] hover:bg-[#FDD800] active:bg-[#FCCC00] transition-colors font-medium rounded-sm"
+      className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs bg-[#FEE500] text-[#191919] hover:bg-[#FDD800] active:bg-[#FCCC00] transition-colors font-medium rounded-sm"
     >
       <LogIn size={14} />
       <span className="hidden sm:inline">카카오 로그인</span>
