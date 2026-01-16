@@ -374,36 +374,36 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
     const isEditing = editingCommentId === comment.id
 
     return (
-      <div key={comment.id} className={`py-4 ${isReply ? 'bg-gray-50/50 rounded-lg px-4' : ''}`}>
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-2 flex-wrap">
+      <div key={comment.id} className={`${isReply ? 'bg-gray-50 rounded-xl p-3 sm:p-4' : 'py-3 sm:py-4'}`}>
+        <div className="flex items-start justify-between mb-2 sm:mb-3 gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap min-w-0 flex-1">
             {isReply && (
-              <span className="px-2 py-0.5 text-[10px] font-semibold text-gray-500 bg-gray-200 rounded">
+              <span className="px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold text-gray-600 bg-gray-200 rounded flex-shrink-0">
                 ↳ 답글
               </span>
             )}
-            <span className="text-[15px] font-semibold text-gray-900">{comment.author_nickname}</span>
+            <span className="text-sm sm:text-base font-bold text-gray-900 truncate">{comment.author_nickname}</span>
             {comment.author_is_admin && (
-              <span className="px-2 py-0.5 text-[11px] font-medium text-blue-600 bg-blue-50 rounded-full">
+              <span className="px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold text-blue-600 bg-blue-50 rounded flex-shrink-0">
                 ADMIN
               </span>
             )}
           </div>
-          <div className="flex items-center gap-3">
-            <time className="text-[13px] text-gray-400">
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            <time className="text-xs sm:text-sm text-gray-400">
               {new Date(comment.created_at).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })}
             </time>
             {canDeleteComment(comment) && !isEditing && (
               <>
                 <button
                   onClick={() => handleEditComment(comment)}
-                  className="text-[13px] text-gray-400 hover:text-gray-600 transition-colors"
+                  className="text-xs sm:text-sm text-gray-500 hover:text-gray-900 active:text-gray-700 transition-colors font-medium min-h-[32px] px-1"
                 >
                   수정
                 </button>
                 <button
                   onClick={() => handleDeleteComment(comment.id)}
-                  className="text-[13px] text-red-400 hover:text-red-600 transition-colors"
+                  className="text-xs sm:text-sm text-red-500 hover:text-red-700 active:text-red-600 transition-colors font-medium min-h-[32px] px-1"
                 >
                   삭제
                 </button>
@@ -418,24 +418,24 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
               value={editingCommentText}
               onChange={(e) => setEditingCommentText(e.target.value)}
               maxLength={500}
-              className="w-full h-24 px-4 py-3 border border-gray-200 rounded-lg text-[15px] leading-[1.7] resize-none outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400"
+              className="w-full h-24 sm:h-28 px-3 sm:px-4 py-2 sm:py-3 bg-white border-2 border-gray-200 rounded-xl text-[15px] sm:text-base leading-relaxed resize-none outline-none focus:border-gray-400 focus:ring-2 focus:ring-gray-100 transition-all"
             />
-            <div className="flex justify-between items-center mt-3">
-              <span className="text-[13px] text-gray-400">
+            <div className="flex justify-between items-center mt-2 sm:mt-3">
+              <span className="text-xs sm:text-sm text-gray-400">
                 {editingCommentText.length}/500
               </span>
               <div className="flex gap-2">
                 <button
                   onClick={handleCancelEditComment}
                   disabled={submitting}
-                  className="px-4 py-2 text-[14px] text-gray-600 hover:text-gray-900 transition-colors disabled:opacity-50"
+                  className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-gray-900 active:text-gray-700 transition-colors disabled:opacity-50 min-h-[44px]"
                 >
                   취소
                 </button>
                 <button
                   onClick={() => handleSaveComment(comment.id)}
                   disabled={submitting || !editingCommentText.trim()}
-                  className="px-5 py-2 bg-gray-900 text-white text-[14px] font-semibold rounded-full disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-gray-700 transition-colors"
+                  className="px-4 sm:px-5 py-2 bg-gray-900 text-white text-xs sm:text-sm font-semibold rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-gray-700 active:scale-95 transition-all min-h-[44px]"
                 >
                   {submitting ? '저장 중...' : '저장'}
                 </button>
@@ -443,16 +443,16 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
             </div>
           </div>
         ) : (
-          <p className="text-[15px] text-gray-700 leading-[1.7] break-words whitespace-pre-wrap">{comment.content}</p>
+          <p className="text-[15px] sm:text-base text-gray-700 leading-relaxed break-words whitespace-pre-wrap">{comment.content}</p>
         )}
 
         {/* 답글 버튼 (부모 댓글에만 표시) */}
         {!isReply && user && !isEditing && (
           <button
             onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
-            className="mt-3 text-[13px] text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-1"
+            className="mt-3 sm:mt-4 px-3 py-2 text-xs sm:text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 rounded-lg transition-all flex items-center gap-1.5 min-h-[40px]"
           >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
             </svg>
             {replyingTo === comment.id ? '취소' : '답글 달기'}
@@ -461,19 +461,19 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
 
         {/* 답글 입력 폼 */}
         {!isReply && replyingTo === comment.id && (
-          <form onSubmit={(e) => handleCommentSubmit(e, comment.id)} className="mt-4 flex gap-2">
+          <form onSubmit={(e) => handleCommentSubmit(e, comment.id)} className="mt-3 sm:mt-4 bg-white rounded-xl border-2 border-gray-200 p-2 sm:p-3 flex flex-col sm:flex-row gap-2">
             <input
               type="text"
               value={replyText}
               onChange={(e) => setReplyText(e.target.value)}
               placeholder="답글을 입력하세요..."
               maxLength={500}
-              className="flex-1 px-4 py-2.5 border border-gray-200 rounded-full text-[15px] outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400"
+              className="flex-1 px-3 py-2 text-[15px] sm:text-base outline-none min-h-[44px]"
             />
             <button
               type="submit"
               disabled={!replyText.trim() || submitting}
-              className="px-5 py-2.5 bg-gray-900 text-white text-[14px] font-semibold rounded-full disabled:bg-gray-300 hover:bg-gray-700 transition-colors"
+              className="px-5 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-lg disabled:bg-gray-300 hover:bg-gray-700 active:scale-95 transition-all min-h-[44px]"
             >
               {submitting ? '...' : '등록'}
             </button>
@@ -509,95 +509,110 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
       </header>
 
       {/* Main */}
-      <main className="max-w-3xl lg:max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <main className="max-w-3xl lg:max-w-4xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
         {/* 뒤로가기 */}
         <Link
           href="/board"
-          className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-gray-400 hover:text-gray-900 transition-colors mb-6 sm:mb-8"
+          className="inline-flex items-center gap-1.5 min-h-[44px] text-sm text-gray-500 hover:text-gray-900 transition-colors mb-4 sm:mb-6 active:scale-95"
         >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          목록으로
+          <span className="font-medium">목록으로</span>
         </Link>
 
         {/* 게시글 */}
         <article className="mb-8 sm:mb-12">
-          {/* 뱃지 */}
-          <div className="flex items-center gap-2 mb-3">
-            {post.is_notice && (
-              <span className="px-2 py-1 text-xs font-bold text-orange-600 bg-orange-50 rounded-full">
-                NOTICE
-              </span>
-            )}
-            {post.author_is_admin && !post.is_notice && (
-              <span className="px-2 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-full">
-                ADMIN
-              </span>
-            )}
-          </div>
+          {/* 헤더 */}
+          <div className="mb-6 sm:mb-8">
+            {/* 뱃지 */}
+            <div className="flex items-center gap-2 mb-3 sm:mb-4">
+              {post.is_notice && (
+                <span className="px-2 py-1 text-[10px] sm:text-xs font-bold text-orange-600 bg-orange-50 rounded">
+                  NOTICE
+                </span>
+              )}
+              {post.author_is_admin && !post.is_notice && (
+                <span className="px-2 py-1 text-[10px] sm:text-xs font-bold text-blue-600 bg-blue-50 rounded">
+                  ADMIN
+                </span>
+              )}
+            </div>
 
-          {/* 제목 */}
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-gray-900 mb-4 sm:mb-6 leading-tight tracking-tight">
-            {post.title}
-          </h1>
+            {/* 제목 */}
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-4 sm:mb-5 leading-tight break-words">
+              {post.title}
+            </h1>
 
-          {/* 메타 정보 */}
-          <div className="flex items-center gap-3 pb-6 sm:pb-8 mb-6 sm:mb-8 border-b border-gray-100">
-            <span className="text-sm font-semibold text-gray-900">{post.author_nickname}</span>
-            <span className="text-sm text-gray-400">·</span>
-            <time className="text-sm text-gray-400">
-              {new Date(post.created_at).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })}
-            </time>
-            <span className="text-sm text-gray-400">·</span>
-            <span className="text-sm text-gray-400">조회 {post.view_count}</span>
+            {/* 메타 정보 */}
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-500">
+              <span className="font-semibold text-gray-900">{post.author_nickname}</span>
+              <span className="hidden sm:inline">·</span>
+              <time className="text-xs sm:text-sm">
+                {new Date(post.created_at).toLocaleDateString('ko-KR', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </time>
+              <span className="hidden sm:inline">·</span>
+              <span className="flex items-center gap-1 text-xs sm:text-sm">
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                {post.view_count}
+              </span>
+            </div>
           </div>
 
           {/* 본문 */}
-          <div className="prose prose-gray max-w-none mb-12 sm:mb-16">
-            <div className="text-[15px] sm:text-base leading-[1.8] text-gray-800 space-y-5">
-              {post.content.split('\n').map((line, i) => {
-                if (line.startsWith('## ')) {
-                  return (
-                    <h2 key={i} className="text-lg sm:text-xl font-bold text-gray-900 mt-10 mb-5 leading-tight">
-                      {line.replace('## ', '')}
-                    </h2>
-                  )
-                }
-                if (line.startsWith('- **')) {
-                  const match = line.match(/- \*\*(.+?)\*\*: (.+)/)
-                  if (match) {
+          <div className="bg-gray-50 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
+            <div className="prose prose-gray max-w-none">
+              <div className="text-[15px] sm:text-base lg:text-lg leading-relaxed text-gray-800 space-y-3 sm:space-y-4 break-words">
+                {post.content.split('\n').map((line, i) => {
+                  if (line.startsWith('## ')) {
                     return (
-                      <p key={i} className="my-3 leading-[1.8]">
-                        <strong className="font-semibold text-gray-900">{match[1]}</strong>: {match[2]}
-                      </p>
+                      <h2 key={i} className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mt-6 sm:mt-8 mb-3 sm:mb-4 leading-tight">
+                        {line.replace('## ', '')}
+                      </h2>
                     )
                   }
-                }
-                if (line.trim() === '') {
-                  return <div key={i} className="h-5" />
-                }
-                return (
-                  <p key={i} className="leading-[1.8]">
-                    {line}
-                  </p>
-                )
-              })}
+                  if (line.startsWith('- **')) {
+                    const match = line.match(/- \*\*(.+?)\*\*: (.+)/)
+                    if (match) {
+                      return (
+                        <p key={i} className="my-2 sm:my-3 leading-relaxed">
+                          <strong className="font-bold text-gray-900">{match[1]}</strong>: {match[2]}
+                        </p>
+                      )
+                    }
+                  }
+                  if (line.trim() === '') {
+                    return <div key={i} className="h-3 sm:h-4" />
+                  }
+                  return (
+                    <p key={i} className="leading-relaxed text-gray-700">
+                      {line}
+                    </p>
+                  )
+                })}
+              </div>
             </div>
           </div>
 
           {/* 버튼 영역 */}
           {canEditPost && (
-            <div className="flex justify-end gap-2 pt-6 border-t border-gray-100">
+            <div className="flex gap-2 sm:gap-3">
               <Link
                 href={`/board/${id}/edit`}
-                className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 border border-gray-200 hover:border-gray-300 rounded-lg transition-colors"
+                className="flex-1 sm:flex-none px-4 sm:px-5 py-3 sm:py-2.5 text-sm font-semibold text-center text-gray-700 bg-white border-2 border-gray-200 hover:border-gray-300 active:bg-gray-50 rounded-lg transition-all min-h-[44px] flex items-center justify-center"
               >
                 수정
               </Link>
               <button
                 onClick={handleDeletePost}
-                className="px-4 py-2 text-sm font-medium text-red-500 hover:text-red-600 transition-colors"
+                className="flex-1 sm:flex-none px-4 sm:px-5 py-3 sm:py-2.5 text-sm font-semibold text-red-600 bg-white border-2 border-red-200 hover:border-red-300 active:bg-red-50 rounded-lg transition-all min-h-[44px]"
               >
                 삭제
               </button>
@@ -606,28 +621,58 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
         </article>
 
         {/* 댓글 섹션 */}
-        <section className="border-t border-gray-100 pt-12 sm:pt-16">
-          <div className="mb-8">
+        <section className="mt-10 sm:mt-16">
+          <div className="mb-6 sm:mb-8">
             <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-              댓글 <span className="text-blue-500">{comments.length}</span>
+              댓글 <span className="text-gray-400 font-normal">{comments.length}</span>
             </h2>
           </div>
 
+          {/* 댓글 작성 */}
+          <form onSubmit={(e) => handleCommentSubmit(e)} className="mb-8 sm:mb-10 bg-white border-2 border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-5 focus-within:border-gray-400 transition-colors">
+            <textarea
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              placeholder={user ? '댓글을 작성하세요...' : '로그인 후 댓글을 작성할 수 있습니다.'}
+              disabled={!user || submitting}
+              maxLength={500}
+              className="w-full h-28 sm:h-32 px-3 sm:px-4 py-3 text-[15px] sm:text-base leading-relaxed resize-none outline-none disabled:bg-gray-50 disabled:cursor-not-allowed transition-colors"
+            />
+            <div className="flex justify-between items-center mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-100">
+              <span className="text-xs sm:text-sm text-gray-400 font-medium">
+                {commentText.length}/500
+              </span>
+              <button
+                type="submit"
+                disabled={!user || !commentText.trim() || submitting}
+                className="px-5 sm:px-6 py-2.5 sm:py-3 bg-gray-900 text-white text-sm font-semibold rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-gray-700 active:scale-95 transition-all min-h-[44px]"
+              >
+                {submitting ? '작성 중...' : '댓글 작성'}
+              </button>
+            </div>
+          </form>
+
           {/* 댓글 목록 */}
-          <div className="space-y-8 mb-10">
+          <div className="space-y-4 sm:space-y-5">
             {comments.length === 0 ? (
-              <div className="py-16 text-center text-gray-400 text-[15px]">
-                아직 댓글이 없습니다.
+              <div className="py-16 sm:py-20 text-center">
+                <div className="text-gray-300 mb-3">
+                  <svg className="w-12 h-12 sm:w-16 sm:h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                </div>
+                <p className="text-gray-400 text-sm sm:text-base">아직 댓글이 없습니다.</p>
+                <p className="text-gray-300 text-xs sm:text-sm mt-2">첫 댓글을 남겨보세요!</p>
               </div>
             ) : (
               organizeComments(comments).map((comment) => (
-                <div key={comment.id} className="border-b border-gray-100 last:border-b-0 pb-8">
+                <div key={comment.id} className="bg-white border border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-5">
                   {/* 부모 댓글 */}
                   {renderComment(comment, false)}
 
                   {/* 대댓글 목록 */}
                   {comment.replies && comment.replies.length > 0 && (
-                    <div className="ml-6 sm:ml-10 mt-6 space-y-4 pl-4 sm:pl-6 border-l-[3px] border-gray-200">
+                    <div className="ml-3 sm:ml-6 mt-4 sm:mt-5 space-y-3 sm:space-y-4 pl-3 sm:pl-4 border-l-[3px] sm:border-l-4 border-gray-200">
                       {comment.replies.map((reply) => renderComment(reply, true))}
                     </div>
                   )}
@@ -635,30 +680,6 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
               ))
             )}
           </div>
-
-          {/* 댓글 작성 */}
-          <form onSubmit={(e) => handleCommentSubmit(e)} className="bg-gray-50 rounded-xl p-5 sm:p-6">
-            <textarea
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              placeholder={user ? '댓글을 작성하세요...' : '로그인 후 댓글을 작성할 수 있습니다.'}
-              disabled={!user || submitting}
-              maxLength={500}
-              className="w-full h-28 sm:h-32 px-4 py-3 border border-gray-200 rounded-lg text-[15px] leading-[1.7] resize-none outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-400 disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
-            />
-            <div className="flex justify-between items-center mt-4">
-              <span className="text-[13px] text-gray-400">
-                {commentText.length}/500
-              </span>
-              <button
-                type="submit"
-                disabled={!user || !commentText.trim() || submitting}
-                className="px-6 py-2.5 bg-gray-900 text-white text-[15px] font-semibold rounded-full disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-gray-700 transition-colors"
-              >
-                {submitting ? '작성 중...' : '댓글 작성'}
-              </button>
-            </div>
-          </form>
         </section>
       </main>
 
