@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Loader2, TrendingUp, Users, Calendar } from 'lucide-react'
+import { ArrowLeft, Loader2, TrendingUp, Users, Calendar, Clock, FileText, Share2, BarChart3 } from 'lucide-react'
 
 interface DashboardStats {
   total: number
@@ -54,306 +54,194 @@ export default function StatsAdminPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAFAF8]">
-        <Loader2 className="animate-spin text-gray-400" size={32} />
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="text-center space-y-4">
+          <Loader2 className="animate-spin text-blue-600 mx-auto" size={48} />
+          <p className="text-sm text-gray-600">데이터를 불러오는 중...</p>
+        </div>
       </div>
     )
   }
 
   if (!stats) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAFAF8]">
-        <p className="text-gray-600 text-sm">통계를 불러올 수 없습니다.</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="text-center space-y-4">
+          <p className="text-gray-600 text-base">통계를 불러올 수 없습니다.</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+          >
+            다시 시도
+          </button>
+        </div>
       </div>
     )
   }
 
-  // 주간 평균 계산
   const weeklyAverage = stats.weekly.length > 0
     ? Math.round(stats.weekly.reduce((sum, day) => sum + day.visit_count, 0) / stats.weekly.length)
     : 0
 
   return (
-    <div className="min-h-screen bg-[#FAFAF8]">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* 헤더 */}
-      <header className="border-b-2 border-black sticky top-0 bg-[#FAFAF8] z-50">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
-          <Link href="/board" className="text-gray-700 hover:text-black transition-colors">
-            <ArrowLeft size={20} />
-          </Link>
-          <h1 className="text-lg font-bold text-gray-900">방문자 통계 대시보드</h1>
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Link
+                href="/board"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                aria-label="돌아가기"
+              >
+                <ArrowLeft size={20} className="text-gray-700" />
+              </Link>
+              <div>
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-900">방문자 통계</h1>
+                <p className="text-xs sm:text-sm text-gray-500 mt-0.5">실시간 트래픽 분석 대시보드</p>
+              </div>
+            </div>
+            <div className="hidden sm:flex items-center gap-2 text-xs text-gray-500">
+              <Clock size={14} />
+              <span>실시간 업데이트</span>
+            </div>
+          </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        {/* 통계 카드 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          {/* 총 방문자 */}
-          <div className="bg-white border-2 border-black p-6">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                <Users className="text-blue-600" size={20} />
-              </div>
-              <h3 className="text-sm font-semibold text-gray-600">총 방문자</h3>
-            </div>
-            <p className="text-3xl font-bold text-blue-600">{stats.total.toLocaleString()}</p>
-            <p className="text-xs text-gray-500 mt-1">전체 누적 방문 횟수</p>
-          </div>
-
-          {/* 오늘 방문자 */}
-          <div className="bg-white border-2 border-black p-6">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                <Calendar className="text-green-600" size={20} />
-              </div>
-              <h3 className="text-sm font-semibold text-gray-600">오늘 방문자</h3>
-            </div>
-            <p className="text-3xl font-bold text-green-600">{stats.today.toLocaleString()}</p>
-            <p className="text-xs text-gray-500 mt-1">금일 방문 횟수</p>
-          </div>
-
-          {/* 주간 평균 */}
-          <div className="bg-white border-2 border-black p-6">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                <TrendingUp className="text-purple-600" size={20} />
-              </div>
-              <h3 className="text-sm font-semibold text-gray-600">주간 평균</h3>
-            </div>
-            <p className="text-3xl font-bold text-purple-600">{weeklyAverage.toLocaleString()}</p>
-            <p className="text-xs text-gray-500 mt-1">일평균 방문 횟수 (7일)</p>
-          </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+        {/* 주요 지표 카드 */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <StatCard
+            icon={<Users className="text-blue-600" size={24} />}
+            title="총 방문자"
+            value={stats.total.toLocaleString()}
+            subtitle="전체 누적 방문"
+            bgColor="bg-blue-50"
+            iconBgColor="bg-blue-100"
+          />
+          <StatCard
+            icon={<Calendar className="text-green-600" size={24} />}
+            title="오늘 방문자"
+            value={stats.today.toLocaleString()}
+            subtitle="금일 방문 횟수"
+            bgColor="bg-green-50"
+            iconBgColor="bg-green-100"
+          />
+          <StatCard
+            icon={<TrendingUp className="text-purple-600" size={24} />}
+            title="주간 평균"
+            value={weeklyAverage.toLocaleString()}
+            subtitle="일평균 (최근 7일)"
+            bgColor="bg-purple-50"
+            iconBgColor="bg-purple-100"
+          />
         </div>
 
-        {/* 주간 통계 테이블 */}
-        <div className="bg-white border-2 border-black">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-base font-bold text-gray-900">최근 7일 방문자 추이</h2>
-            <p className="text-xs text-gray-500 mt-1">일별 방문 횟수를 확인할 수 있습니다</p>
-          </div>
+        {/* 주간 트렌드 차트 */}
+        <ChartCard title="주간 트렌드" subtitle="일별 방문자 변화 추이" icon={<BarChart3 size={20} />}>
+          <div className="flex items-end justify-between gap-1 sm:gap-2 h-48 sm:h-64">
+            {stats.weekly.slice().reverse().map((day) => {
+              const maxCount = Math.max(...stats.weekly.map(d => d.visit_count))
+              const height = maxCount > 0 ? (day.visit_count / maxCount) * 100 : 0
+              const isToday = day.id === new Date().toISOString().split('T')[0]
 
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    날짜
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    방문자 수
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    비율
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {stats.weekly.length === 0 ? (
-                  <tr>
-                    <td colSpan={3} className="px-6 py-8 text-center text-sm text-gray-500">
-                      아직 데이터가 없습니다
-                    </td>
-                  </tr>
-                ) : (
-                  stats.weekly.map((day, index) => {
-                    const maxCount = Math.max(...stats.weekly.map(d => d.visit_count))
-                    const percentage = maxCount > 0 ? (day.visit_count / maxCount) * 100 : 0
-                    const isToday = day.id === new Date().toISOString().split('T')[0]
-
-                    return (
-                      <tr key={day.id} className={isToday ? 'bg-blue-50' : ''}>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-gray-900">
-                              {new Date(day.id).toLocaleDateString('ko-KR', {
-                                month: 'long',
-                                day: 'numeric',
-                                weekday: 'short'
-                              })}
-                            </span>
-                            {isToday && (
-                              <span className="px-1.5 py-0.5 text-[10px] font-bold text-blue-600 bg-blue-100 rounded">
-                                TODAY
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right">
-                          <span className="text-sm font-bold text-gray-900">
-                            {day.visit_count.toLocaleString()}
+              return (
+                <div key={day.id} className="flex-1 flex flex-col items-center gap-2 min-w-0">
+                  <div className="relative w-full flex items-end justify-center h-40 sm:h-56">
+                    <div
+                      className={`w-full rounded-t-lg transition-all shadow-sm ${
+                        isToday
+                          ? 'bg-gradient-to-t from-blue-600 via-blue-500 to-blue-400'
+                          : 'bg-gradient-to-t from-gray-400 via-gray-300 to-gray-200'
+                      }`}
+                      style={{ height: `${height}%`, minHeight: day.visit_count > 0 ? '12px' : '0' }}
+                    >
+                      {day.visit_count > 0 && (
+                        <div className="absolute -top-7 left-0 right-0 text-center">
+                          <span className="text-xs font-bold text-gray-900 bg-white/80 backdrop-blur-sm px-1.5 py-0.5 rounded">
+                            {day.visit_count}
                           </span>
-                          <span className="text-xs text-gray-500 ml-1">명</span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            <div className="w-24 bg-gray-200 rounded-full h-2 overflow-hidden">
-                              <div
-                                className="bg-blue-600 h-2 rounded-full transition-all"
-                                style={{ width: `${percentage}%` }}
-                              />
-                            </div>
-                            <span className="text-xs text-gray-600 w-12 text-right">
-                              {percentage.toFixed(0)}%
-                            </span>
-                          </div>
-                        </td>
-                      </tr>
-                    )
-                  })
-                )}
-              </tbody>
-            </table>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-center w-full">
+                    <div className="text-[10px] sm:text-xs text-gray-600 truncate">
+                      {new Date(day.id).toLocaleDateString('ko-KR', {
+                        month: 'short',
+                        day: 'numeric'
+                      })}
+                    </div>
+                    {isToday && (
+                      <div className="text-[8px] sm:text-[9px] font-bold text-blue-600">TODAY</div>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
           </div>
+        </ChartCard>
 
-          {/* 푸터 정보 */}
-          {stats.weekly.length > 0 && (
-            <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
-              <div className="flex items-center justify-between text-xs text-gray-600">
-                <span>
-                  총 <span className="font-bold text-gray-900">{stats.weekly.length}</span>일 데이터
-                </span>
-                <span>
-                  최고: <span className="font-bold text-gray-900">
-                    {Math.max(...stats.weekly.map(d => d.visit_count)).toLocaleString()}명
-                  </span>
-                  {' / '}
-                  최저: <span className="font-bold text-gray-900">
-                    {Math.min(...stats.weekly.map(d => d.visit_count)).toLocaleString()}명
-                  </span>
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* 시간대별 트래픽 */}
-        {stats.hourlyTraffic && stats.hourlyTraffic.length > 0 && (
-          <div className="mt-8 bg-white border-2 border-black">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-base font-bold text-gray-900">시간대별 트래픽 (최근 24시간)</h2>
-              <p className="text-xs text-gray-500 mt-1">시간당 방문자 추이를 확인할 수 있습니다</p>
-            </div>
-            <div className="p-6">
-              <div className="space-y-2">
-                {stats.hourlyTraffic.slice(0, 12).map((traffic) => {
-                  const maxVisits = Math.max(...stats.hourlyTraffic.map(t => t.total_visits))
-                  const percentage = maxVisits > 0 ? (traffic.total_visits / maxVisits) * 100 : 0
-                  const hourStr = new Date(traffic.hour).toLocaleString('ko-KR', {
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* 인기 페이지 */}
+          <ChartCard title="인기 페이지" subtitle="최근 30일 TOP 10" icon={<FileText size={20} />}>
+            {stats.popularPages && stats.popularPages.length > 0 ? (
+              <div className="space-y-3">
+                {stats.popularPages.slice(0, 10).map((page, index) => {
+                  const maxViews = Math.max(...stats.popularPages.map(p => p.total_views))
+                  const percentage = maxViews > 0 ? (page.total_views / maxViews) * 100 : 0
 
                   return (
-                    <div key={traffic.hour} className="flex items-center gap-3">
-                      <span className="text-xs text-gray-600 w-32 flex-shrink-0">{hourStr}</span>
-                      <div className="flex-1 bg-gray-200 rounded-full h-6 overflow-hidden">
-                        <div
-                          className="bg-gradient-to-r from-blue-500 to-blue-600 h-6 rounded-full flex items-center justify-end pr-2 transition-all"
-                          style={{ width: `${Math.max(percentage, 5)}%` }}
-                        >
-                          {traffic.total_visits > 0 && (
-                            <span className="text-[10px] font-bold text-white">
-                              {traffic.total_visits}
-                            </span>
-                          )}
+                    <div key={page.page_path} className="space-y-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                          <span className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                            index === 0 ? 'bg-yellow-100 text-yellow-700' :
+                            index === 1 ? 'bg-gray-200 text-gray-700' :
+                            index === 2 ? 'bg-orange-100 text-orange-700' :
+                            'bg-gray-100 text-gray-600'
+                          }`}>
+                            {index + 1}
+                          </span>
+                          <span className="text-sm text-gray-900 font-mono truncate">{page.page_path}</span>
+                        </div>
+                        <div className="flex-shrink-0 text-right">
+                          <div className="text-sm font-bold text-gray-900">{page.total_views.toLocaleString()}</div>
+                          <div className="text-xs text-gray-500">{page.unique_visitors}명</div>
                         </div>
                       </div>
-                      <span className="text-xs text-gray-500 w-16 text-right">
-                        {traffic.unique_visitors}명
-                      </span>
+                      <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                        <div
+                          className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all"
+                          style={{ width: `${percentage}%` }}
+                        />
+                      </div>
                     </div>
                   )
                 })}
               </div>
-            </div>
-          </div>
-        )}
+            ) : (
+              <EmptyState message="데이터가 수집되는 중입니다" />
+            )}
+          </ChartCard>
 
-        {/* 인기 페이지 TOP 10 */}
-        {stats.popularPages && stats.popularPages.length > 0 && (
-          <div className="mt-8 bg-white border-2 border-black">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-base font-bold text-gray-900">인기 페이지 TOP 10</h2>
-              <p className="text-xs text-gray-500 mt-1">최근 30일 기준 가장 많이 방문한 페이지</p>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      순위
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      페이지
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      총 조회수
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      고유 방문자
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {stats.popularPages.map((page, index) => (
-                    <tr key={page.page_path} className={index < 3 ? 'bg-yellow-50' : ''}>
-                      <td className="px-6 py-3 whitespace-nowrap">
-                        <span className={`text-sm font-bold ${
-                          index === 0 ? 'text-yellow-600' :
-                          index === 1 ? 'text-gray-500' :
-                          index === 2 ? 'text-orange-600' :
-                          'text-gray-400'
-                        }`}>
-                          {index + 1}
-                        </span>
-                      </td>
-                      <td className="px-6 py-3">
-                        <span className="text-sm text-gray-900 font-mono">{page.page_path}</span>
-                      </td>
-                      <td className="px-6 py-3 whitespace-nowrap text-right">
-                        <span className="text-sm font-bold text-gray-900">
-                          {page.total_views.toLocaleString()}
-                        </span>
-                      </td>
-                      <td className="px-6 py-3 whitespace-nowrap text-right">
-                        <span className="text-sm text-gray-600">
-                          {page.unique_visitors.toLocaleString()}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {/* 유입 경로 분석 */}
-        {stats.referrers && stats.referrers.length > 0 && (
-          <div className="mt-8 bg-white border-2 border-black">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-base font-bold text-gray-900">유입 경로 분석</h2>
-              <p className="text-xs text-gray-500 mt-1">방문자들이 어디에서 유입되었는지 확인할 수 있습니다</p>
-            </div>
-            <div className="p-6">
+          {/* 유입 경로 */}
+          <ChartCard title="유입 경로" subtitle="트래픽 소스 분석" icon={<Share2 size={20} />}>
+            {stats.referrers && stats.referrers.length > 0 ? (
               <div className="space-y-3">
                 {stats.referrers.map((referrer) => {
                   const maxVisits = Math.max(...stats.referrers.map(r => r.total_visits))
                   const percentage = maxVisits > 0 ? (referrer.total_visits / maxVisits) * 100 : 0
 
                   return (
-                    <div key={referrer.source} className="space-y-1">
+                    <div key={referrer.source} className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-gray-900">{referrer.source}</span>
-                        <div className="flex items-center gap-3">
-                          <span className="text-xs text-gray-500">
-                            {referrer.unique_visitors}명
-                          </span>
-                          <span className="text-sm font-bold text-gray-900">
-                            {referrer.total_visits.toLocaleString()}회
-                          </span>
+                        <span className="text-sm font-medium text-gray-900 truncate flex-1">{referrer.source}</span>
+                        <div className="flex items-center gap-3 flex-shrink-0">
+                          <span className="text-xs text-gray-500">{referrer.unique_visitors}명</span>
+                          <span className="text-sm font-bold text-gray-900">{referrer.total_visits.toLocaleString()}</span>
                         </div>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
@@ -366,69 +254,143 @@ export default function StatsAdminPage() {
                   )
                 })}
               </div>
-            </div>
-          </div>
-        )}
+            ) : (
+              <EmptyState message="유입 경로 데이터가 없습니다" />
+            )}
+          </ChartCard>
+        </div>
 
-        {/* 주간 트렌드 차트 */}
-        {stats.weekly && stats.weekly.length > 0 && (
-          <div className="mt-8 bg-white border-2 border-black">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-base font-bold text-gray-900">주간 트렌드</h2>
-              <p className="text-xs text-gray-500 mt-1">일별 방문자 변화 추이</p>
-            </div>
-            <div className="p-6">
-              <div className="flex items-end justify-between gap-2 h-48">
-                {stats.weekly.slice().reverse().map((day) => {
-                  const maxCount = Math.max(...stats.weekly.map(d => d.visit_count))
-                  const height = maxCount > 0 ? (day.visit_count / maxCount) * 100 : 0
-                  const isToday = day.id === new Date().toISOString().split('T')[0]
+        {/* 시간대별 트래픽 */}
+        <ChartCard title="시간대별 트래픽" subtitle="최근 24시간 활동" icon={<Clock size={20} />}>
+          {stats.hourlyTraffic && stats.hourlyTraffic.length > 0 ? (
+            <div className="space-y-2">
+              {stats.hourlyTraffic.slice(0, 12).map((traffic) => {
+                const maxVisits = Math.max(...stats.hourlyTraffic.map(t => t.total_visits))
+                const percentage = maxVisits > 0 ? (traffic.total_visits / maxVisits) * 100 : 0
+                const hourStr = new Date(traffic.hour).toLocaleString('ko-KR', {
+                  month: 'short',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })
 
-                  return (
-                    <div key={day.id} className="flex-1 flex flex-col items-center gap-2">
-                      <div className="relative w-full flex items-end justify-center h-40">
-                        <div
-                          className={`w-full rounded-t transition-all ${
-                            isToday ? 'bg-gradient-to-t from-blue-600 to-blue-400' : 'bg-gradient-to-t from-gray-400 to-gray-300'
-                          }`}
-                          style={{ height: `${height}%`, minHeight: day.visit_count > 0 ? '8px' : '0' }}
-                        >
-                          {day.visit_count > 0 && (
-                            <div className="absolute -top-6 left-0 right-0 text-center">
-                              <span className="text-[10px] font-bold text-gray-900">
-                                {day.visit_count}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-[10px] text-gray-600">
-                          {new Date(day.id).toLocaleDateString('ko-KR', {
-                            month: 'short',
-                            day: 'numeric'
-                          })}
-                        </div>
-                        {isToday && (
-                          <div className="text-[9px] font-bold text-blue-600">TODAY</div>
+                return (
+                  <div key={traffic.hour} className="flex items-center gap-3">
+                    <span className="text-xs text-gray-600 w-24 sm:w-32 flex-shrink-0">{hourStr}</span>
+                    <div className="flex-1 bg-gray-200 rounded-full h-7 overflow-hidden">
+                      <div
+                        className="bg-gradient-to-r from-blue-500 to-blue-600 h-7 rounded-full flex items-center justify-end pr-3 transition-all"
+                        style={{ width: `${Math.max(percentage, 8)}%` }}
+                      >
+                        {traffic.total_visits > 0 && (
+                          <span className="text-xs font-bold text-white">
+                            {traffic.total_visits}
+                          </span>
                         )}
                       </div>
                     </div>
-                  )
-                })}
-              </div>
+                    <span className="text-xs text-gray-500 w-12 sm:w-16 text-right flex-shrink-0">
+                      {traffic.unique_visitors}명
+                    </span>
+                  </div>
+                )
+              })}
             </div>
-          </div>
-        )}
+          ) : (
+            <EmptyState message="시간대별 데이터가 없습니다" />
+          )}
+        </ChartCard>
 
         {/* 안내 메시지 */}
-        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded">
-          <p className="text-xs text-blue-800">
-            💡 <span className="font-semibold">쿠키 기반 중복 방지:</span> 같은 방문자는 하루에 한 번만 카운트됩니다.
-            데이터는 실시간으로 수집되며, 상세 분석 정보가 표시됩니다.
-          </p>
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 sm:p-6">
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+              <span className="text-lg">💡</span>
+            </div>
+            <div className="flex-1 space-y-1">
+              <p className="text-sm font-semibold text-blue-900">데이터 수집 정보</p>
+              <p className="text-xs text-blue-800 leading-relaxed">
+                쿠키 기반 중복 방지로 같은 방문자는 하루에 한 번만 카운트됩니다.
+                모든 데이터는 실시간으로 수집되며, 개인정보는 해시 처리되어 안전하게 보관됩니다.
+              </p>
+            </div>
+          </div>
         </div>
       </main>
+    </div>
+  )
+}
+
+// 통계 카드 컴포넌트
+function StatCard({
+  icon,
+  title,
+  value,
+  subtitle,
+  bgColor,
+  iconBgColor
+}: {
+  icon: React.ReactNode
+  title: string
+  value: string
+  subtitle: string
+  bgColor: string
+  iconBgColor: string
+}) {
+  return (
+    <div className={`${bgColor} rounded-xl p-6 shadow-sm border border-gray-200`}>
+      <div className="flex items-start justify-between mb-4">
+        <div className={`${iconBgColor} p-3 rounded-lg`}>
+          {icon}
+        </div>
+      </div>
+      <div className="space-y-1">
+        <h3 className="text-sm font-medium text-gray-600">{title}</h3>
+        <p className="text-3xl sm:text-4xl font-bold text-gray-900">{value}</p>
+        <p className="text-xs text-gray-500">{subtitle}</p>
+      </div>
+    </div>
+  )
+}
+
+// 차트 카드 컴포넌트
+function ChartCard({
+  title,
+  subtitle,
+  icon,
+  children
+}: {
+  title: string
+  subtitle: string
+  icon: React.ReactNode
+  children: React.ReactNode
+}) {
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+        <div className="flex items-center gap-3">
+          <div className="text-gray-600">{icon}</div>
+          <div>
+            <h2 className="text-base font-bold text-gray-900">{title}</h2>
+            <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>
+          </div>
+        </div>
+      </div>
+      <div className="p-6">
+        {children}
+      </div>
+    </div>
+  )
+}
+
+// 빈 상태 컴포넌트
+function EmptyState({ message }: { message: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-12 text-center">
+      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+        <BarChart3 className="text-gray-400" size={32} />
+      </div>
+      <p className="text-sm text-gray-500">{message}</p>
     </div>
   )
 }
