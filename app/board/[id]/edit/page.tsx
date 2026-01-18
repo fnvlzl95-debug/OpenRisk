@@ -38,17 +38,11 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
 
     const loadData = async () => {
       setLoading(true)
+      setError('')
 
       try {
-        // 병렬로 사용자, 프로필, 게시글 로드
-        const [
-          { data: { user } },
-          postRes
-        ] = await Promise.all([
-          supabase.auth.getUser(),
-          fetch(`/api/board/posts/${id}`)
-        ])
-
+        // 1. 먼저 사용자 인증 확인
+        const { data: { user } } = await supabase.auth.getUser()
         setUser(user)
 
         if (!user) {
@@ -56,33 +50,47 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
           return
         }
 
-        // 프로필 확인
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('is_admin')
-          .eq('id', user.id)
-          .single()
+        // 2. 프로필과 게시글을 병렬로 로드
+        const [profileResult, postRes] = await Promise.all([
+          supabase
+            .from('profiles')
+            .select('is_admin')
+            .eq('id', user.id)
+            .single(),
+          fetch(`/api/board/posts/${id}`, {
+            cache: 'no-store'
+          })
+        ])
+
+        const profileData = profileResult.data
         setProfile(profileData)
 
-        // 게시글 처리
+        // 3. 게시글 처리
         if (!postRes.ok) {
-          throw new Error('게시글을 찾을 수 없습니다.')
+          const errorData = await postRes.json().catch(() => ({}))
+          throw new Error(errorData.error || '게시글을 찾을 수 없습니다.')
         }
 
         const data = await postRes.json()
         const postData = data.post
 
-        // 권한 확인 (작성자 또는 관리자)
+        if (!postData) {
+          throw new Error('게시글 데이터가 없습니다.')
+        }
+
+        // 4. 권한 확인 (작성자 또는 관리자)
         if (postData.author_id !== user.id && !profileData?.is_admin) {
           router.push(`/board/${id}`)
           return
         }
 
+        // 5. 상태 업데이트
         setPost(postData)
-        setTitle(postData.title)
-        setContent(postData.content)
-        setIsNotice(postData.is_notice)
+        setTitle(postData.title || '')
+        setContent(postData.content || '')
+        setIsNotice(postData.is_notice || false)
       } catch (err) {
+        console.error('Edit page load error:', err)
         setError(err instanceof Error ? err.message : '게시글을 불러올 수 없습니다.')
       } finally {
         setLoading(false)

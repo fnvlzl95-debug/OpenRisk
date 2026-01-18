@@ -55,37 +55,24 @@ export async function POST(request: NextRequest) {
             .map(b => b.toString(16).padStart(2, '0')).join(''))
       : 'unknown'
 
-    // 오늘 이미 카운트했는지 DB에서 확인 (쿠키보다 정확함)
+    // 오늘 이미 카운트했는지 확인 (하루 1회만 기록)
     let alreadyCounted = false
+    const adminClient = createAdminClient()
+
     if (visitorId) {
-      const adminClient = createAdminClient()
       const { data: existingLog } = await adminClient
         .from('visitor_logs')
         .select('id')
         .eq('visitor_id', visitorId)
         .gte('visited_at', `${today}T00:00:00Z`)
         .limit(1)
-        .single()
+        .maybeSingle()
 
       alreadyCounted = !!existingLog
     }
 
     if (alreadyCounted) {
-      // 이미 카운트됨 - 로그만 저장
-      const adminClient = createAdminClient()
-      const { error: logError } = await adminClient.from('visitor_logs').insert({
-        visitor_id: visitorId,
-        page_path: pagePath,
-        referrer,
-        user_agent: userAgent,
-        ip_hash: ipHash,
-        session_id: sessionId
-      })
-
-      if (logError) {
-        console.error('visitor_logs INSERT 실패 (already counted):', logError)
-      }
-
+      // 이미 카운트됨 - 로그 저장하지 않음 (하루 1회만 기록)
       const supabase = await createClient()
       const { data } = await supabase
         .from('visitor_stats')
@@ -100,9 +87,7 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // 카운터 증가
-    const adminClient = createAdminClient()
-
+    // 카운터 증가 (adminClient는 이미 선언됨)
     // 총 방문자 증가
     const { data: totalCount } = await adminClient
       .rpc('increment_visitor_count', { p_stat_id: 'total' })

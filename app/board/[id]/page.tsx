@@ -495,7 +495,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
 
       {/* Header - 심플하고 깔끔한 헤더 */}
       <header className="bg-white border-b border-gray-100">
-        <div className="max-w-2xl mx-auto px-5 sm:px-6 py-5 sm:py-5">
+        <div className="max-w-4xl mx-auto px-5 sm:px-6 py-5 sm:py-5">
           <div className="flex justify-between items-center">
             <Link href="/home-b" className="group">
               <span className="text-lg sm:text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
@@ -508,7 +508,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
       </header>
 
       {/* Main - 편안한 가독성 중심 */}
-      <main className="max-w-2xl mx-auto px-5 sm:px-6 py-6 sm:py-8 bg-gray-50">
+      <main className="max-w-4xl mx-auto px-5 sm:px-6 py-6 sm:py-8 bg-gray-50">
         {/* 뒤로가기 */}
         <Link
           href="/board"
@@ -559,10 +559,9 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
           </div>
 
           {/* 본문 */}
-          <div className="prose prose-lg max-w-none">
+          <div className="prose prose-lg max-w-none text-[16px] sm:text-[17px] leading-[1.8] text-gray-700">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
-              className="text-[16px] sm:text-[17px] leading-[1.8] text-gray-700"
               components={{
                 h1: ({ children }) => (
                   <h1 className="text-[24px] sm:text-[28px] font-bold text-gray-900 mt-8 mb-6 leading-[1.3]">
@@ -614,13 +613,13 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
                     {children}
                   </blockquote>
                 ),
-                code: ({ inline, children }) =>
+                code: ({ node, inline, className, children, ...props }: any) =>
                   inline ? (
-                    <code className="px-1.5 py-0.5 bg-gray-100 text-gray-800 rounded text-sm font-mono">
+                    <code className="px-1.5 py-0.5 bg-gray-100 text-gray-800 rounded text-sm font-mono" {...props}>
                       {children}
                     </code>
                   ) : (
-                    <code className="block my-4 p-4 bg-gray-100 text-gray-800 rounded-lg text-sm font-mono overflow-x-auto">
+                    <code className="block my-4 p-4 bg-gray-100 text-gray-800 rounded-lg text-sm font-mono overflow-x-auto" {...props}>
                       {children}
                     </code>
                   ),
@@ -637,7 +636,13 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
                 hr: () => <hr className="my-8 border-gray-200" />,
               }}
             >
-              {post.content}
+              {post.content
+                .replace(/&#8220;/g, '"')
+                .replace(/&#8221;/g, '"')
+                .replace(/&#8216;/g, "'")
+                .replace(/&#8217;/g, "'")
+                .replace(/&quot;/g, '"')
+                .replace(/&#39;/g, "'")}
             </ReactMarkdown>
           </div>
 
@@ -723,7 +728,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
 
       {/* Footer */}
       <footer className="bg-white border-t border-gray-100 mt-8">
-        <div className="max-w-2xl mx-auto px-5 sm:px-6 py-8">
+        <div className="max-w-4xl mx-auto px-5 sm:px-6 py-8">
           <div className="flex flex-col items-center gap-2 text-xs text-gray-400">
             <Link href="/home-b" className="font-bold text-gray-600 hover:text-blue-600 transition-colors">
               OPEN RISK

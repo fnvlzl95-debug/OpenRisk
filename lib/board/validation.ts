@@ -2,8 +2,13 @@
 
 // HTML 태그 제거 (XSS 방지)
 // 마크다운은 ReactMarkdown이 안전하게 렌더링하므로 < > 만 이스케이프
+// 스마트 따옴표는 일반 따옴표로 변환 (마크다운 호환성)
 export function sanitizeHtml(text: string): string {
   return text
+    // 스마트 따옴표를 일반 따옴표로 변환
+    .replace(/[""]/g, '"')
+    .replace(/['']/g, "'")
+    // HTML 태그 이스케이프
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
 }
