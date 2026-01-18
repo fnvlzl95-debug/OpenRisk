@@ -55,24 +55,59 @@ export async function POST(request: NextRequest) {
             .map(b => b.toString(16).padStart(2, '0')).join(''))
       : 'unknown'
 
-    // 오늘 이미 카운트했는지 DB에서 확인 (쿠키보다 정확함)
+    // 오늘 이미 카운트했는지 + 최근 5분 이내 중복 방문인지 확인
     let alreadyCounted = false
+    let recentlyLogged = false
+    const adminClient = createAdminClient()
+
     if (visitorId) {
-      const adminClient = createAdminClient()
+      // 1. 오늘 카운트 여부 확인
       const { data: existingLog } = await adminClient
         .from('visitor_logs')
-        .select('id')
+        .select('id, visited_at')
         .eq('visitor_id', visitorId)
         .gte('visited_at', `${today}T00:00:00Z`)
+        .order('visited_at', { ascending: false })
         .limit(1)
-        .single()
+        .maybeSingle()
 
       alreadyCounted = !!existingLog
+
+      // 2. 최근 5분 이내 같은 페이지 방문 확인 (중복 로그 방지)
+      if (existingLog) {
+        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString()
+        const { data: recentLog } = await adminClient
+          .from('visitor_logs')
+          .select('id')
+          .eq('visitor_id', visitorId)
+          .eq('page_path', pagePath)
+          .gte('visited_at', fiveMinutesAgo)
+          .limit(1)
+          .maybeSingle()
+
+        recentlyLogged = !!recentLog
+      }
     }
 
     if (alreadyCounted) {
-      // 이미 카운트됨 - 로그만 저장
-      const adminClient = createAdminClient()
+      // 이미 카운트됨
+      if (recentlyLogged) {
+        // 최근 5분 이내 같은 페이지 방문 - 로그 저장 안 함
+        const supabase = await createClient()
+        const { data } = await supabase
+          .from('visitor_stats')
+          .select('visit_count')
+          .eq('id', 'total')
+          .single()
+
+        return NextResponse.json({
+          success: true,
+          counted: false,
+          count: data?.visit_count || 0
+        })
+      }
+
+      // 5분 이상 지났거나 다른 페이지 - 로그만 저장
       const { error: logError } = await adminClient.from('visitor_logs').insert({
         visitor_id: visitorId,
         page_path: pagePath,
@@ -100,9 +135,7 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    // 카운터 증가
-    const adminClient = createAdminClient()
-
+    // 카운터 증가 (adminClient는 이미 선언됨)
     // 총 방문자 증가
     const { data: totalCount } = await adminClient
       .rpc('increment_visitor_count', { p_stat_id: 'total' })
