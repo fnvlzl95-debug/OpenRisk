@@ -143,7 +143,7 @@ export default function AuthButton() {
             </div>
           )}
           {/* 데스크톱: 닉네임 표시 */}
-          <span className="hidden sm:flex items-center text-xs font-medium">
+          <span className="hidden sm:flex items-center text-xs font-medium text-gray-900">
             {displayName}
             {profile?.is_admin && (
               <span className="ml-1 text-[10px] text-red-500">[관리자]</span>
