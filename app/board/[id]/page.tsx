@@ -613,13 +613,13 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
                     {children}
                   </blockquote>
                 ),
-                code: ({ inline, children }) =>
+                code: ({ node, inline, className, children, ...props }: any) =>
                   inline ? (
-                    <code className="px-1.5 py-0.5 bg-gray-100 text-gray-800 rounded text-sm font-mono">
+                    <code className="px-1.5 py-0.5 bg-gray-100 text-gray-800 rounded text-sm font-mono" {...props}>
                       {children}
                     </code>
                   ) : (
-                    <code className="block my-4 p-4 bg-gray-100 text-gray-800 rounded-lg text-sm font-mono overflow-x-auto">
+                    <code className="block my-4 p-4 bg-gray-100 text-gray-800 rounded-lg text-sm font-mono overflow-x-auto" {...props}>
                       {children}
                     </code>
                   ),
