@@ -1,12 +1,11 @@
 // 입력값 검증 및 sanitize
 
 // HTML 태그 제거 (XSS 방지)
+// 마크다운은 ReactMarkdown이 안전하게 렌더링하므로 < > 만 이스케이프
 export function sanitizeHtml(text: string): string {
   return text
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
 }
 
 // 게시글 검증

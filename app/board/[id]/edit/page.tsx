@@ -37,31 +37,39 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
     const supabase = createClient()
 
     const loadData = async () => {
-      // 사용자 확인
-      const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
+      setLoading(true)
 
-      if (!user) {
-        router.push('/board')
-        return
-      }
-
-      // 프로필 확인
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('is_admin')
-        .eq('id', user.id)
-        .single()
-      setProfile(profileData)
-
-      // 게시글 로드
       try {
-        const res = await fetch(`/api/board/posts/${id}`)
-        if (!res.ok) {
+        // 병렬로 사용자, 프로필, 게시글 로드
+        const [
+          { data: { user } },
+          postRes
+        ] = await Promise.all([
+          supabase.auth.getUser(),
+          fetch(`/api/board/posts/${id}`)
+        ])
+
+        setUser(user)
+
+        if (!user) {
+          router.push('/board')
+          return
+        }
+
+        // 프로필 확인
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('is_admin')
+          .eq('id', user.id)
+          .single()
+        setProfile(profileData)
+
+        // 게시글 처리
+        if (!postRes.ok) {
           throw new Error('게시글을 찾을 수 없습니다.')
         }
 
-        const data = await res.json()
+        const data = await postRes.json()
         const postData = data.post
 
         // 권한 확인 (작성자 또는 관리자)
@@ -122,7 +130,10 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
   if (loading) {
     return (
       <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
-        <div className="text-gray-400">로딩 중...</div>
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-3 border-gray-200 border-t-gray-400 rounded-full animate-spin" />
+          <div className="text-sm text-gray-500">게시글 불러오는 중...</div>
+        </div>
       </div>
     )
   }

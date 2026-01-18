@@ -7,6 +7,8 @@ import AuthButton from '@/components/board/AuthButton'
 import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { hasViewedPost, markPostAsViewed } from '@/lib/board/view-tracker'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 // 커스텀 확인 모달
 function ConfirmModal({
@@ -558,35 +560,85 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
 
           {/* 본문 */}
           <div className="prose prose-lg max-w-none">
-            <div className="text-[16px] sm:text-[17px] leading-[1.8] text-gray-700 space-y-4">
-              {post.content.split('\n').map((line, i) => {
-                if (line.startsWith('## ')) {
-                  return (
-                    <h2 key={i} className="text-[20px] sm:text-[22px] font-bold text-gray-900 mt-8 mb-4 leading-[1.3]">
-                      {line.replace('## ', '')}
-                    </h2>
-                  )
-                }
-                if (line.startsWith('- **')) {
-                  const match = line.match(/- \*\*(.+?)\*\*: (.+)/)
-                  if (match) {
-                    return (
-                      <p key={i} className="my-3 leading-[1.8]">
-                        <strong className="font-semibold text-gray-900">{match[1]}</strong>: {match[2]}
-                      </p>
-                    )
-                  }
-                }
-                if (line.trim() === '') {
-                  return <div key={i} className="h-3" />
-                }
-                return (
-                  <p key={i} className="leading-[1.8] text-gray-700">
-                    {line}
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              className="text-[16px] sm:text-[17px] leading-[1.8] text-gray-700"
+              components={{
+                h1: ({ children }) => (
+                  <h1 className="text-[24px] sm:text-[28px] font-bold text-gray-900 mt-8 mb-6 leading-[1.3]">
+                    {children}
+                  </h1>
+                ),
+                h2: ({ children }) => (
+                  <h2 className="text-[20px] sm:text-[22px] font-bold text-gray-900 mt-8 mb-4 leading-[1.3]">
+                    {children}
+                  </h2>
+                ),
+                h3: ({ children }) => (
+                  <h3 className="text-[18px] sm:text-[20px] font-semibold text-gray-900 mt-6 mb-3 leading-[1.4]">
+                    {children}
+                  </h3>
+                ),
+                p: ({ children }) => (
+                  <p className="my-4 leading-[1.8] text-gray-700">
+                    {children}
                   </p>
-                )
-              })}
-            </div>
+                ),
+                strong: ({ children }) => (
+                  <strong className="font-semibold text-gray-900">
+                    {children}
+                  </strong>
+                ),
+                em: ({ children }) => (
+                  <em className="italic text-gray-800">
+                    {children}
+                  </em>
+                ),
+                ul: ({ children }) => (
+                  <ul className="my-4 ml-6 space-y-2 list-disc">
+                    {children}
+                  </ul>
+                ),
+                ol: ({ children }) => (
+                  <ol className="my-4 ml-6 space-y-2 list-decimal">
+                    {children}
+                  </ol>
+                ),
+                li: ({ children }) => (
+                  <li className="leading-[1.8] text-gray-700">
+                    {children}
+                  </li>
+                ),
+                blockquote: ({ children }) => (
+                  <blockquote className="my-4 pl-4 border-l-4 border-gray-300 text-gray-600 italic">
+                    {children}
+                  </blockquote>
+                ),
+                code: ({ inline, children }) =>
+                  inline ? (
+                    <code className="px-1.5 py-0.5 bg-gray-100 text-gray-800 rounded text-sm font-mono">
+                      {children}
+                    </code>
+                  ) : (
+                    <code className="block my-4 p-4 bg-gray-100 text-gray-800 rounded-lg text-sm font-mono overflow-x-auto">
+                      {children}
+                    </code>
+                  ),
+                a: ({ href, children }) => (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-800 underline"
+                  >
+                    {children}
+                  </a>
+                ),
+                hr: () => <hr className="my-8 border-gray-200" />,
+              }}
+            >
+              {post.content}
+            </ReactMarkdown>
           </div>
 
           {/* 버튼 영역 */}
