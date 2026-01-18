@@ -636,7 +636,13 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
                 hr: () => <hr className="my-8 border-gray-200" />,
               }}
             >
-              {post.content}
+              {post.content
+                .replace(/&#8220;/g, '"')
+                .replace(/&#8221;/g, '"')
+                .replace(/&#8216;/g, "'")
+                .replace(/&#8217;/g, "'")
+                .replace(/&quot;/g, '"')
+                .replace(/&#39;/g, "'")}
             </ReactMarkdown>
           </div>
 
