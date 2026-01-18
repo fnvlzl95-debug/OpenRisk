@@ -32,7 +32,9 @@
       "Bash(nslookup:*)",
       "Bash(lsof:*)",
       "Bash(npm install:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(taskkill:*)",
+      "Bash(psql:*)"
     ]
   }
 }
