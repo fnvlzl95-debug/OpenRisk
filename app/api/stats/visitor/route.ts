@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
 
     // IP 해싱 (개인정보 보호)
     const forwarded = request.headers.get('x-forwarded-for')
-    const ip = forwarded ? forwarded.split(',')[0] : request.ip || 'unknown'
+    const ip = forwarded ? forwarded.split(',')[0] : 'unknown'
     const ipHash = ip !== 'unknown'
       ? await crypto.subtle.digest('SHA-256', new TextEncoder().encode(ip))
           .then(buf => Array.from(new Uint8Array(buf))
