@@ -7,6 +7,14 @@ export function VisitorTracker() {
   const pathname = usePathname()
 
   useEffect(() => {
+    // 관리자 페이지 및 API 경로는 추적하지 않음
+    const excludedPaths = ['/admin', '/api']
+    const shouldTrack = !excludedPaths.some(path => pathname.startsWith(path))
+
+    if (!shouldTrack) {
+      return
+    }
+
     // 페이지 로드 시 방문자 추적
     async function trackVisit() {
       try {
