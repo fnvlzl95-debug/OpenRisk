@@ -36,39 +36,54 @@ export async function GET(request: NextRequest) {
     console.log('[Dashboard API] today:', today, 'weekAgo:', weekAgo)
 
     // 총 통계
-    const { data: total, error: totalError } = await supabase
+    const { data: total } = await supabase
       .from('visitor_stats')
       .select('visit_count, unique_visitors')
       .eq('id', 'total')
       .single()
 
-    console.log('[Dashboard API] total:', total, 'error:', totalError)
-
     // 오늘 통계
-    const { data: todayStats, error: todayError } = await supabase
+    const { data: todayStats } = await supabase
       .from('visitor_stats')
       .select('visit_count')
       .eq('id', today)
       .single()
 
-    console.log('[Dashboard API] todayStats:', todayStats, 'error:', todayError)
-
     // 주간 통계
-    const { data: weeklyData, error: weeklyError } = await supabase
+    const { data: weeklyData } = await supabase
       .from('visitor_stats')
       .select('id, visit_count')
       .gte('id', weekAgo)
       .lte('id', today)
       .order('id', { ascending: false })
 
-    console.log('[Dashboard API] weeklyData:', weeklyData, 'error:', weeklyError)
+    // 시간대별 트래픽 (최근 24시간)
+    const { data: hourlyTraffic } = await supabase
+      .from('hourly_traffic')
+      .select('*')
+      .limit(24)
+
+    // 인기 페이지 TOP 10
+    const { data: popularPages } = await supabase
+      .from('popular_pages')
+      .select('*')
+      .limit(10)
+
+    // 유입 경로 분석
+    const { data: referrerData } = await supabase
+      .from('referrer_analysis')
+      .select('*')
+      .limit(10)
 
     return NextResponse.json({
       success: true,
       stats: {
         total: total?.visit_count || 0,
         today: todayStats?.visit_count || 0,
-        weekly: weeklyData || []
+        weekly: weeklyData || [],
+        hourlyTraffic: hourlyTraffic || [],
+        popularPages: popularPages || [],
+        referrers: referrerData || []
       }
     })
   } catch (error) {
