@@ -55,72 +55,24 @@ export async function POST(request: NextRequest) {
             .map(b => b.toString(16).padStart(2, '0')).join(''))
       : 'unknown'
 
-    // 오늘 이미 카운트했는지 + 최근 5분 이내 중복 방문인지 확인
+    // 오늘 이미 카운트했는지 확인 (하루 1회만 기록)
     let alreadyCounted = false
-    let recentlyLogged = false
     const adminClient = createAdminClient()
 
     if (visitorId) {
-      // 1. 오늘 카운트 여부 확인
       const { data: existingLog } = await adminClient
         .from('visitor_logs')
-        .select('id, visited_at')
+        .select('id')
         .eq('visitor_id', visitorId)
         .gte('visited_at', `${today}T00:00:00Z`)
-        .order('visited_at', { ascending: false })
         .limit(1)
         .maybeSingle()
 
       alreadyCounted = !!existingLog
-
-      // 2. 최근 5분 이내 같은 페이지 방문 확인 (중복 로그 방지)
-      if (existingLog) {
-        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString()
-        const { data: recentLog } = await adminClient
-          .from('visitor_logs')
-          .select('id')
-          .eq('visitor_id', visitorId)
-          .eq('page_path', pagePath)
-          .gte('visited_at', fiveMinutesAgo)
-          .limit(1)
-          .maybeSingle()
-
-        recentlyLogged = !!recentLog
-      }
     }
 
     if (alreadyCounted) {
-      // 이미 카운트됨
-      if (recentlyLogged) {
-        // 최근 5분 이내 같은 페이지 방문 - 로그 저장 안 함
-        const supabase = await createClient()
-        const { data } = await supabase
-          .from('visitor_stats')
-          .select('visit_count')
-          .eq('id', 'total')
-          .single()
-
-        return NextResponse.json({
-          success: true,
-          counted: false,
-          count: data?.visit_count || 0
-        })
-      }
-
-      // 5분 이상 지났거나 다른 페이지 - 로그만 저장
-      const { error: logError } = await adminClient.from('visitor_logs').insert({
-        visitor_id: visitorId,
-        page_path: pagePath,
-        referrer,
-        user_agent: userAgent,
-        ip_hash: ipHash,
-        session_id: sessionId
-      })
-
-      if (logError) {
-        console.error('visitor_logs INSERT 실패 (already counted):', logError)
-      }
-
+      // 이미 카운트됨 - 로그 저장하지 않음 (하루 1회만 기록)
       const supabase = await createClient()
       const { data } = await supabase
         .from('visitor_stats')
