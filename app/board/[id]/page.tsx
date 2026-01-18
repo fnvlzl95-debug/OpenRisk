@@ -495,7 +495,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
 
       {/* Header - 심플하고 깔끔한 헤더 */}
       <header className="bg-white border-b border-gray-100">
-        <div className="max-w-2xl mx-auto px-5 sm:px-6 py-5 sm:py-5">
+        <div className="max-w-4xl mx-auto px-5 sm:px-6 py-5 sm:py-5">
           <div className="flex justify-between items-center">
             <Link href="/home-b" className="group">
               <span className="text-lg sm:text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
@@ -508,7 +508,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
       </header>
 
       {/* Main - 편안한 가독성 중심 */}
-      <main className="max-w-2xl mx-auto px-5 sm:px-6 py-6 sm:py-8 bg-gray-50">
+      <main className="max-w-4xl mx-auto px-5 sm:px-6 py-6 sm:py-8 bg-gray-50">
         {/* 뒤로가기 */}
         <Link
           href="/board"
@@ -728,7 +728,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
 
       {/* Footer */}
       <footer className="bg-white border-t border-gray-100 mt-8">
-        <div className="max-w-2xl mx-auto px-5 sm:px-6 py-8">
+        <div className="max-w-4xl mx-auto px-5 sm:px-6 py-8">
           <div className="flex flex-col items-center gap-2 text-xs text-gray-400">
             <Link href="/home-b" className="font-bold text-gray-600 hover:text-blue-600 transition-colors">
               OPEN RISK
