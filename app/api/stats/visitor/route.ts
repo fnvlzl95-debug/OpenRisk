@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     if (alreadyCounted) {
       // 이미 카운트됨 - 로그만 저장
       const adminClient = createAdminClient()
-      await adminClient.from('visitor_logs').insert({
+      const { error: logError } = await adminClient.from('visitor_logs').insert({
         visitor_id: visitorId,
         page_path: pagePath,
         referrer,
@@ -69,6 +69,10 @@ export async function POST(request: NextRequest) {
         ip_hash: ipHash,
         session_id: sessionId
       })
+
+      if (logError) {
+        console.error('visitor_logs INSERT 실패 (already counted):', logError)
+      }
 
       const supabase = await createClient()
       const { data } = await supabase
@@ -96,7 +100,7 @@ export async function POST(request: NextRequest) {
       .rpc('increment_visitor_count', { p_stat_id: today })
 
     // 상세 로그 저장
-    await adminClient.from('visitor_logs').insert({
+    const { error: logError } = await adminClient.from('visitor_logs').insert({
       visitor_id: visitorId || crypto.randomUUID(),
       page_path: pagePath,
       referrer,
@@ -104,6 +108,10 @@ export async function POST(request: NextRequest) {
       ip_hash: ipHash,
       session_id: sessionId
     })
+
+    if (logError) {
+      console.error('visitor_logs INSERT 실패 (new visitor):', logError)
+    }
 
     // 쿠키 설정
     const response = NextResponse.json({
