@@ -43,8 +43,40 @@ export async function POST(request: NextRequest) {
     const body = await request.json().catch(() => ({}))
     const pagePath = body.page_path || request.headers.get('referer') || '/'
     const referrer = request.headers.get('referer')
-    const userAgent = request.headers.get('user-agent')
+    const userAgent = request.headers.get('user-agent') || ''
     const sessionId = cookieStore.get('session_id')?.value || crypto.randomUUID()
+
+    // 봇 트래픽 필터링 (Vercel 스크린샷, 크롤러 등)
+    const botPatterns = [
+      'vercel-screenshot',
+      'bot',
+      'crawler',
+      'spider',
+      'googlebot',
+      'bingbot',
+      'slurp',
+      'headless'
+    ]
+    const isBot = botPatterns.some(pattern =>
+      userAgent.toLowerCase().includes(pattern)
+    )
+
+    if (isBot) {
+      // 봇 트래픽은 카운트하지 않음
+      const supabase = await createClient()
+      const { data } = await supabase
+        .from('visitor_stats')
+        .select('visit_count')
+        .eq('id', 'total')
+        .single()
+
+      return NextResponse.json({
+        success: true,
+        counted: false,
+        count: data?.visit_count || 0,
+        reason: 'bot_filtered'
+      })
+    }
 
     // IP 해싱 (개인정보 보호)
     const forwarded = request.headers.get('x-forwarded-for')
