@@ -559,10 +559,9 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
           </div>
 
           {/* 본문 */}
-          <div className="prose prose-lg max-w-none">
+          <div className="prose prose-lg max-w-none text-[16px] sm:text-[17px] leading-[1.8] text-gray-700">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
-              className="text-[16px] sm:text-[17px] leading-[1.8] text-gray-700"
               components={{
                 h1: ({ children }) => (
                   <h1 className="text-[24px] sm:text-[28px] font-bold text-gray-900 mt-8 mb-6 leading-[1.3]">
