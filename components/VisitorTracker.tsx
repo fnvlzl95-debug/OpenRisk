@@ -8,7 +8,7 @@ export function VisitorTracker() {
 
   useEffect(() => {
     // 관리자 페이지 및 API 경로는 추적하지 않음
-    const excludedPaths = ['/admin', '/api']
+    const excludedPaths = ['/ops-9f2', '/api']
     const shouldTrack = !excludedPaths.some(path => pathname.startsWith(path))
 
     if (!shouldTrack) {

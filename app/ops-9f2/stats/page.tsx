@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Loader2, TrendingUp, Users, Calendar, Clock, FileText, Share2, BarChart3 } from 'lucide-react'
+import { Loader2, TrendingUp, Users, Calendar, Clock, FileText, Share2, BarChart3 } from 'lucide-react'
 
 interface DashboardStats {
   total: number
@@ -89,23 +89,10 @@ export default function StatsAdminPage() {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 sm:gap-4">
-              <Link
-                href="/board"
-                className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                aria-label="돌아가기"
-              >
-                <ArrowLeft size={18} className="text-gray-700 sm:w-5 sm:h-5" />
-              </Link>
-              <div>
-                <h1 className="text-base sm:text-xl lg:text-2xl font-bold text-gray-900">방문자 통계</h1>
-                <p className="text-[10px] sm:text-xs text-gray-500 mt-0.5 hidden sm:block">실시간 트래픽 분석 대시보드</p>
-              </div>
-            </div>
-            <div className="hidden sm:flex items-center gap-2 text-xs text-gray-500">
-              <Clock size={14} />
-              <span>실시간 업데이트</span>
-            </div>
+            <h1 className="text-lg sm:text-xl font-bold text-gray-900">방문자 통계</h1>
+            <Link href="/ops-9f2" className="text-xs sm:text-sm text-blue-600 hover:underline">
+              ← 관리자 메뉴
+            </Link>
           </div>
         </div>
       </header>
