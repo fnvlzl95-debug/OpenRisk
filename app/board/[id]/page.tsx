@@ -372,8 +372,11 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
   }
 
   // 댓글 렌더링 함수 - 컴팩트한 디자인
-  const renderComment = (comment: Comment, isReply: boolean = false) => {
+  // rootCommentId: 대댓글에서 답글 달 때 원 댓글의 id를 사용하기 위함
+  const renderComment = (comment: Comment, isReply: boolean = false, rootCommentId?: number) => {
     const isEditing = editingCommentId === comment.id
+    // 대댓글에 답글 달면 원 댓글에 대댓글로 저장
+    const replyTargetId = isReply && rootCommentId ? rootCommentId : comment.id
 
     return (
       <div key={comment.id} className={isReply ? 'bg-gray-50 rounded-lg p-3' : ''}>
@@ -449,7 +452,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
         )}
 
         {/* 답글 버튼 */}
-        {!isReply && user && !isEditing && (
+        {user && !isEditing && (
           <button
             onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
             className="mt-2 text-xs text-gray-500 hover:text-gray-900 transition-colors"
@@ -459,8 +462,8 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
         )}
 
         {/* 답글 입력 폼 */}
-        {!isReply && replyingTo === comment.id && (
-          <form onSubmit={(e) => handleCommentSubmit(e, comment.id)} className="mt-2 flex gap-2">
+        {replyingTo === comment.id && (
+          <form onSubmit={(e) => handleCommentSubmit(e, replyTargetId)} className="mt-2 flex gap-2">
             <input
               type="text"
               value={replyText}
@@ -716,7 +719,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
                   {/* 대댓글 목록 */}
                   {comment.replies && comment.replies.length > 0 && (
                     <div className="ml-5 mt-3 space-y-3 pl-3 border-l-2 border-gray-100">
-                      {comment.replies.map((reply) => renderComment(reply, true))}
+                      {comment.replies.map((reply) => renderComment(reply, true, comment.id))}
                     </div>
                   )}
                 </div>
