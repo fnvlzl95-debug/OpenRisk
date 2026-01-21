@@ -119,7 +119,7 @@ function BoardContent() {
           <div className="flex justify-between items-center sm:items-start">
             <div>
               <p className="text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-widest mb-1 sm:mb-2">Community</p>
-              <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">자유게시판</h1>
+              <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">오픈톡</h1>
             </div>
             <Link
               href={user ? "/board/write" : "/auth/login?next=/board/write"}
