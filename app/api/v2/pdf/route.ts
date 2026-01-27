@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generatePdfHtml } from '@/lib/v2/pdf-template'
 import { AnalyzeV2Response } from '@/lib/v2/types'
-import puppeteer from 'puppeteer'
+import chromium from '@sparticuz/chromium'
+import puppeteer from 'puppeteer-core'
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,10 +11,11 @@ export async function POST(request: NextRequest) {
     // HTML 생성
     const html = generatePdfHtml(data)
 
-    // Puppeteer로 직접 PDF 생성
+    // Vercel 서버리스 환경 호환 Puppeteer
     const browser = await puppeteer.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     })
 
     const page = await browser.newPage()
