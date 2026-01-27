@@ -115,7 +115,7 @@ export function generatePdfHtml(data: AnalyzeV2Response): string {
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; background: #fff; color: #1a1a1a; width: 794px; margin: 0 auto; font-size: 10px; }
-  .page { padding: 28px 36px 24px; height: 1123px; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+  .page { padding: 28px 36px 24px; height: 1123px; position: relative; display: flex; flex-direction: column; }
 
   /* 헤더 */
   .header { text-align: center; border-bottom: 3px double #1a1a1a; padding-bottom: 10px; margin-bottom: 14px; }
