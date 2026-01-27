@@ -11,7 +11,7 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { AnalyzeV2Response, RiskLevel, AREA_TYPE_INFO, AIAnalysisResponse } from '@/lib/v2/types'
 import { BusinessCategory } from '@/lib/categories'
-import { AlertTriangle, Check, ArrowRight, Train, TrendingUp, TrendingDown, Sparkles, Search, MapPin, Share2, HelpCircle, MessageSquare, Users, ThumbsUp } from 'lucide-react'
+import { AlertTriangle, Check, ArrowRight, Train, TrendingUp, TrendingDown, Sparkles, Search, MapPin, Share2, HelpCircle, MessageSquare, Users, ThumbsUp, FileDown, X, Menu } from 'lucide-react'
 import AIAnalysisModal from '@/components/skin-b/AIAnalysisModal'
 import MapModal from '@/components/skin-b/MapModal'
 import ShareModal from '@/components/skin-b/ShareModal'
@@ -63,6 +63,10 @@ function ResultBContent() {
   // 피드백 모달 상태
   const [showFeedbackModal, setShowFeedbackModal] = useState(false)
 
+  // PDF 다운로드 상태
+  const [pdfLoading, setPdfLoading] = useState(false)
+  const [fabOpen, setFabOpen] = useState(false)
+
   const today = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })
 
   // 로딩 단계별 메시지
@@ -86,6 +90,31 @@ function ResultBContent() {
 
     return () => clearInterval(interval)
   }, [loading])
+
+  // PDF 다운로드
+  const handlePdfDownload = async () => {
+    if (!result) return
+    setPdfLoading(true)
+    try {
+      const res = await fetch('/api/v2/pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(result),
+      })
+      if (!res.ok) throw new Error('PDF 생성 실패')
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `OpenRisk_Report_${result.location.district}_${result.analysis.categoryName}.pdf`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      alert('PDF 생성에 실패했습니다. 다시 시도해주세요.')
+    } finally {
+      setPdfLoading(false)
+    }
+  }
 
   // AI 분석 요청
   const handleAIAnalysis = async () => {
@@ -725,14 +754,33 @@ function ResultBContent() {
         </div>
       </footer>
 
-      {/* Floating AI Button */}
-      <div className="fixed bottom-3 sm:bottom-4 right-3 sm:right-4 z-50">
+      {/* FAB Menu */}
+      <div className="fixed bottom-3 sm:bottom-4 right-3 sm:right-4 z-50 flex flex-col items-end gap-2">
+        {/* Expanded options */}
+        <div className={`flex flex-col items-end gap-2 transition-all duration-200 ${fabOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
+          <button
+            onClick={() => { handleAIAnalysis(); setFabOpen(false) }}
+            className="bg-black text-white rounded-full px-4 py-2.5 shadow-md flex items-center gap-2 hover:bg-gray-800 transition-colors text-xs sm:text-sm font-medium whitespace-nowrap"
+          >
+            <Sparkles size={14} className="sm:w-4 sm:h-4" />
+            AI 분석
+          </button>
+          <button
+            onClick={() => { handlePdfDownload(); setFabOpen(false) }}
+            disabled={pdfLoading || !result}
+            className="bg-black text-white rounded-full px-4 py-2.5 shadow-md flex items-center gap-2 hover:bg-gray-800 transition-colors text-xs sm:text-sm font-medium whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <FileDown size={14} className="sm:w-4 sm:h-4" />
+            {pdfLoading ? '생성 중...' : 'PDF 저장'}
+          </button>
+        </div>
+        {/* Main FAB toggle */}
         <button
-          onClick={handleAIAnalysis}
-          className="bg-black text-white px-3 sm:px-4 py-2.5 sm:py-3 shadow-lg flex items-center gap-1.5 sm:gap-2 hover:bg-gray-700 transition-colors text-xs sm:text-sm font-medium"
+          onClick={() => setFabOpen(!fabOpen)}
+          className="bg-black text-white rounded-full px-4 py-2.5 sm:py-3 shadow-md flex items-center gap-1.5 hover:bg-gray-800 transition-colors text-xs sm:text-sm font-medium"
         >
-          <Sparkles size={14} className="sm:w-4 sm:h-4" />
-          AI 분석
+          {fabOpen ? <X size={16} /> : <Menu size={16} />}
+          {fabOpen ? '닫기' : 'AI / PDF'}
         </button>
       </div>
 
