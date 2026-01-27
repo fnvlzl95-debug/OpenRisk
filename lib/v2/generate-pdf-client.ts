@@ -22,12 +22,18 @@ export async function generatePdfClient(data: AnalyzeV2Response): Promise<void> 
   container.innerHTML = html
 
   try {
-    const canvas = await html2canvas(container.querySelector('.page') as HTMLElement, {
+    const pageEl = container.querySelector('.page') as HTMLElement
+
+    // 캡처 시 overflow hidden 제거하여 잘림 방지
+    pageEl.style.overflow = 'visible'
+    pageEl.style.height = 'auto'
+    pageEl.style.minHeight = '1123px'
+
+    const canvas = await html2canvas(pageEl, {
       scale: 2,
       useCORS: true,
       backgroundColor: '#ffffff',
       width: 794,
-      height: 1123,
     })
 
     const imgData = canvas.toDataURL('image/jpeg', 0.95)
@@ -38,7 +44,7 @@ export async function generatePdfClient(data: AnalyzeV2Response): Promise<void> 
     })
 
     const pdfWidth = 210
-    const pdfHeight = 297
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width
     pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight)
 
     const filename = `OpenRisk_Report_${data.location.district}_${data.analysis.categoryName}.pdf`
