@@ -43,7 +43,7 @@ export async function generatePdfClient(data: AnalyzeV2Response): Promise<void> 
     pageEl.style.width = '794px'
 
     const canvas = await html2canvas(pageEl, {
-      scale: 2,
+      scale: 4,
       useCORS: true,
       backgroundColor: '#ffffff',
       width: 794,
@@ -52,14 +52,15 @@ export async function generatePdfClient(data: AnalyzeV2Response): Promise<void> 
       windowHeight: 1123,
     })
 
-    const imgData = canvas.toDataURL('image/jpeg', 0.95)
+    const imgData = canvas.toDataURL('image/png')
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
       format: 'a4',
+      compress: true,
     })
 
-    pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297)
+    pdf.addImage(imgData, 'PNG', 0, 0, 210, 297, undefined, 'FAST')
 
     const filename = `OpenRisk_Report_${data.location.district}_${data.analysis.categoryName}.pdf`
     pdf.save(filename)
