@@ -91,24 +91,13 @@ function ResultBContent() {
     return () => clearInterval(interval)
   }, [loading])
 
-  // PDF 다운로드
+  // PDF 다운로드 (클라이언트 사이드)
   const handlePdfDownload = async () => {
     if (!result) return
     setPdfLoading(true)
     try {
-      const res = await fetch('/api/v2/pdf', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(result),
-      })
-      if (!res.ok) throw new Error('PDF 생성 실패')
-      const blob = await res.blob()
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `OpenRisk_Report_${result.location.district}_${result.analysis.categoryName}.pdf`
-      a.click()
-      URL.revokeObjectURL(url)
+      const { generatePdfClient } = await import('@/lib/v2/generate-pdf-client')
+      await generatePdfClient(result)
     } catch (err) {
       alert('PDF 생성에 실패했습니다. 다시 시도해주세요.')
     } finally {
