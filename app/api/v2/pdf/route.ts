@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { spawn } from 'child_process'
-import path from 'path'
 import { generatePdfHtml } from '@/lib/v2/pdf-template'
 import { AnalyzeV2Response } from '@/lib/v2/types'
+import puppeteer from 'puppeteer'
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,37 +10,24 @@ export async function POST(request: NextRequest) {
     // HTML 생성
     const html = generatePdfHtml(data)
 
-    // 외부 스크립트로 PDF 생성
-    const scriptPath = path.join(process.cwd(), 'scripts', 'generate-pdf.js')
-
-    const pdfBuffer = await new Promise<Buffer>((resolve, reject) => {
-      const child = spawn('node', [scriptPath], {
-        stdio: ['pipe', 'pipe', 'pipe'],
-      })
-
-      const chunks: Buffer[] = []
-      const stderrChunks: Buffer[] = []
-
-      child.stdout.on('data', (chunk: Buffer) => chunks.push(chunk))
-      child.stderr.on('data', (chunk: Buffer) => stderrChunks.push(chunk))
-
-      child.on('close', (code) => {
-        if (code !== 0) {
-          const stderr = Buffer.concat(stderrChunks).toString()
-          reject(new Error(stderr || `Process exited with code ${code}`))
-          return
-        }
-        resolve(Buffer.concat(chunks))
-      })
-
-      child.on('error', reject)
-
-      // HTML을 stdin으로 전달
-      child.stdin.write(html)
-      child.stdin.end()
+    // Puppeteer로 직접 PDF 생성
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     })
 
-    return new NextResponse(pdfBuffer, {
+    const page = await browser.newPage()
+    await page.setContent(html, { waitUntil: 'domcontentloaded' })
+
+    const pdf = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: { top: '0', right: '0', bottom: '0', left: '0' },
+    })
+
+    await browser.close()
+
+    return new NextResponse(Buffer.from(pdf), {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="OpenRisk_Report_${Date.now()}.pdf"`,
