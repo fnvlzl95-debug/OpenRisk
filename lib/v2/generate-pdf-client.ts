@@ -2,54 +2,34 @@ import { generatePdfHtml } from './pdf-template'
 import { AnalyzeV2Response } from './types'
 
 export async function generatePdfClient(data: AnalyzeV2Response): Promise<void> {
-  const [html2canvasModule, jsPDFModule] = await Promise.all([
-    import('html2canvas-pro'),
-    import('jspdf'),
-  ])
-  const html2canvas = html2canvasModule.default
-  const jsPDF = jsPDFModule.default
-
-  // 숨겨진 컨테이너에 HTML 렌더링
-  const container = document.createElement('div')
-  container.style.position = 'fixed'
-  container.style.left = '-9999px'
-  container.style.top = '0'
-  container.style.width = '794px'
-  container.style.zIndex = '-1'
-  document.body.appendChild(container)
-
   const html = generatePdfHtml(data)
-  container.innerHTML = html
 
-  try {
-    const pageEl = container.querySelector('.page') as HTMLElement
+  // iframe을 사용하여 브라우저 인쇄 기능으로 PDF 저장
+  const iframe = document.createElement('iframe')
+  iframe.style.position = 'fixed'
+  iframe.style.left = '-9999px'
+  iframe.style.top = '0'
+  iframe.style.width = '794px'
+  iframe.style.height = '1123px'
+  document.body.appendChild(iframe)
 
-    // 캡처 시 overflow hidden 제거하여 잘림 방지
-    pageEl.style.overflow = 'visible'
-    pageEl.style.height = 'auto'
-    pageEl.style.minHeight = '1123px'
-
-    const canvas = await html2canvas(pageEl, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#ffffff',
-      width: 794,
-    })
-
-    const imgData = canvas.toDataURL('image/jpeg', 0.95)
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4',
-    })
-
-    const pdfWidth = 210
-    const pdfHeight = (canvas.height * pdfWidth) / canvas.width
-    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight)
-
-    const filename = `OpenRisk_Report_${data.location.district}_${data.analysis.categoryName}.pdf`
-    pdf.save(filename)
-  } finally {
-    document.body.removeChild(container)
+  const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document
+  if (!iframeDoc) {
+    document.body.removeChild(iframe)
+    throw new Error('iframe 생성 실패')
   }
+
+  iframeDoc.open()
+  iframeDoc.write(html)
+  iframeDoc.close()
+
+  // 렌더링 완료 대기
+  await new Promise(resolve => setTimeout(resolve, 500))
+
+  iframe.contentWindow?.print()
+
+  // 인쇄 다이얼로그 닫힌 후 정리
+  setTimeout(() => {
+    document.body.removeChild(iframe)
+  }, 1000)
 }
