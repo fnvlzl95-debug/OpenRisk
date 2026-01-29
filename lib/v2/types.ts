@@ -56,7 +56,7 @@ export interface AnalyzeV2Response {
     lat: number
     lng: number
     address: string
-    region: '서울' | '경기' | '인천'
+    region: '서울' | '경기' | '인천' | '부산'
     district: string
   }
 

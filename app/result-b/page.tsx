@@ -264,7 +264,7 @@ function ResultBContent() {
 
             <div className="text-center space-y-3 mb-8">
               <p className="text-sm sm:text-base text-gray-600">
-                현재 <span className="font-bold">서울 · 경기 · 인천</span> 지역만 지원합니다.
+                현재 <span className="font-bold">서울 · 경기 · 인천 · 부산</span> 지역만 지원합니다.
               </p>
               <p className="text-xs text-gray-400">
                 다른 지역은 데이터 확보 후 순차적으로 오픈 예정입니다.
