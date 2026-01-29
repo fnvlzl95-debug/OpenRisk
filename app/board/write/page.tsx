@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import AuthButton from '@/components/board/AuthButton'
@@ -10,7 +10,7 @@ interface Profile {
   is_admin: boolean
 }
 
-export default function WritePostPage() {
+function WritePostContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const boardType = searchParams.get('type') === 'info' ? 'info' : 'open'
@@ -222,5 +222,20 @@ export default function WritePostPage() {
         </div>
       </footer>
     </div>
+  )
+}
+
+export default function WritePostPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-5 h-5 border-2 border-gray-200 border-t-gray-400 rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-sm text-gray-400">로딩 중...</p>
+        </div>
+      </div>
+    }>
+      <WritePostContent />
+    </Suspense>
   )
 }
