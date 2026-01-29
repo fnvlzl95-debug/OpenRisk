@@ -642,12 +642,16 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
               }}
             >
               {post.content
+                // HTML 엔티티 디코드
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
                 .replace(/&#8220;/g, '"')
                 .replace(/&#8221;/g, '"')
                 .replace(/&#8216;/g, "'")
                 .replace(/&#8217;/g, "'")
                 .replace(/&quot;/g, '"')
-                .replace(/&#39;/g, "'")}
+                .replace(/&#39;/g, "'")
+                .replace(/&amp;/g, '&')}
             </ReactMarkdown>
           </div>
 
