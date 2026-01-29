@@ -10,6 +10,7 @@ export async function GET(request: NextRequest) {
   const page = parseInt(searchParams.get('page') || '1')
   const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 50) // 최대 50개
   const sort = searchParams.get('sort') || 'latest' // 'latest' | 'views'
+  const boardType = searchParams.get('type') || 'open' // 'open' | 'info'
   const offset = (page - 1) * limit
 
   const supabase = await createClient()
@@ -18,6 +19,7 @@ export async function GET(request: NextRequest) {
   let query = supabase
     .from('active_posts')
     .select('*', { count: 'exact' })
+    .eq('board_type', boardType) // 게시판 타입 필터링
 
   // 정렬 옵션
   if (sort === 'views') {
@@ -68,13 +70,16 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json()
-  const { title, content, is_notice } = body
+  const { title, content, is_notice, board_type } = body
 
   // 입력값 검증
   const validation = validatePost(title, content)
   if (!validation.valid) {
     return NextResponse.json({ error: validation.error }, { status: 400 })
   }
+
+  // board_type 검증
+  const validBoardType = ['open', 'info'].includes(board_type) ? board_type : 'open'
 
   // 관리자 확인 (공지글 작성 시)
   if (is_notice) {
@@ -96,7 +101,8 @@ export async function POST(request: NextRequest) {
       author_id: user.id,
       title: sanitizeHtml(title.trim()),
       content: sanitizeHtml(content.trim()),
-      is_notice: is_notice || false
+      is_notice: is_notice || false,
+      board_type: validBoardType
     })
     .select()
     .single()

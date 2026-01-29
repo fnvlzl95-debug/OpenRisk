@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const KAKAO_REST_KEY = process.env.KAKAO_REST_KEY
 
-// 지원 지역 (서울, 경기, 인천만)
-const SUPPORTED_REGIONS = ['서울', '경기', '인천']
+// 지원 지역 (서울, 경기, 인천, 부산)
+const SUPPORTED_REGIONS = ['서울', '경기', '인천', '부산']
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
