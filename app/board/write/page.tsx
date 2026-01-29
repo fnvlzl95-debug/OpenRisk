@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import AuthButton from '@/components/board/AuthButton'
 import { createClient } from '@/lib/supabase/client'
 
@@ -12,6 +12,8 @@ interface Profile {
 
 export default function WritePostPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const boardType = searchParams.get('type') === 'info' ? 'info' : 'open'
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [isNotice, setIsNotice] = useState(false)
@@ -57,7 +59,8 @@ export default function WritePostPage() {
         body: JSON.stringify({
           title: title.trim(),
           content: content.trim(),
-          is_notice: isAdmin && isNotice
+          is_notice: isAdmin && isNotice,
+          board_type: boardType
         })
       })
 
@@ -67,7 +70,9 @@ export default function WritePostPage() {
         throw new Error(data.error || '글 작성에 실패했습니다.')
       }
 
-      router.push(`/board/${data.post.id}`)
+      // 작성한 게시판으로 리다이렉트
+      const redirectPath = boardType === 'info' ? '/board/info' : '/board'
+      router.push(`${redirectPath}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : '글 작성에 실패했습니다.')
     } finally {
@@ -94,7 +99,7 @@ export default function WritePostPage() {
       <main className="max-w-3xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
         {/* 뒤로가기 */}
         <Link
-          href="/board"
+          href={boardType === 'info' ? '/board/info' : '/board'}
           className="inline-flex items-center gap-1 text-xs sm:text-sm text-gray-500 hover:text-black mb-3 sm:mb-4"
         >
           <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -106,8 +111,12 @@ export default function WritePostPage() {
         {/* 글쓰기 폼 */}
         <form onSubmit={handleSubmit} className="border-2 border-black bg-white">
           {/* 헤더 */}
-          <div className="px-3 sm:px-4 py-2.5 sm:py-3 border-b-2 border-black bg-gray-50">
-            <h1 className="text-base sm:text-lg font-bold">글쓰기</h1>
+          <div className={`px-3 sm:px-4 py-2.5 sm:py-3 border-b-2 border-black ${
+            boardType === 'info' ? 'bg-blue-50' : 'bg-gray-50'
+          }`}>
+            <h1 className="text-base sm:text-lg font-bold">
+              {boardType === 'info' ? '정보톡 글쓰기' : '오픈톡 글쓰기'}
+            </h1>
           </div>
 
           {/* 에러 메시지 */}

@@ -24,13 +24,10 @@ interface Pagination {
 }
 
 /**
- * 미니멀 리스트 디자인 (모바일 최적화)
- * - 깔끔한 타이포그래피 중심
- * - 시간순 타임라인 느낌
- * - 좌측 날짜 표시 (PC)
- * - 모바일 터치 최적화
+ * 정보톡 - 정보 공유 전용 게시판
+ * 업종 정보, 지역 정보, 창업 팁 등 실용 정보 중심
  */
-function BoardContent() {
+function InfoBoardContent() {
   const [posts, setPosts] = useState<Post[]>([])
   const [pagination, setPagination] = useState<Pagination | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
@@ -51,7 +48,7 @@ function BoardContent() {
     const fetchPosts = async () => {
       setLoading(true)
       try {
-        const res = await fetch(`/api/board/posts?page=${currentPage}&type=open`)
+        const res = await fetch(`/api/board/posts?page=${currentPage}&type=info`)
         const data = await res.json()
         if (res.ok) {
           setPosts(data.posts || [])
@@ -114,33 +111,41 @@ function BoardContent() {
 
       {/* Main */}
       <main className="max-w-4xl lg:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* 타이틀 영역 - 모바일에서 컴팩트하게 */}
+        {/* 타이틀 영역 + 탭 */}
         <div className="py-6 sm:py-12 border-b border-gray-100">
           <div className="flex justify-between items-center sm:items-start mb-4 sm:mb-6">
             <div>
               <p className="text-[10px] sm:text-xs font-medium text-gray-400 uppercase tracking-widest mb-1 sm:mb-2">Community</p>
-              <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">오픈톡</h1>
+              <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">정보톡</h1>
             </div>
             <Link
-              href={user ? "/board/write" : "/auth/login?next=/board/write"}
-              className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-white bg-gray-900 rounded-full hover:bg-gray-700 active:bg-gray-800 transition-colors"
+              href={user ? "/board/write?type=info" : "/auth/login?next=/board/write?type=info"}
+              className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-white bg-blue-600 rounded-full hover:bg-blue-700 active:bg-blue-800 transition-colors"
             >
-              글쓰기
+              정보 공유
             </Link>
           </div>
 
           {/* 탭 네비게이션 */}
           <div className="flex gap-2 sm:gap-4">
-            <div className="px-4 py-2 text-sm font-bold text-gray-900 border-b-2 border-gray-900">
-              오픈톡
-            </div>
             <Link
-              href="/board/info"
+              href="/board"
               className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-gray-600 transition-colors"
             >
-              정보톡
+              오픈톡
             </Link>
+            <div className="px-4 py-2 text-sm font-bold text-blue-600 border-b-2 border-blue-600">
+              정보톡
+            </div>
           </div>
+        </div>
+
+        {/* 안내 배너 */}
+        <div className="my-4 sm:my-6 p-4 bg-blue-50 border-l-4 border-blue-600 rounded-r-lg">
+          <h3 className="text-sm font-bold text-blue-900 mb-1">💡 정보톡이란?</h3>
+          <p className="text-xs text-blue-700">
+            창업 관련 유용한 정보를 공유하는 공간입니다. 업종 정보, 지역 정보, 창업 팁, 운영 노하우 등을 나눠주세요.
+          </p>
         </div>
 
         {/* 게시글 목록 */}
@@ -151,8 +156,8 @@ function BoardContent() {
           </div>
         ) : posts.length === 0 ? (
           <div className="py-16 sm:py-20 text-center">
-            <p className="text-gray-400 mb-1">아직 게시글이 없습니다</p>
-            <p className="text-sm text-gray-300">첫 번째 글의 주인공이 되어보세요</p>
+            <p className="text-gray-400 mb-1">아직 정보글이 없습니다</p>
+            <p className="text-sm text-gray-300">첫 번째 정보를 공유해보세요</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-100">
@@ -160,12 +165,12 @@ function BoardContent() {
               <Link
                 key={post.id}
                 href={`/board/${post.id}`}
-                className="group block py-4 sm:py-5 lg:py-5 -mx-4 sm:-mx-2 px-4 sm:px-2 hover:bg-gray-50 active:bg-gray-100 transition-colors sm:rounded-lg"
+                className="group block py-4 sm:py-5 lg:py-5 -mx-4 sm:-mx-2 px-4 sm:px-2 hover:bg-blue-50 active:bg-blue-100 transition-colors sm:rounded-lg"
               >
                 <article className="flex gap-4 sm:gap-6 lg:gap-6">
                   {/* 좌측: 날짜 (PC only) */}
                   <div className="hidden md:block w-16 lg:w-18 flex-shrink-0 pt-0.5">
-                    <time className="text-xs lg:text-sm font-mono text-gray-300 group-hover:text-gray-400 transition-colors">
+                    <time className="text-xs lg:text-sm font-mono text-gray-300 group-hover:text-blue-400 transition-colors">
                       {formatFullDate(post.created_at)}
                     </time>
                   </div>
@@ -184,6 +189,10 @@ function BoardContent() {
                           ADMIN
                         </span>
                       )}
+                      {/* 정보 뱃지 */}
+                      <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] lg:text-xs font-medium text-emerald-600 bg-emerald-50 rounded-full">
+                        INFO
+                      </span>
                       {/* 모바일에서 날짜 표시 */}
                       <span className="md:hidden text-[10px] text-gray-300">
                         {formatDate(post.created_at)}
@@ -191,7 +200,7 @@ function BoardContent() {
                     </div>
 
                     {/* 제목 */}
-                    <h2 className="text-base sm:text-lg lg:text-lg font-semibold text-gray-900 group-hover:text-gray-600 transition-colors mb-1 line-clamp-2 sm:line-clamp-1">
+                    <h2 className="text-base sm:text-lg lg:text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors mb-1 line-clamp-2 sm:line-clamp-1">
                       {post.title}
                       {post.comment_count > 0 && (
                         <span className="ml-1.5 sm:ml-2 text-xs sm:text-sm font-normal text-blue-500">
@@ -248,7 +257,7 @@ function BoardContent() {
                   onClick={() => setCurrentPage(page)}
                   className={`min-w-[40px] min-h-[40px] lg:min-w-[44px] lg:min-h-[44px] text-xs lg:text-sm font-medium rounded-full transition-all flex items-center justify-center ${
                     currentPage === page
-                      ? 'bg-gray-900 text-white'
+                      ? 'bg-blue-600 text-white'
                       : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100 active:bg-gray-200'
                   }`}
                 >
@@ -283,7 +292,7 @@ function BoardContent() {
   )
 }
 
-export default function BoardPage() {
+export default function InfoBoardPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -293,7 +302,7 @@ export default function BoardPage() {
         </div>
       </div>
     }>
-      <BoardContent />
+      <InfoBoardContent />
     </Suspense>
   )
 }

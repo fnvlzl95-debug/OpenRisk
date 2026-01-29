@@ -207,7 +207,7 @@ export default function HomeEditorial() {
             <span className="text-gray-300 hidden sm:inline">|</span>
             <span>7대 지표 분석</span>
             <span className="text-gray-300 hidden sm:inline">|</span>
-            <span>서울 · 경기 · 인천</span>
+            <span>서울 · 경기 · 인천 · 부산</span>
             <span className="text-gray-300">|</span>
             <Link
               href="/board"
@@ -297,7 +297,7 @@ export default function HomeEditorial() {
                 {noResults ? (
                   <div className="px-4 py-4 text-center">
                     <p className="text-sm text-gray-600 mb-1">검색 결과가 없습니다</p>
-                    <p className="text-xs text-gray-400">서울 · 경기 · 인천 지역만 지원합니다</p>
+                    <p className="text-xs text-gray-400">서울 · 경기 · 인천 · 부산 지역만 지원합니다</p>
                   </div>
                 ) : (
                   suggestions.map((item, index) => (
