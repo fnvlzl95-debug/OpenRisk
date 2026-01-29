@@ -1,28 +1,12 @@
 // 입력값 검증 및 sanitize
-import DOMPurify from 'isomorphic-dompurify'
 
 // HTML Sanitization (XSS 방지)
-// DOMPurify를 사용해 안전한 HTML만 허용
+// 서버에서는 기본 검증만, 클라이언트에서 ReactMarkdown이 안전하게 렌더링
 export function sanitizeHtml(text: string): string {
   // 스마트 따옴표를 일반 따옴표로 변환
-  const normalized = text
+  return text
     .replace(/[""]/g, '"')
     .replace(/['']/g, "'")
-
-  // 안전한 HTML 태그만 허용
-  return DOMPurify.sanitize(normalized, {
-    ALLOWED_TAGS: [
-      'p', 'br', 'strong', 'em', 'u', 's', 'del', 'ins',
-      'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-      'ul', 'ol', 'li',
-      'blockquote', 'pre', 'code',
-      'a', 'img',
-      'table', 'thead', 'tbody', 'tr', 'th', 'td',
-      'hr', 'div', 'span'
-    ],
-    ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'id', 'target', 'rel'],
-    ALLOW_DATA_ATTR: false,
-  })
 }
 
 // 게시글 검증
