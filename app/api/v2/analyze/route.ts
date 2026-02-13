@@ -10,13 +10,11 @@ import { getSupabase, SupabaseClient } from '@/lib/supabase'
 import {
   latLngToH3,
   getH3CellsInRadius,
-  h3ToLatLng,
   getDistance,
 } from '@/lib/h3'
 import {
   BusinessCategory,
   BUSINESS_CATEGORIES,
-  getCategoryInfo,
   getCategoryName,
 } from '@/lib/categories'
 import {
@@ -39,41 +37,110 @@ import {
   getCompetitionLevel,
   getTrafficLevel,
   getCostLevel,
-  getSurvivalRisk,
   getPeakTime,
   generateInterpretation,
 } from '@/lib/v2/riskEngine'
 import {
   calculateClosureRisk,
-  analyzeClosureRiskFactors,
+  getClosureRiskLevel,
 } from '@/lib/v2/closure-risk'
 import { getTopRiskCards } from '@/lib/v2/interpretations/risk-cards'
 import type { MetricContext } from '@/lib/v2/interpretations/types'
+import { getClientIp } from '@/lib/server/client-ip'
+import { checkServerRateLimit, getRetryAfterSeconds } from '@/lib/server/rate-limit'
 
 // 카카오 API
 const KAKAO_REST_KEY = process.env.KAKAO_REST_KEY
+const ANALYZE_RATE_LIMIT = { max: 20, windowMs: 60 * 1000 }
+const ANALYZE_CACHE_TTL_MS = 5 * 60 * 1000
 
 // 분석 반경 (고정)
 const ANALYSIS_RADIUS = 500
+type SupportedRegion = AnalyzeV2Response['location']['region']
+
+interface AnalyzeCacheEntry {
+  value: AnalyzeV2Response
+  expiresAt: number
+}
+
+const analyzeCache = new Map<string, AnalyzeCacheEntry>()
+const MAX_ANALYZE_CACHE_SIZE = 1000
+
+function sweepAnalyzeCache(now: number) {
+  for (const [key, entry] of analyzeCache.entries()) {
+    if (entry.expiresAt <= now) {
+      analyzeCache.delete(key)
+    }
+  }
+}
+
+function buildAnalyzeCacheKey(
+  lat: number,
+  lng: number,
+  targetCategory: BusinessCategory
+): string {
+  return `${lat.toFixed(5)}:${lng.toFixed(5)}:${targetCategory}`
+}
 
 export async function POST(request: NextRequest) {
+  const clientIp = getClientIp(request)
+  const rateLimit = checkServerRateLimit(`analyze-v2:${clientIp}`, ANALYZE_RATE_LIMIT)
+  const rateLimitHeaders = {
+    'X-RateLimit-Limit': String(ANALYZE_RATE_LIMIT.max),
+    'X-RateLimit-Remaining': String(rateLimit.remaining),
+    'X-RateLimit-Reset': String(Math.ceil(rateLimit.resetAt / 1000)),
+  }
+
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: '분석 요청이 너무 많습니다. 잠시 후 다시 시도해주세요.' },
+      {
+        status: 429,
+        headers: {
+          ...rateLimitHeaders,
+          'Retry-After': String(getRetryAfterSeconds(rateLimit.resetAt)),
+        },
+      }
+    )
+  }
+
   try {
     const body: AnalyzeV2Request = await request.json()
     const { lat, lng, targetCategory } = body
 
     // 1. 입력 검증
-    if (!lat || !lng || !targetCategory) {
+    if (typeof lat !== 'number' || typeof lng !== 'number' || !targetCategory) {
       return NextResponse.json(
         { error: '위도, 경도, 업종을 모두 입력해주세요.' },
-        { status: 400 }
+        { status: 400, headers: rateLimitHeaders }
       )
     }
 
     if (!BUSINESS_CATEGORIES[targetCategory]) {
       return NextResponse.json(
         { error: '유효하지 않은 업종입니다.' },
-        { status: 400 }
+        { status: 400, headers: rateLimitHeaders }
       )
+    }
+
+    const cacheKey = buildAnalyzeCacheKey(lat, lng, targetCategory)
+    const now = Date.now()
+    if (analyzeCache.size > MAX_ANALYZE_CACHE_SIZE) {
+      sweepAnalyzeCache(now)
+    }
+
+    const cached = analyzeCache.get(cacheKey)
+    if (cached && cached.expiresAt > now) {
+      return NextResponse.json(cached.value, {
+        headers: {
+          ...rateLimitHeaders,
+          'X-Analyze-Cache': 'HIT',
+        },
+      })
+    }
+
+    if (cached && cached.expiresAt <= now) {
+      analyzeCache.delete(cacheKey)
     }
 
     const supabase = getSupabase()
@@ -90,8 +157,6 @@ export async function POST(request: NextRequest) {
     const gridTrafficData = await getGridTrafficData(supabase, h3Cells)
 
     // 5. 지표 계산
-    const categoryInfo = getCategoryInfo(targetCategory)
-
     // 5-1. 경쟁 지표
     const competition = calculateCompetition(
       gridStoreData,
@@ -104,7 +169,7 @@ export async function POST(request: NextRequest) {
     const traffic = calculateTraffic(gridTrafficData, lat, lng)
 
     // 5-3. 임대료 지표
-    const cost = await calculateCost(supabase, addressInfo.district)
+    const cost = await calculateCost(supabase, addressInfo.region, addressInfo.district)
 
     // 5-4. 앵커 시설
     const anchors = await calculateAnchors(supabase, lat, lng)
@@ -222,12 +287,22 @@ export async function POST(request: NextRequest) {
       centerH3,
     }
 
-    return NextResponse.json(response)
+    analyzeCache.set(cacheKey, {
+      value: response,
+      expiresAt: now + ANALYZE_CACHE_TTL_MS,
+    })
+
+    return NextResponse.json(response, {
+      headers: {
+        ...rateLimitHeaders,
+        'X-Analyze-Cache': 'MISS',
+      },
+    })
   } catch (error) {
     console.error('v2 analyze error:', error)
     return NextResponse.json(
       { error: '분석 중 오류가 발생했습니다.' },
-      { status: 500 }
+      { status: 500, headers: rateLimitHeaders }
     )
   }
 }
@@ -237,12 +312,33 @@ export async function POST(request: NextRequest) {
 /**
  * 카카오 역지오코딩
  */
+function inferRegionByCoordinates(lat: number, lng: number): SupportedRegion {
+  // 부산 대략 범위
+  if (lat >= 35.0 && lat <= 35.4 && lng >= 128.8 && lng <= 129.4) {
+    return '부산'
+  }
+
+  // 인천 대략 범위
+  if (lat >= 37.3 && lat <= 37.7 && lng >= 126.3 && lng <= 126.9) {
+    return '인천'
+  }
+
+  // 경기 대략 범위
+  if (lat >= 36.8 && lat <= 38.3 && lng >= 126.3 && lng <= 127.9) {
+    return '경기'
+  }
+
+  return '서울'
+}
+
 async function getAddressFromKakao(
   lat: number,
   lng: number
-): Promise<{ address: string; region: '서울' | '경기' | '인천'; district: string }> {
+): Promise<{ address: string; region: SupportedRegion; district: string }> {
+  const fallbackRegion = inferRegionByCoordinates(lat, lng)
+
   if (!KAKAO_REST_KEY) {
-    return { address: '주소 조회 불가', region: '서울', district: '' }
+    return { address: '주소 조회 불가', region: fallbackRegion, district: '' }
   }
 
   try {
@@ -261,21 +357,22 @@ async function getAddressFromKakao(
     const doc = data.documents?.[0]
 
     if (!doc) {
-      return { address: '주소 없음', region: '서울', district: '' }
+      return { address: '주소 없음', region: fallbackRegion, district: '' }
     }
 
     const address = doc.road_address?.address_name || doc.address?.address_name || ''
     const region1 = doc.address?.region_1depth_name || ''
     const region2 = doc.address?.region_2depth_name || ''
 
-    let region: '서울' | '경기' | '인천' = '서울'
+    let region: SupportedRegion = '서울'
     if (region1.includes('경기')) region = '경기'
     else if (region1.includes('인천')) region = '인천'
+    else if (region1.includes('부산')) region = '부산'
 
     return { address, region, district: region2 }
   } catch (error) {
     console.error('Kakao geocoding error:', error)
-    return { address: '주소 조회 실패', region: '서울', district: '' }
+    return { address: '주소 조회 실패', region: fallbackRegion, district: '' }
   }
 }
 
@@ -372,6 +469,15 @@ function calculateTraffic(
   centerLat: number,
   centerLng: number
 ): TrafficMetrics {
+  type GridTrafficRow = GridTrafficData & {
+    center_lat?: number | null
+    center_lng?: number | null
+    traffic_estimated?: number | null
+    traffic_morning?: number | null
+    traffic_day?: number | null
+    traffic_night?: number | null
+  }
+
   const TRAFFIC_LEVEL_LABELS: Record<TrafficLevel, string> = {
     very_low: '매우 낮음',
     low: '낮음',
@@ -403,7 +509,7 @@ function calculateTraffic(
 
   for (const grid of gridData) {
     // DB 필드명: traffic_estimated, traffic_morning 등 (types.ts와 다름)
-    const g = grid as any
+    const g = grid as GridTrafficRow
 
     // H3 셀 중심이 실제 500m 반경 내에 있는지 확인
     if (g.center_lat && g.center_lng) {
@@ -473,31 +579,121 @@ function calculateTraffic(
  */
 async function calculateCost(
   supabase: SupabaseClient,
+  region: SupportedRegion,
   district: string
 ): Promise<CostMetrics> {
-  // 법정동별 임대료 조회
-  const { data, error } = await supabase
-    .from('district_rent')
-    .select('*')
-    .ilike('district_name', `%${district}%`)
-    .limit(1)
-    .single()
-
-  if (data) {
-    // DB에 rent_level이 있으면 사용, 없으면 계산
-    const level = data.rent_level || getCostLevel(data.avg_rent_per_pyeong || 100)
+  if (!district) {
     return {
-      avgRent: data.avg_rent_per_pyeong || 100,
-      level: level as 'low' | 'medium' | 'high',
-      districtAvg: data.avg_rent_per_pyeong,
+      avgRent: 20,
+      level: 'medium',
     }
   }
 
-  // 기본값 (데이터 없음) - DB 평균 기준 20만원/평
+  const selectQuery = 'district_name, avg_rent_per_pyeong, rent_level'
+
+  // 1) 구/군 이름 exact match 우선
+  const { data: exactMatch, error: exactError } = await supabase
+    .from('district_rent')
+    .select(selectQuery)
+    .eq('district_name', district)
+    .limit(1)
+
+  if (exactError) {
+    console.error('Cost exact query error:', exactError)
+  }
+
+  const exactRow = (exactMatch?.[0] as DistrictRentRow | undefined) ?? null
+  if (exactRow) {
+    const avgRent = exactRow.avg_rent_per_pyeong ?? 20
+    const level = resolveCostLevel(exactRow.rent_level, avgRent)
+    return {
+      avgRent,
+      level,
+      districtAvg: exactRow.avg_rent_per_pyeong ?? undefined,
+    }
+  }
+
+  // 2) 부분일치 후보 조회 후 지역/구군명을 함께 점수화해서 최적 선택
+  const { data: candidates, error } = await supabase
+    .from('district_rent')
+    .select(selectQuery)
+    .ilike('district_name', `%${district}%`)
+    .limit(20)
+
+  if (error) {
+    console.error('Cost fallback query error:', error)
+  }
+
+  const best = pickBestRentCandidate(
+    (candidates as DistrictRentRow[] | null) ?? [],
+    region,
+    district
+  )
+
+  if (best) {
+    const avgRent = best.avg_rent_per_pyeong ?? 20
+    const level = resolveCostLevel(best.rent_level, avgRent)
+    return {
+      avgRent,
+      level,
+      districtAvg: best.avg_rent_per_pyeong ?? undefined,
+    }
+  }
+
+  // 3) 기본값 (데이터 없음)
   return {
     avgRent: 20,
     level: 'medium',
   }
+}
+
+interface DistrictRentRow {
+  district_name: string
+  avg_rent_per_pyeong: number | null
+  rent_level: string | null
+}
+
+function normalizeDistrictName(value: string): string {
+  return value
+    .replace(/\s+/g, '')
+    .replace(/(특별시|광역시|특별자치시|특별자치도|도)$/g, '')
+}
+
+function pickBestRentCandidate(
+  candidates: DistrictRentRow[],
+  region: SupportedRegion,
+  district: string
+): DistrictRentRow | null {
+  if (candidates.length === 0) return null
+
+  const normalizedDistrict = normalizeDistrictName(district)
+
+  const scored = candidates.map((candidate) => {
+    const name = candidate.district_name || ''
+    const normalizedName = normalizeDistrictName(name)
+    let score = 0
+
+    if (normalizedName === normalizedDistrict) score += 100
+    if (normalizedName.includes(normalizedDistrict)) score += 50
+    if (name.startsWith(`${region} ${district}`)) score += 40
+    if (name.includes(region)) score += 30
+    if (name.includes(district)) score += 20
+
+    return { candidate, score }
+  })
+
+  scored.sort((a, b) => b.score - a.score)
+  return scored[0]?.candidate ?? null
+}
+
+function resolveCostLevel(
+  rentLevel: string | null,
+  avgRent: number
+): 'low' | 'medium' | 'high' {
+  if (rentLevel === 'low' || rentLevel === 'medium' || rentLevel === 'high') {
+    return rentLevel
+  }
+  return getCostLevel(avgRent)
 }
 
 /**
@@ -527,7 +723,7 @@ function calculateSurvivalWithEstimation(
     const closureRate = (totalClosure / totalPrev) * 100
     const openingRate = (totalOpening / totalPrev) * 100
     const netChange = totalOpening - totalClosure
-    const risk = getSurvivalRisk(closureRate)
+    const risk = getClosureRiskLevel(closureRate)
 
     // 트렌드 및 직관적 표현 생성
     const { trend, trendLabel, riskLabel, summary } = buildSurvivalLabels(
@@ -700,6 +896,13 @@ async function calculateAnchors(
   }
 }
 
+interface KakaoPlaceDocument {
+  id?: string
+  place_name?: string
+  distance?: string
+  address_name?: string
+}
+
 /**
  * 카카오 로컬 API로 스타벅스 검색 (개수 포함)
  */
@@ -725,16 +928,17 @@ async function searchStarbucks(
     if (!res.ok) return null
 
     const data = await res.json()
-    const docs = data.documents || []
+    const docs = (data.documents || []) as KakaoPlaceDocument[]
 
-    const starbucksList = docs.filter((d: any) =>
+    const starbucksList = docs.filter((d) =>
       d.place_name?.includes('스타벅스')
     )
 
     if (starbucksList.length === 0) return null
 
+    const nearestDistance = Number.parseInt(starbucksList[0].distance ?? '0', 10)
     return {
-      distance: parseInt(starbucksList[0].distance, 10),
+      distance: Number.isNaN(nearestDistance) ? 0 : nearestDistance,
       count: starbucksList.length,
     }
   } catch (error) {
@@ -771,10 +975,10 @@ async function searchMart(
     if (!res.ok) return null
 
     const data = await res.json()
-    const docs = data.documents || []
+    const docs = (data.documents || []) as KakaoPlaceDocument[]
 
     // 주요 대형마트만 필터링 (익스프레스, 슈퍼 제외)
-    const majorOnly = docs.filter((d: any) => {
+    const majorOnly = docs.filter((d) => {
       const name = d.place_name || ''
       const isMajor = majorMarts.some(brand => name.includes(brand))
       const isExpress = /익스프레스|슈퍼|프레시/.test(name)
@@ -784,9 +988,10 @@ async function searchMart(
     if (majorOnly.length === 0) return null
 
     const nearest = majorOnly[0]
+    const nearestDistance = Number.parseInt(nearest.distance ?? '0', 10)
     return {
-      name: nearest.place_name,
-      distance: parseInt(nearest.distance, 10),
+      name: nearest.place_name || '대형마트',
+      distance: Number.isNaN(nearestDistance) ? 0 : nearestDistance,
     }
   } catch (error) {
     console.error('Mart search error:', error)

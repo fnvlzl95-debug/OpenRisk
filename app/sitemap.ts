@@ -33,13 +33,35 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
 
-    const { data: posts } = await supabase
-      .from('active_posts')
-      .select('id, created_at')
-      .order('created_at', { ascending: false })
-      .limit(100)
+    const posts: Array<{ id: number; created_at: string }> = []
+    const pageSize = 1000
+    let offset = 0
 
-    const postPages: MetadataRoute.Sitemap = (posts || []).map((post) => ({
+    while (true) {
+      const { data, error } = await supabase
+        .from('active_posts')
+        .select('id, created_at')
+        .order('created_at', { ascending: false })
+        .range(offset, offset + pageSize - 1)
+
+      if (error) {
+        throw error
+      }
+
+      if (!data || data.length === 0) {
+        break
+      }
+
+      posts.push(...data)
+
+      if (data.length < pageSize) {
+        break
+      }
+
+      offset += pageSize
+    }
+
+    const postPages: MetadataRoute.Sitemap = posts.map((post) => ({
       url: `${baseUrl}/board/${post.id}`,
       lastModified: new Date(post.created_at),
       changeFrequency: 'weekly' as const,

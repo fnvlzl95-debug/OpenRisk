@@ -211,7 +211,12 @@ function InfoBoardContent() {
 
                     {/* 본문 미리보기 */}
                     <p className="text-xs sm:text-sm lg:text-sm text-gray-400 line-clamp-1 mb-2 sm:mb-2">
-                      {post.content.replace(/<[^>]*>/g, '').substring(0, 100)}
+                      {post.content
+                        .replace(/&lt;/g, '<')
+                        .replace(/&gt;/g, '>')
+                        .replace(/<[^>]*>/g, '')
+                        .replace(/&amp;/g, '&')
+                        .substring(0, 100)}
                     </p>
 
                     {/* 메타 정보 */}

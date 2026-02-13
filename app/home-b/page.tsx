@@ -34,13 +34,17 @@ export default function HomeEditorial() {
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const [showCategoryWarning, setShowCategoryWarning] = useState(false)
   const [noResults, setNoResults] = useState(false)
+  const [selectedCoords, setSelectedCoords] = useState<{ lat: number; lng: number } | null>(null)
+  const [recentPosts, setRecentPosts] = useState<Post[]>([])
   const skipNextSearchRef = useRef(false)
   const searchContainerRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
   // 자동완성 검색 (debounced)
   useEffect(() => {
-    if (query.length < 1) {
+    const normalizedQuery = query.trim()
+
+    if (normalizedQuery.length < 2) {
       setSuggestions([])
       setShowSuggestions(false)
       setNoResults(false)
@@ -52,22 +56,38 @@ export default function HomeEditorial() {
       return
     }
 
+    const controller = new AbortController()
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch(`/api/search?q=${encodeURIComponent(query)}`)
+        const res = await fetch(
+          `/api/search?q=${encodeURIComponent(normalizedQuery)}`,
+          { signal: controller.signal }
+        )
+        if (!res.ok) {
+          throw new Error('검색 요청 실패')
+        }
         const data = await res.json()
+        if (controller.signal.aborted) {
+          return
+        }
         setSuggestions(data)
-        setNoResults(data.length === 0 && query.length >= 2)
-        setShowSuggestions(data.length > 0 || (data.length === 0 && query.length >= 2))
+        setNoResults(data.length === 0)
+        setShowSuggestions(data.length > 0 || data.length === 0)
         setSelectedIndex(-1)
       } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') {
+          return
+        }
         console.error('Search error:', error)
         setSuggestions([])
         setNoResults(false)
       }
-    }, 200)
+    }, 350)
 
-    return () => clearTimeout(timer)
+    return () => {
+      controller.abort()
+      clearTimeout(timer)
+    }
   }, [query])
 
   // 외부 클릭 시 드롭다운 닫기
@@ -123,9 +143,6 @@ export default function HomeEditorial() {
     }
   }
 
-  const [selectedCoords, setSelectedCoords] = useState<{ lat: number; lng: number } | null>(null)
-  const [recentPosts, setRecentPosts] = useState<Post[]>([])
-
   const selectSuggestion = (suggestion: SearchSuggestion & { lat?: number; lng?: number }) => {
     skipNextSearchRef.current = true
     setQuery(suggestion.name)
@@ -162,19 +179,6 @@ export default function HomeEditorial() {
     day: 'numeric',
     weekday: 'long',
   })
-
-  const formatPostDate = (dateString: string) => {
-    const date = new Date(dateString)
-    const now = new Date()
-    const diff = now.getTime() - date.getTime()
-    const hours = Math.floor(diff / (1000 * 60 * 60))
-
-    if (hours < 24) {
-      if (hours < 1) return '방금'
-      return `${hours}시간 전`
-    }
-    return date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })
-  }
 
   return (
     <div className="min-h-screen bg-[#FAFAF8] text-black selection:bg-black/10 overflow-x-hidden">

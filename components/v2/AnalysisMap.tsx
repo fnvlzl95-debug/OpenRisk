@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { RiskLevel } from '@/lib/v2/types'
-import type { KakaoMap } from '@/lib/kakao-maps.d'
 
 interface AnalysisMapProps {
   center: { lat: number; lng: number }
@@ -25,13 +24,19 @@ export default function AnalysisMap({ center, locationName, riskLevel, riskScore
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    let isCancelled = false
+    let loaded = false
+
     // 카카오맵이 로드될 때까지 대기 (layout.tsx에서 전역 로드)
     const checkKakao = setInterval(() => {
       if (window.kakao && window.kakao.maps) {
         clearInterval(checkKakao)
+        if (isCancelled) return
         console.log('[AnalysisMap] Kakao maps ready, initializing...')
         window.kakao.maps.load(() => {
-          initMap()
+          if (!isCancelled) {
+            initMap()
+          }
         })
       }
     }, 100)
@@ -39,12 +44,14 @@ export default function AnalysisMap({ center, locationName, riskLevel, riskScore
     // 10초 후 타임아웃
     const timeout = setTimeout(() => {
       clearInterval(checkKakao)
-      if (!isLoaded) {
-        console.error('[AnalysisMap] Kakao maps load timeout')
-        setError('지도 로딩 타임아웃 - 카카오 개발자 콘솔에서 localhost:8081 도메인 등록 필요')
+      if (isCancelled || loaded) {
+        return
       }
+      console.error('[AnalysisMap] Kakao maps load timeout')
+      setError('지도 로딩 타임아웃 - 카카오 개발자 콘솔에서 localhost:8081 도메인 등록 필요')
     }, 10000)
 
+    // 카카오맵이 로드될 때까지 대기 (layout.tsx에서 전역 로드)
     function initMap() {
       clearTimeout(timeout)
       if (!mapRef.current) return
@@ -119,11 +126,18 @@ export default function AnalysisMap({ center, locationName, riskLevel, riskScore
           map: map
         })
 
+        loaded = true
         setIsLoaded(true)
       } catch (err) {
         console.error('Map initialization error:', err)
         setError('지도 초기화 실패')
       }
+    }
+
+    return () => {
+      isCancelled = true
+      clearInterval(checkKakao)
+      clearTimeout(timeout)
     }
   }, [center.lat, center.lng, locationName, riskLevel, riskScore])
 

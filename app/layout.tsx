@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+const kakaoMapKey = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY
 
 export const metadata: Metadata = {
   title: "오픈리스크 - 창업 리스크 분석",
@@ -27,12 +28,12 @@ export const metadata: Metadata = {
   creator: "OpenRisk",
   metadataBase: new URL("https://openrisk.info"),
   alternates: {
-    canonical: "/",
+    canonical: "/home-b",
   },
   openGraph: {
     title: "오픈리스크 - 창업 리스크 분석",
     description: "지금, 창업해도 될까? 데이터 기반 창업 리스크 분석 서비스.",
-    url: "https://openrisk.info",
+    url: "https://openrisk.info/home-b",
     images: [
       {
         url: "https://openrisk.info/MetaImg.png",
@@ -86,14 +87,16 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
         />
         {/* Kakao Maps SDK - 전역 로드 */}
-        <Script
-          src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY}&autoload=false`}
-          strategy="beforeInteractive"
-        />
+        {kakaoMapKey && (
+          <Script
+            src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoMapKey}&autoload=false`}
+            strategy="lazyOnload"
+          />
+        )}
         {/* Kakao JS SDK - 공유 기능 */}
         <Script
           src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
         {/* Google Analytics */}
         <Script
@@ -111,7 +114,7 @@ export default function RootLayout({
         {/* Naver Analytics */}
         <Script
           src="//wcs.naver.net/wcslog.js"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
         <Script id="naver-analytics" strategy="afterInteractive">
           {`
@@ -119,6 +122,28 @@ export default function RootLayout({
             wcs_add["wa"] = "621ea5aa7ae878";
             if(window.wcs) { wcs_do(); }
           `}
+        </Script>
+        <Script id="openrisk-jsonld" type="application/ld+json" strategy="afterInteractive">
+          {JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            name: '오픈리스크',
+            alternateName: 'OpenRisk',
+            url: 'https://openrisk.info',
+            inLanguage: 'ko-KR',
+            description: '서울/경기/인천/부산 상권 데이터 기반 창업 리스크 분석 서비스',
+            potentialAction: {
+              '@type': 'SearchAction',
+              target: 'https://openrisk.info/home-b?query={search_term_string}',
+              'query-input': 'required name=search_term_string',
+            },
+            publisher: {
+              '@type': 'Organization',
+              name: 'OpenRisk',
+              url: 'https://openrisk.info',
+              logo: 'https://openrisk.info/favicon.ico',
+            },
+          })}
         </Script>
       </head>
       <body

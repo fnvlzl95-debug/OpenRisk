@@ -42,8 +42,8 @@ const NORMALIZATION = {
     highThreshold: 40,   // 40만원/평 이상: 높음 (강남/명동급)
   },
   survival: {
-    lowThreshold: 5,     // 5% 이하: 낮음
-    highThreshold: 15,   // 15% 이상: 높음
+    lowThreshold: 30,    // 30% 이하: 낮음
+    highThreshold: 50,   // 50% 이상: 높음
   },
 }
 
@@ -409,8 +409,8 @@ export function getTrafficLevel(estimated: number): TrafficLevel {
  * 임대료 레벨 판별
  */
 export function getCostLevel(avgRent: number): 'low' | 'medium' | 'high' {
-  if (avgRent <= 80) return 'low'
-  if (avgRent <= 150) return 'medium'
+  if (avgRent <= 15) return 'low'
+  if (avgRent <= 40) return 'medium'
   return 'high'
 }
 
@@ -418,8 +418,8 @@ export function getCostLevel(avgRent: number): 'low' | 'medium' | 'high' {
  * 폐업 리스크 레벨 판별
  */
 export function getSurvivalRisk(closureRate: number): 'low' | 'medium' | 'high' {
-  if (closureRate <= 5) return 'low'
-  if (closureRate <= 10) return 'medium'
+  if (closureRate < 30) return 'low'
+  if (closureRate < 50) return 'medium'
   return 'high'
 }
 
@@ -538,9 +538,9 @@ function generateDetailedRisksAndOpportunities(
   }
 
   // 임대료 분석
-  if (metrics.cost.avgRent > 150) {
+  if (metrics.cost.avgRent > 40) {
     risks.push(`평당 임대료 ${metrics.cost.avgRent}만원 - 비용 부담 큼`)
-  } else if (metrics.cost.avgRent < 80) {
+  } else if (metrics.cost.avgRent < 15) {
     opportunities.push(`평당 임대료 ${metrics.cost.avgRent}만원 - 비용 효율적`)
   }
 

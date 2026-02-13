@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { X, Link2, Check, MessageCircle, Loader2 } from 'lucide-react'
 
-const KAKAO_JS_KEY = '3e682108baedad97b96ccde241977838'
+const KAKAO_JS_KEY = process.env.NEXT_PUBLIC_KAKAO_JS_KEY || process.env.NEXT_PUBLIC_KAKAO_MAP_KEY || ''
 
 interface ShareModalProps {
   isOpen: boolean
@@ -23,6 +23,9 @@ export default function ShareModal({ isOpen, onClose, title, text, url }: ShareM
 
     const checkKakao = () => {
       if (typeof window !== 'undefined' && window.Kakao) {
+        if (!KAKAO_JS_KEY) {
+          return
+        }
         if (!window.Kakao.isInitialized()) {
           window.Kakao.init(KAKAO_JS_KEY)
         }

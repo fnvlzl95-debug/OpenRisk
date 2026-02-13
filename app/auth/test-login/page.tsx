@@ -1,13 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 // 비공개 테스트 로그인 페이지
 // URL: /auth/test-login?key=openrisk2025
 export default function TestLoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -15,11 +16,21 @@ export default function TestLoginPage() {
   const [mode, setMode] = useState<'login' | 'signup'>('login')
   const [nickname, setNickname] = useState('')
 
-  // URL 파라미터로 접근 제한
-  const isAuthorized = typeof window !== 'undefined' &&
-    new URLSearchParams(window.location.search).get('key') === 'openrisk2025'
+  const isTestLoginEnabled = process.env.NEXT_PUBLIC_ENABLE_TEST_LOGIN === 'true'
+  const expectedKey = process.env.NEXT_PUBLIC_TEST_LOGIN_KEY
+  const isAuthorized = isTestLoginEnabled &&
+    !!expectedKey &&
+    searchParams.get('key') === expectedKey
 
-  if (typeof window !== 'undefined' && !isAuthorized) {
+  if (!isTestLoginEnabled) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <p className="text-gray-500">테스트 로그인이 비활성화되어 있습니다.</p>
+      </div>
+    )
+  }
+
+  if (!isAuthorized) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <p className="text-gray-500">접근 권한이 없습니다.</p>
