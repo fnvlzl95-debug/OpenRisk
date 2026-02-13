@@ -1,16 +1,28 @@
 // 입력값 검증 및 sanitize
 
 // HTML Sanitization (XSS 방지)
-// 서버에서는 기본 검증만, 클라이언트에서 ReactMarkdown이 안전하게 렌더링
+// 마크다운 문법은 유지하고 HTML 태그만 이스케이프
 export function sanitizeHtml(text: string): string {
-  // 스마트 따옴표를 일반 따옴표로 변환
-  return text
-    .replace(/[""]/g, '"')
-    .replace(/['']/g, "'")
+  const normalized = text
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/[\u0000-\u001F\u007F]/g, '')
+
+  // HTML 특수문자 이스케이프
+  return normalized
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
 }
 
 // 게시글 검증
 export function validatePost(title: string, content: string): { valid: boolean; error?: string } {
+  if (typeof title !== 'string' || typeof content !== 'string') {
+    return { valid: false, error: '잘못된 요청입니다.' }
+  }
+
   const sanitizedTitle = title.trim()
   const sanitizedContent = content.trim()
 
@@ -35,6 +47,10 @@ export function validatePost(title: string, content: string): { valid: boolean; 
 
 // 댓글 검증
 export function validateComment(content: string): { valid: boolean; error?: string } {
+  if (typeof content !== 'string') {
+    return { valid: false, error: '잘못된 요청입니다.' }
+  }
+
   const sanitizedContent = content.trim()
 
   if (!sanitizedContent) {

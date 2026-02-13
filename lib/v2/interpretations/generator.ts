@@ -239,11 +239,11 @@ function generateTimePatternExplanation(
   metrics: AllMetrics,
   vars: DynamicVars
 ): string {
-  const { peakTime, weekendRatio, timePattern } = metrics.traffic
+  const { peakTime, weekendRatio } = metrics.traffic
 
   // 주말 비중 판단
-  const isWeekendHeavy = weekendRatio > 1.3
-  const isWeekdayHeavy = weekendRatio < 0.7
+  const isWeekendHeavy = weekendRatio >= 0.45
+  const isWeekdayHeavy = weekendRatio <= 0.30
 
   // 피크타임 기반 문장
   const peakPhrases: Record<string, string[]> = {

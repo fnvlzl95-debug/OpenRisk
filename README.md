@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# OpenRisk
 
-## Getting Started
+공공데이터 기반 상권 리스크 분석 서비스입니다.  
+서울/경기/인천/부산 좌표를 입력하면 반경 500m 기준으로 경쟁·유동·임대료·생존·앵커 지표를 종합 분석합니다.
 
-First, run the development server:
+## Stack
+
+- `Next.js (App Router)`
+- `TypeScript`
+- `Supabase`
+- `Kakao Local/Maps API`
+- `OpenAI API` (AI 요약)
+
+## 주요 경로
+
+- `app/home-b` : 메인 랜딩/검색
+- `app/result-b` : 분석 결과 화면
+- `app/api/v2/analyze` : v2 분석 API
+- `app/api/search` : 위치 자동완성 API
+- `app/api/ai/summary` : AI 경고 요약 API
+- `app/board` : 커뮤니티
+
+## 실행 방법
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+기본 접속: `http://localhost:3000`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 환경 변수
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+필수/권장 변수:
 
-## Learn More
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `KAKAO_REST_KEY`
+- `NEXT_PUBLIC_KAKAO_MAP_KEY`
+- `NEXT_PUBLIC_KAKAO_JS_KEY` (권장)
+- `OPENAI_API_KEY` (AI 요약 사용 시)
 
-To learn more about Next.js, take a look at the following resources:
+테스트 로그인 페이지를 사용할 때만:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `NEXT_PUBLIC_ENABLE_TEST_LOGIN=true`
+- `NEXT_PUBLIC_TEST_LOGIN_KEY=<임의의_비밀키>`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 참고
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 일부 API는 서버 측 레이트리밋이 적용됩니다.
+- SEO 파일은 `app/layout.tsx`, `app/robots.ts`, `app/sitemap.ts`에서 관리합니다.

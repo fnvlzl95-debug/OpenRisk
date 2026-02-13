@@ -155,7 +155,7 @@ export interface TrafficMetrics {
   level: TrafficLevel
   levelLabel: string         // '매우 높음', '높음' 등
   peakTime: 'morning' | 'day' | 'night'
-  weekendRatio: number       // 주말/평일 비율 (1.0 = 동일)
+  weekendRatio: number       // 주말 유동 비중 (0~1, 예: 0.35 = 35%)
   timePattern: {
     morning: number          // 06-11시 비중 (%)
     day: number              // 11-17시 비중 (%)

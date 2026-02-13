@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
 import { AIAnalysisResponse, AnalyzeV2Response } from '@/lib/v2/types'
+import { getClientIp } from '@/lib/server/client-ip'
+import { checkServerRateLimit, getRetryAfterSeconds } from '@/lib/server/rate-limit'
 
 // Node.js 런타임 명시 (Edge에서 OpenAI SDK 호환 문제 방지)
 export const runtime = 'nodejs'
 
 // Vercel Function 타임아웃 확장 (Hobby: 10초, Pro: 60초)
 export const maxDuration = 60
+const AI_SUMMARY_RATE_LIMIT = { max: 8, windowMs: 60 * 1000 }
 
 // OpenAI 클라이언트는 요청 시점에 lazy 초기화
 let openaiClient: OpenAI | null = null
@@ -134,6 +137,27 @@ function compactReportV2(data: AnalyzeV2Response) {
 }
 
 export async function POST(req: NextRequest) {
+  const clientIp = getClientIp(req)
+  const rateLimit = checkServerRateLimit(`ai-summary:${clientIp}`, AI_SUMMARY_RATE_LIMIT)
+  const rateLimitHeaders = {
+    'X-RateLimit-Limit': String(AI_SUMMARY_RATE_LIMIT.max),
+    'X-RateLimit-Remaining': String(rateLimit.remaining),
+    'X-RateLimit-Reset': String(Math.ceil(rateLimit.resetAt / 1000)),
+  }
+
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.' },
+      {
+        status: 429,
+        headers: {
+          ...rateLimitHeaders,
+          'Retry-After': String(getRetryAfterSeconds(rateLimit.resetAt)),
+        },
+      }
+    )
+  }
+
   try {
     // API 키 확인 및 클라이언트 초기화
     const openai = getOpenAIClient()
@@ -144,12 +168,28 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const { data } = await req.json()
+    const body = await req.json()
+    if (!body || typeof body !== 'object') {
+      return NextResponse.json(
+        { error: '잘못된 요청 형식입니다.' },
+        { status: 400, headers: rateLimitHeaders }
+      )
+    }
+
+    const { data } = body as { data?: AnalyzeV2Response }
 
     if (!data) {
       return NextResponse.json(
         { error: 'v2 분석 데이터가 필요합니다.' },
-        { status: 400 }
+        { status: 400, headers: rateLimitHeaders }
+      )
+    }
+
+    const payloadSize = JSON.stringify(data).length
+    if (payloadSize > 60_000) {
+      return NextResponse.json(
+        { error: '요청 데이터가 너무 큽니다.' },
+        { status: 413, headers: rateLimitHeaders }
       )
     }
 
@@ -175,7 +215,7 @@ ${JSON.stringify(compactData, null, 2)}
     if (!content) {
       return NextResponse.json(
         { error: 'AI 응답이 비었습니다.' },
-        { status: 502 }
+        { status: 502, headers: rateLimitHeaders }
       )
     }
 
@@ -183,11 +223,11 @@ ${JSON.stringify(compactData, null, 2)}
     let analysis: AIAnalysisResponse
     try {
       analysis = JSON.parse(content)
-    } catch (parseError) {
+    } catch {
       console.error('JSON 파싱 오류:', content)
       return NextResponse.json(
         { error: 'AI 응답 형식 오류' },
-        { status: 502 }
+        { status: 502, headers: rateLimitHeaders }
       )
     }
 
@@ -196,7 +236,7 @@ ${JSON.stringify(compactData, null, 2)}
       console.error('필수 필드 누락:', analysis)
       return NextResponse.json(
         { error: 'AI 응답에 필수 필드가 없습니다.' },
-        { status: 502 }
+        { status: 502, headers: rateLimitHeaders }
       )
     }
 
@@ -216,41 +256,50 @@ ${JSON.stringify(compactData, null, 2)}
       analysis.disclaimer = '본 분석은 공공데이터 기반 참고자료입니다. 최종 결정은 현장 실사와 전문가 상담을 통해 신중하게 내리시기 바랍니다.'
     }
 
-    return NextResponse.json({ analysis })
-
-  } catch (error: any) {
+    return NextResponse.json({ analysis }, { headers: rateLimitHeaders })
+  } catch (error: unknown) {
     // 상세 에러 로깅 (디버깅용)
     console.error('AI analysis error RAW:', error)
-    console.error('status:', error?.status)
-    console.error('message:', error?.message)
-    console.error('error body:', error?.error)
+    const status = typeof error === 'object' && error !== null && 'status' in error
+      ? (error as { status?: number }).status
+      : undefined
+    const message = typeof error === 'object' && error !== null && 'message' in error
+      ? (error as { message?: string }).message
+      : undefined
+    const errorBody = typeof error === 'object' && error !== null && 'error' in error
+      ? (error as { error?: { message?: string } }).error
+      : undefined
+
+    console.error('status:', status)
+    console.error('message:', message)
+    console.error('error body:', errorBody)
 
     // OpenAI API 에러 처리
-    if (error?.status === 429 || error?.message?.includes('rate')) {
+    if (status === 429 || message?.includes('rate')) {
       return NextResponse.json(
         { error: 'API 호출 한도 초과. 잠시 후 다시 시도해주세요.' },
-        { status: 429 }
+        { status: 429, headers: rateLimitHeaders }
       )
     }
 
-    if (error?.status === 401 || error?.message?.includes('API key') || error?.message?.includes('Incorrect API key')) {
+    if (status === 401 || message?.includes('API key') || message?.includes('Incorrect API key')) {
       return NextResponse.json(
         { error: 'API 인증 오류' },
-        { status: 401 }
+        { status: 401, headers: rateLimitHeaders }
       )
     }
 
     // Bad Request - OpenAI가 준 원인 그대로 반환
-    if (error?.status === 400) {
+    if (status === 400) {
       return NextResponse.json(
-        { error: error?.error?.message ?? error?.message ?? 'Bad Request' },
-        { status: 400 }
+        { error: errorBody?.message ?? message ?? 'Bad Request' },
+        { status: 400, headers: rateLimitHeaders }
       )
     }
 
     return NextResponse.json(
       { error: 'AI 분석 생성 중 오류가 발생했습니다.' },
-      { status: 500 }
+      { status: 500, headers: rateLimitHeaders }
     )
   }
 }

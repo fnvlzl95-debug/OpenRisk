@@ -104,14 +104,14 @@ export function getTrafficLevelSimple(index: number): TrafficLevelSimple {
 }
 
 export function getCostLevelSimple(avgRent: number): MetricLevel {
-  if (avgRent <= 80) return 'low'
-  if (avgRent <= 150) return 'medium'
+  if (avgRent <= 15) return 'low'
+  if (avgRent <= 40) return 'medium'
   return 'high'
 }
 
 export function getSurvivalLevel(closureRate: number): MetricLevel {
-  if (closureRate <= 30) return 'low'
-  if (closureRate <= 50) return 'medium'
+  if (closureRate < 30) return 'low'
+  if (closureRate < 50) return 'medium'
   return 'high'
 }
 

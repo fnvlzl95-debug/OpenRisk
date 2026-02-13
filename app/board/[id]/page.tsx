@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, use } from 'react'
+import { useState, useEffect, use, type HTMLAttributes, type ReactNode } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import AuthButton from '@/components/board/AuthButton'
@@ -9,7 +9,6 @@ import { User } from '@supabase/supabase-js'
 import { hasViewedPost, markPostAsViewed } from '@/lib/board/view-tracker'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import rehypeRaw from 'rehype-raw'
 
 // 커스텀 확인 모달
 function ConfirmModal({
@@ -185,17 +184,6 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
 
     fetchPost()
   }, [id])
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  }
 
   // 댓글을 계층 구조로 정리
   const organizeComments = (flatComments: Comment[]): Comment[] => {
@@ -566,7 +554,6 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
           <div className="prose prose-lg max-w-none text-[16px] sm:text-[17px] leading-[1.8] text-gray-700">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
-              rehypePlugins={[rehypeRaw]}
               components={{
                 h1: ({ children }) => (
                   <h1 className="text-[24px] sm:text-[28px] font-bold text-gray-900 mt-8 mb-6 leading-[1.3]">
@@ -618,7 +605,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
                     {children}
                   </blockquote>
                 ),
-                code: ({ node, inline, className, children, ...props }: any) =>
+                code: ({ inline, children, ...props }: { inline?: boolean; children?: ReactNode } & HTMLAttributes<HTMLElement>) =>
                   inline ? (
                     <code className="px-1.5 py-0.5 bg-gray-100 text-gray-800 rounded text-sm font-mono" {...props}>
                       {children}
@@ -641,17 +628,7 @@ export default function PostDetailPage({ params }: { params: Promise<{ id: strin
                 hr: () => <hr className="my-8 border-gray-200" />,
               }}
             >
-              {post.content
-                // HTML 엔티티 디코드
-                .replace(/&lt;/g, '<')
-                .replace(/&gt;/g, '>')
-                .replace(/&#8220;/g, '"')
-                .replace(/&#8221;/g, '"')
-                .replace(/&#8216;/g, "'")
-                .replace(/&#8217;/g, "'")
-                .replace(/&quot;/g, '"')
-                .replace(/&#39;/g, "'")
-                .replace(/&amp;/g, '&')}
+              {post.content}
             </ReactMarkdown>
           </div>
 
