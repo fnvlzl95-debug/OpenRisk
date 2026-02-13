@@ -26,32 +26,42 @@ export default function AdminViewsPage() {
   const [sortBy, setSortBy] = useState<SortType>('latest')
 
   useEffect(() => {
-    fetchPosts()
-  }, [sortBy])
+    let isActive = true
 
-  const fetchPosts = async () => {
-    const supabase = createClient()
-    let query = supabase
-      .from('posts')
-      .select('id, title, view_count, created_at')
+    const fetchPosts = async () => {
+      const supabase = createClient()
+      let query = supabase
+        .from('posts')
+        .select('id, title, view_count, created_at')
 
-    // 삭제되지 않은 게시글만 조회
-    query = query.is('deleted_at', null)
+      // 삭제되지 않은 게시글만 조회
+      query = query.is('deleted_at', null)
 
-    if (sortBy === 'latest') {
-      query = query.order('created_at', { ascending: false })
-    } else {
-      query = query.order('view_count', { ascending: false })
+      if (sortBy === 'latest') {
+        query = query.order('created_at', { ascending: false })
+      } else {
+        query = query.order('view_count', { ascending: false })
+      }
+
+      const { data } = await query.limit(50)
+
+      if (!isActive) {
+        return
+      }
+
+      setPosts(data || [])
+      const initialEdit: EditState = {}
+      data?.forEach(p => { initialEdit[p.id] = p.view_count })
+      setEditValues(initialEdit)
+      setLoading(false)
     }
 
-    const { data } = await query.limit(50)
+    void fetchPosts()
 
-    setPosts(data || [])
-    const initialEdit: EditState = {}
-    data?.forEach(p => { initialEdit[p.id] = p.view_count })
-    setEditValues(initialEdit)
-    setLoading(false)
-  }
+    return () => {
+      isActive = false
+    }
+  }, [sortBy])
 
   const handleChange = (postId: number, value: number | string) => {
     // 빈 문자열이면 0으로 설정 (입력 중 삭제 허용)

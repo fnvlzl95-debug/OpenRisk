@@ -252,7 +252,7 @@ export async function POST(request: NextRequest) {
     // DB 업데이트
     const supabase = getSupabase()
     let updatedCount = 0
-    let insertedCount = 0
+    const insertedCount = 0
     let errorCount = 0
 
     const h3Ids = Object.keys(gridCounts)

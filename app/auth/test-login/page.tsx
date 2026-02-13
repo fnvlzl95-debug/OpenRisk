@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 // 비공개 테스트 로그인 페이지
 // URL: /auth/test-login?key=openrisk2025
-export default function TestLoginPage() {
+function TestLoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [username, setUsername] = useState('')
@@ -222,5 +222,19 @@ export default function TestLoginPage() {
         </p>
       </div>
     </div>
+  )
+}
+
+export default function TestLoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+          <p className="text-gray-500">로딩 중...</p>
+        </div>
+      }
+    >
+      <TestLoginContent />
+    </Suspense>
   )
 }

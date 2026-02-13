@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense, useRef, useMemo } from 'react'
+import { useState, useEffect, Suspense, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import AuthButton from '@/components/board/AuthButton'
@@ -393,19 +393,19 @@ function PostCard({
 }) {
   const cardRef = useRef<HTMLAnchorElement>(null)
   const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 })
+  const appliedTilt = hoveredPost === post.id ? tilt : { rotateX: 0, rotateY: 0 }
 
-  useEffect(() => {
-    if (!cardRef.current || hoveredPost !== post.id) {
-      setTilt({ rotateX: 0, rotateY: 0 })
-      return
-    }
+  const handleMouseMove = () => {
+    if (!cardRef.current || hoveredPost !== post.id) return
+
     const rect = cardRef.current.getBoundingClientRect()
     const centerX = rect.left + rect.width / 2
     const centerY = rect.top + rect.height / 2
     const rotateY = ((mousePos.x - centerX) / rect.width) * 8
     const rotateX = ((centerY - mousePos.y) / rect.height) * 8
+
     setTilt({ rotateX, rotateY })
-  }, [mousePos, hoveredPost, post.id])
+  }
 
   return (
     <Link
@@ -417,12 +417,16 @@ function PostCard({
         animationDelay: `${index * 100}ms`
       }}
       onMouseEnter={() => setHoveredPost(post.id)}
-      onMouseLeave={() => setHoveredPost(null)}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={() => {
+        setHoveredPost(null)
+        setTilt({ rotateX: 0, rotateY: 0 })
+      }}
     >
       <div
         className="relative bg-gradient-to-br from-white/10 to-white/5 border border-white/10 p-5 transition-all duration-200 hover:border-white/30"
         style={{
-          transform: `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`,
+          transform: `rotateX(${appliedTilt.rotateX}deg) rotateY(${appliedTilt.rotateY}deg)`,
           transformStyle: 'preserve-3d'
         }}
       >

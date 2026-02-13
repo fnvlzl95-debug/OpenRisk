@@ -215,7 +215,7 @@ export function calculateClosureRisk(input: ClosureRiskInput): SurvivalMetrics {
 
   // 2-1. 업종별 기본 폐업률 (100 - 생존율)
   const baseSurvivalRate = CATEGORY_SURVIVAL_RATES[category] || 55
-  let baseClosureRate = 100 - baseSurvivalRate
+  const baseClosureRate = 100 - baseSurvivalRate
 
   // 2-2. 경쟁 밀도 조정 (밀도 0.5 이상이면 위험 증가)
   const competitionAdjustment = competitionDensity > 0.5

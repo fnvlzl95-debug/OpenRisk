@@ -9,7 +9,7 @@ import { useSearchParams } from 'next/navigation'
 import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
-import { AnalyzeV2Response, RiskLevel, RiskCard, AIAnalysisResponse, AREA_TYPE_INFO } from '@/lib/v2/types'
+import { AnalyzeV2Response, RiskLevel, AIAnalysisResponse, AREA_TYPE_INFO } from '@/lib/v2/types'
 import { BusinessCategory } from '@/lib/categories'
 import RiskCardStack from '@/components/v2/RiskCardStack'
 import AIAnalysisModal from '@/components/v2/AIAnalysisModal'
@@ -35,25 +35,20 @@ const RISK_COLORS: Record<RiskLevel, { text: string; bg: string; border: string;
   VERY_HIGH: { text: 'text-rose-400', bg: 'bg-rose-500/10', border: 'border-rose-500/30', hex: '#f43f5e' },
 }
 
-const RISK_LABELS: Record<RiskLevel, string> = {
-  LOW: '안전',
-  MEDIUM: '주의',
-  HIGH: '위험',
-  VERY_HIGH: '매우 위험',
-}
-
 function ResultV2Content() {
   const searchParams = useSearchParams()
   const paramLat = parseFloat(searchParams.get('lat') || '0')
   const paramLng = parseFloat(searchParams.get('lng') || '0')
   const query = searchParams.get('query') || ''
   const category = (searchParams.get('category') || 'cafe') as BusinessCategory
+  const hasInitialCoords = !!(paramLat && paramLng)
+  const hasQuery = query.trim().length > 0
 
   const [result, setResult] = useState<AnalyzeV2Response | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(hasInitialCoords || hasQuery)
   const [error, setError] = useState<string | null>(null)
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
-    paramLat && paramLng ? { lat: paramLat, lng: paramLng } : null
+    hasInitialCoords ? { lat: paramLat, lng: paramLng } : null
   )
 
   // AI 분석 상태
@@ -96,12 +91,7 @@ function ResultV2Content() {
 
   // query -> 좌표 변환
   useEffect(() => {
-    if (coords) return
-    if (!query) {
-      setError('검색어 또는 좌표가 필요합니다.')
-      setLoading(false)
-      return
-    }
+    if (coords || !query) return
 
     const geocode = async () => {
       try {
@@ -178,13 +168,15 @@ function ResultV2Content() {
     )
   }
 
-  if (error || !result) {
+  const displayError = error || (!coords && !hasQuery ? '검색어 또는 좌표가 필요합니다.' : null)
+
+  if (displayError || !result) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-white">
         <div className="p-6 rounded-2xl bg-[#111] border border-white/10 max-w-sm text-center">
           <div className="text-3xl mb-3">⚠️</div>
           <h2 className="text-lg font-bold mb-2">분석 실패</h2>
-          <p className="text-white/60 text-sm mb-4">{error}</p>
+          <p className="text-white/60 text-sm mb-4">{displayError || '분석 데이터를 불러오지 못했습니다.'}</p>
           <Link
             href="/"
             className="inline-block px-5 py-2.5 bg-white text-black font-bold text-sm rounded-lg hover:bg-gray-200 transition-colors"

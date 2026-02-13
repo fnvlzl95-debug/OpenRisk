@@ -2,20 +2,19 @@
 
 import { useState, useEffect, useSyncExternalStore } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { User, Session } from '@supabase/supabase-js'
-import { LogIn, LogOut, Loader2, UserCircle, Settings } from 'lucide-react'
+import { Session } from '@supabase/supabase-js'
+import { LogIn, LogOut, Loader2, Settings } from 'lucide-react'
 import Link from 'next/link'
 
 interface Profile {
+  id: string
   nickname: string
   profile_image: string | null
   is_admin: boolean
 }
 
 // 전역 세션 캐시
-let cachedSession: Session | null = null
-let sessionLoaded = false
-let listeners: Set<() => void> = new Set()
+const listeners: Set<() => void> = new Set()
 let cachedSnapshot: { session: Session | null; loaded: boolean } = { session: null, loaded: false }
 
 function subscribe(callback: () => void) {
@@ -34,8 +33,6 @@ function getServerSnapshot() {
 }
 
 function updateSnapshot(session: Session | null, loaded: boolean) {
-  cachedSession = session
-  sessionLoaded = loaded
   cachedSnapshot = { session, loaded }
   listeners.forEach(l => l())
 }
@@ -48,7 +45,7 @@ if (typeof window !== 'undefined') {
     updateSnapshot(session, true)
   })
 
-  supabase.auth.onAuthStateChange((event, session) => {
+  supabase.auth.onAuthStateChange((_event, session) => {
     updateSnapshot(session, true)
   })
 }
@@ -56,23 +53,21 @@ if (typeof window !== 'undefined') {
 export default function AuthButton() {
   const { session, loaded } = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
   const user = session?.user ?? null
+  const userId = user?.id
   const [profile, setProfile] = useState<Profile | null>(null)
   const [showMenu, setShowMenu] = useState(false)
 
   useEffect(() => {
-    if (!user) {
-      setProfile(null)
-      return
-    }
+    if (!userId) return
 
     const supabase = createClient()
     supabase
       .from('profiles')
-      .select('nickname, profile_image, is_admin')
-      .eq('id', user.id)
+      .select('id, nickname, profile_image, is_admin')
+      .eq('id', userId)
       .single()
       .then(({ data }) => setProfile(data))
-  }, [user?.id])
+  }, [userId])
 
   const [loggingOut, setLoggingOut] = useState(false)
 
@@ -118,8 +113,9 @@ export default function AuthButton() {
   }
 
   if (user) {
-    const displayName = profile?.nickname || user.user_metadata?.name || user.user_metadata?.full_name || '사용자'
-    const displayImage = profile?.profile_image || user.user_metadata?.avatar_url || null
+    const activeProfile = profile?.id === userId ? profile : null
+    const displayName = activeProfile?.nickname || user.user_metadata?.name || user.user_metadata?.full_name || '사용자'
+    const displayImage = activeProfile?.profile_image || user.user_metadata?.avatar_url || null
 
     return (
       <div className="relative">
@@ -145,7 +141,7 @@ export default function AuthButton() {
           {/* 데스크톱: 닉네임 표시 */}
           <span className="hidden sm:flex items-center text-xs font-medium text-gray-900">
             {displayName}
-            {profile?.is_admin && (
+            {activeProfile?.is_admin && (
               <span className="ml-1 text-[10px] text-red-500">[관리자]</span>
             )}
           </span>
@@ -157,7 +153,7 @@ export default function AuthButton() {
             {/* 모바일에서만 닉네임 표시 */}
             <div className="sm:hidden px-3 py-2 border-b border-gray-100">
               <p className="text-xs font-medium text-gray-900 truncate">{displayName}</p>
-              {profile?.is_admin && (
+              {activeProfile?.is_admin && (
                 <span className="text-[10px] text-red-500">[관리자]</span>
               )}
             </div>

@@ -59,7 +59,9 @@ export default function AIAnalysisModal({
               {/* Headline - Big Quote Style */}
               <div className="border-l-4 border-black pl-3 sm:pl-4 py-1 sm:py-2">
                 <p className="text-base sm:text-xl font-bold leading-tight" style={{ fontFamily: 'Georgia, serif' }}>
-                  "{analysis.headline}"
+                  <span aria-hidden>“</span>
+                  {analysis.headline}
+                  <span aria-hidden>”</span>
                 </p>
               </div>
 
