@@ -16,6 +16,12 @@ interface RateLimitEntry {
 
 const rateLimitStore = new Map<string, RateLimitEntry>()
 const MAX_STORE_SIZE = 10_000
+const UPSTASH_REDIS_URL = process.env.UPSTASH_REDIS_REST_URL
+const UPSTASH_REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN
+
+function isRedisRateLimitEnabled(): boolean {
+  return Boolean(UPSTASH_REDIS_URL && UPSTASH_REDIS_TOKEN)
+}
 
 function sweepExpiredEntries(now: number) {
   for (const [key, value] of rateLimitStore.entries()) {
@@ -25,7 +31,7 @@ function sweepExpiredEntries(now: number) {
   }
 }
 
-export function checkServerRateLimit(
+function checkInMemoryRateLimit(
   key: string,
   config: RateLimitConfig
 ): RateLimitResult {
@@ -62,6 +68,75 @@ export function checkServerRateLimit(
     remaining: Math.max(config.max - entry.count, 0),
     resetAt: entry.resetAt,
   }
+}
+
+async function checkRedisRateLimit(
+  key: string,
+  config: RateLimitConfig
+): Promise<RateLimitResult | null> {
+  if (!isRedisRateLimitEnabled()) {
+    return null
+  }
+
+  try {
+    const redisKey = `openrisk:rate:${key}`
+    const response = await fetch(`${UPSTASH_REDIS_URL}/pipeline`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${UPSTASH_REDIS_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify([
+        ['INCR', redisKey],
+        ['PEXPIRE', redisKey, config.windowMs, 'NX'],
+        ['PTTL', redisKey],
+      ]),
+      cache: 'no-store',
+    })
+
+    if (!response.ok) {
+      return null
+    }
+
+    const pipeline = await response.json() as Array<{ result?: number | string | null }>
+    const incrementResult = pipeline?.[0]?.result
+    const ttlResult = pipeline?.[2]?.result
+
+    const count = typeof incrementResult === 'number'
+      ? incrementResult
+      : Number.parseInt(String(incrementResult ?? '0'), 10)
+
+    const ttlMsRaw = typeof ttlResult === 'number'
+      ? ttlResult
+      : Number.parseInt(String(ttlResult ?? '-1'), 10)
+
+    if (!Number.isFinite(count) || count <= 0) {
+      return null
+    }
+
+    const ttlMs = ttlMsRaw > 0 ? ttlMsRaw : config.windowMs
+    const resetAt = Date.now() + ttlMs
+
+    return {
+      allowed: count <= config.max,
+      remaining: count >= config.max ? 0 : Math.max(config.max - count, 0),
+      resetAt,
+    }
+  } catch {
+    return null
+  }
+}
+
+export async function checkServerRateLimit(
+  key: string,
+  config: RateLimitConfig
+): Promise<RateLimitResult> {
+  const redisResult = await checkRedisRateLimit(key, config)
+  if (redisResult) {
+    return redisResult
+  }
+
+  return checkInMemoryRateLimit(key, config)
 }
 
 export function getRetryAfterSeconds(resetAt: number): number {

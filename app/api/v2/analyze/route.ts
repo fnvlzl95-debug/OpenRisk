@@ -11,6 +11,7 @@ import {
   latLngToH3,
   getH3CellsInRadius,
   getDistance,
+  h3ToLatLng,
 } from '@/lib/h3'
 import {
   BusinessCategory,
@@ -31,7 +32,7 @@ import {
   AreaType,
 } from '@/lib/v2/types'
 import {
-  calculateRiskScore,
+  calculateRiskScoreBreakdown,
   getRiskLevel,
   determineAreaType,
   getCompetitionLevel,
@@ -44,6 +45,7 @@ import {
   calculateClosureRisk,
   getClosureRiskLevel,
 } from '@/lib/v2/closure-risk'
+import { createAnalysisIntegrity } from '@/lib/v2/integrity'
 import { getTopRiskCards } from '@/lib/v2/interpretations/risk-cards'
 import type { MetricContext } from '@/lib/v2/interpretations/types'
 import { getClientIp } from '@/lib/server/client-ip'
@@ -57,6 +59,12 @@ const ANALYZE_CACHE_TTL_MS = 5 * 60 * 1000
 // 분석 반경 (고정)
 const ANALYSIS_RADIUS = 500
 type SupportedRegion = AnalyzeV2Response['location']['region']
+const SUPPORTED_REGION_BOUNDS: Record<SupportedRegion, { latMin: number; latMax: number; lngMin: number; lngMax: number }> = {
+  서울: { latMin: 37.41, latMax: 37.72, lngMin: 126.75, lngMax: 127.27 },
+  경기: { latMin: 36.85, latMax: 38.35, lngMin: 126.20, lngMax: 127.95 },
+  인천: { latMin: 37.30, latMax: 37.65, lngMin: 126.35, lngMax: 126.95 },
+  부산: { latMin: 34.95, latMax: 35.35, lngMin: 128.75, lngMax: 129.35 },
+}
 
 interface AnalyzeCacheEntry {
   value: AnalyzeV2Response
@@ -84,7 +92,7 @@ function buildAnalyzeCacheKey(
 
 export async function POST(request: NextRequest) {
   const clientIp = getClientIp(request)
-  const rateLimit = checkServerRateLimit(`analyze-v2:${clientIp}`, ANALYZE_RATE_LIMIT)
+  const rateLimit = await checkServerRateLimit(`analyze-v2:${clientIp}`, ANALYZE_RATE_LIMIT)
   const rateLimitHeaders = {
     'X-RateLimit-Limit': String(ANALYZE_RATE_LIMIT.max),
     'X-RateLimit-Remaining': String(rateLimit.remaining),
@@ -113,6 +121,28 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: '위도, 경도, 업종을 모두 입력해주세요.' },
         { status: 400, headers: rateLimitHeaders }
+      )
+    }
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+      return NextResponse.json(
+        { error: '좌표 형식이 올바르지 않습니다.' },
+        { status: 400, headers: rateLimitHeaders }
+      )
+    }
+
+    if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+      return NextResponse.json(
+        { error: '좌표 범위를 벗어났습니다.' },
+        { status: 400, headers: rateLimitHeaders }
+      )
+    }
+
+    const supportedRegion = detectSupportedRegionByCoordinates(lat, lng)
+    if (!supportedRegion) {
+      return NextResponse.json(
+        { error: '현재는 서울·경기·인천·부산 지역만 지원합니다.' },
+        { status: 422, headers: rateLimitHeaders }
       )
     }
 
@@ -156,17 +186,19 @@ export async function POST(request: NextRequest) {
     const gridStoreData = await getGridStoreData(supabase, h3Cells)
     const gridTrafficData = await getGridTrafficData(supabase, h3Cells)
 
+    // 4-1. 500m 반경 필터를 모든 지표에 동일 적용
+    const filteredStoreData = filterStoreDataByRadius(gridStoreData, lat, lng)
+    const filteredTrafficData = filterTrafficDataByRadius(gridTrafficData, lat, lng)
+
     // 5. 지표 계산
     // 5-1. 경쟁 지표
     const competition = calculateCompetition(
-      gridStoreData,
-      targetCategory,
-      lat,
-      lng
+      filteredStoreData,
+      targetCategory
     )
 
     // 5-2. 유동인구 지표
-    const traffic = calculateTraffic(gridTrafficData, lat, lng)
+    const traffic = calculateTraffic(filteredTrafficData)
 
     // 5-3. 임대료 지표
     const cost = await calculateCost(supabase, addressInfo.region, addressInfo.district)
@@ -175,7 +207,7 @@ export async function POST(request: NextRequest) {
     const anchors = await calculateAnchors(supabase, lat, lng)
 
     // 5-5. 상권 유형 판별 (survival 계산에 필요)
-    const storeCounts = aggregateStoreCounts(gridStoreData)
+    const storeCounts = aggregateStoreCounts(filteredStoreData)
     const areaType = determineAreaType(
       { competition, traffic, anchors },
       storeCounts
@@ -197,7 +229,7 @@ export async function POST(request: NextRequest) {
 
     // 5-6. 생존율 지표 (closure-risk.ts 추정 로직 사용)
     const survival = calculateSurvivalWithEstimation(
-      gridStoreData,
+      filteredStoreData,
       targetCategory,
       traffic.level,
       cost.level,
@@ -205,7 +237,7 @@ export async function POST(request: NextRequest) {
     )
 
     // 6. 리스크 점수 계산 (상권 유형 패널티 포함)
-    const riskScore = calculateRiskScore(
+    const riskScoreBreakdown = calculateRiskScoreBreakdown(
       targetCategory,
       {
         competition,
@@ -216,6 +248,7 @@ export async function POST(request: NextRequest) {
       },
       areaType  // 상권 유형별 패널티 적용
     )
+    const riskScore = riskScoreBreakdown.finalScore
     const riskLevel = getRiskLevel(riskScore)
 
     // 8. 해석 문구 생성
@@ -249,6 +282,7 @@ export async function POST(request: NextRequest) {
       subwayDistance: anchors.subway?.distance,
       subwayName: anchors.subway?.name,
       hasNearbyAnchor: anchors.hasAnyAnchor,
+      categoryKey: targetCategory,
       categoryName: getCategoryName(targetCategory),
     }
     const riskCards = getTopRiskCards(metricContext, 3)
@@ -268,6 +302,7 @@ export async function POST(request: NextRequest) {
         areaType,
         targetCategory,
         categoryName: getCategoryName(targetCategory),
+        scoreBreakdown: riskScoreBreakdown,
       },
       metrics: {
         competition,
@@ -279,12 +314,17 @@ export async function POST(request: NextRequest) {
       interpretation,
       riskCards,
       dataQuality: {
-        storeDataAge: gridStoreData[0]?.period || 'N/A',
-        trafficDataAge: gridTrafficData[0]?.h3_id ? '2025-01' : 'N/A',
-        coverage: calculateCoverage(gridStoreData, gridTrafficData),
+        storeDataAge: filteredStoreData[0]?.period || 'N/A',
+        trafficDataAge: filteredTrafficData[0]?.h3_id ? '2025-01' : 'N/A',
+        coverage: calculateCoverage(filteredStoreData, filteredTrafficData),
       },
       h3Cells,
       centerH3,
+    }
+
+    const integrity = createAnalysisIntegrity(response)
+    if (integrity) {
+      response.integrity = integrity
     }
 
     analyzeCache.set(cacheKey, {
@@ -312,23 +352,30 @@ export async function POST(request: NextRequest) {
 /**
  * 카카오 역지오코딩
  */
+function detectSupportedRegionByCoordinates(
+  lat: number,
+  lng: number
+): SupportedRegion | null {
+  const isWithin = (region: SupportedRegion) => {
+    const bounds = SUPPORTED_REGION_BOUNDS[region]
+    return (
+      lat >= bounds.latMin &&
+      lat <= bounds.latMax &&
+      lng >= bounds.lngMin &&
+      lng <= bounds.lngMax
+    )
+  }
+
+  if (isWithin('서울')) return '서울'
+  if (isWithin('부산')) return '부산'
+  if (isWithin('인천')) return '인천'
+  if (isWithin('경기')) return '경기'
+
+  return null
+}
+
 function inferRegionByCoordinates(lat: number, lng: number): SupportedRegion {
-  // 부산 대략 범위
-  if (lat >= 35.0 && lat <= 35.4 && lng >= 128.8 && lng <= 129.4) {
-    return '부산'
-  }
-
-  // 인천 대략 범위
-  if (lat >= 37.3 && lat <= 37.7 && lng >= 126.3 && lng <= 126.9) {
-    return '인천'
-  }
-
-  // 경기 대략 범위
-  if (lat >= 36.8 && lat <= 38.3 && lng >= 126.3 && lng <= 127.9) {
-    return '경기'
-  }
-
-  return '서울'
+  return detectSupportedRegionByCoordinates(lat, lng) || '서울'
 }
 
 async function getAddressFromKakao(
@@ -416,26 +463,57 @@ async function getGridTrafficData(
   return data || []
 }
 
+function filterStoreDataByRadius(
+  gridData: GridStoreData[],
+  centerLat: number,
+  centerLng: number
+): GridStoreData[] {
+  return gridData.filter((grid) => {
+    const cellDistance = getDistance(centerLat, centerLng, grid.center_lat, grid.center_lng)
+    return cellDistance <= ANALYSIS_RADIUS
+  })
+}
+
+function filterTrafficDataByRadius(
+  gridData: GridTrafficData[],
+  centerLat: number,
+  centerLng: number
+): GridTrafficData[] {
+  type GridTrafficRowWithCenter = GridTrafficData & {
+    center_lat?: number | null
+    center_lng?: number | null
+  }
+
+  return gridData.filter((grid) => {
+    const withCenter = grid as GridTrafficRowWithCenter
+
+    if (typeof withCenter.center_lat === 'number' && typeof withCenter.center_lng === 'number') {
+      const distance = getDistance(centerLat, centerLng, withCenter.center_lat, withCenter.center_lng)
+      return distance <= ANALYSIS_RADIUS
+    }
+
+    try {
+      const center = h3ToLatLng(grid.h3_id)
+      const distance = getDistance(centerLat, centerLng, center.lat, center.lng)
+      return distance <= ANALYSIS_RADIUS
+    } catch {
+      return false
+    }
+  })
+}
+
 /**
  * 경쟁 지표 계산
  */
 function calculateCompetition(
   gridData: GridStoreData[],
-  category: BusinessCategory,
-  centerLat: number,
-  centerLng: number
+  category: BusinessCategory
 ): CompetitionMetrics {
   let total = 0
   let sameCategory = 0
   let hasCategoryData = false
 
   for (const grid of gridData) {
-    // H3 셀 중심이 실제 500m 반경 내에 있는지 확인
-    const cellDistance = getDistance(centerLat, centerLng, grid.center_lat, grid.center_lng)
-    if (cellDistance > ANALYSIS_RADIUS) {
-      continue // 500m 반경 밖의 셀은 제외
-    }
-
     total += grid.total_count || 0
 
     // 해당 업종 수
@@ -465,9 +543,7 @@ function calculateCompetition(
  * 유동인구 지표 계산
  */
 function calculateTraffic(
-  gridData: GridTrafficData[],
-  centerLat: number,
-  centerLng: number
+  gridData: GridTrafficData[]
 ): TrafficMetrics {
   type GridTrafficRow = GridTrafficData & {
     center_lat?: number | null
@@ -510,14 +586,6 @@ function calculateTraffic(
   for (const grid of gridData) {
     // DB 필드명: traffic_estimated, traffic_morning 등 (types.ts와 다름)
     const g = grid as GridTrafficRow
-
-    // H3 셀 중심이 실제 500m 반경 내에 있는지 확인
-    if (g.center_lat && g.center_lng) {
-      const cellDistance = getDistance(centerLat, centerLng, g.center_lat, g.center_lng)
-      if (cellDistance > ANALYSIS_RADIUS) {
-        continue // 500m 반경 밖의 셀은 제외
-      }
-    }
 
     const trafficValue = g.traffic_estimated || g.traffic_index || 0
     const morningValue = g.traffic_morning || g.time_morning || 33
@@ -718,8 +786,8 @@ function calculateSurvivalWithEstimation(
     totalPrev += grid.prev_period_count || grid.total_count || 0
   }
 
-  // 2. 실제 데이터가 있으면 사용
-  if (totalClosure > 0 && totalPrev > 0) {
+  // 2. 전기 점포 데이터가 있으면 실제 데이터 사용 (폐업 0건 포함)
+  if (totalPrev > 0) {
     const closureRate = (totalClosure / totalPrev) * 100
     const openingRate = (totalOpening / totalPrev) * 100
     const netChange = totalOpening - totalClosure

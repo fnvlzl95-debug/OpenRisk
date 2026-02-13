@@ -51,6 +51,28 @@ export interface RiskCard {
   priority: number          // 우선순위 (낮을수록 중요)
 }
 
+export interface RiskScoreBreakdown {
+  normalized: {
+    competition: number
+    traffic: number
+    cost: number
+    survival: number
+    anchor: number
+  }
+  adjustments: {
+    timePattern: number
+    areaType: number
+  }
+  weightedBase: number
+  finalScore: number
+}
+
+export interface AnalysisIntegrity {
+  version: number
+  issuedAt: string
+  signature: string
+}
+
 export interface AnalyzeV2Response {
   location: {
     lat: number
@@ -66,6 +88,7 @@ export interface AnalyzeV2Response {
     areaType: AreaType
     targetCategory: BusinessCategory
     categoryName: string
+    scoreBreakdown: RiskScoreBreakdown
   }
 
   metrics: {
@@ -91,6 +114,9 @@ export interface AnalyzeV2Response {
   // 지도 표시용
   h3Cells: string[]
   centerH3: string
+
+  // 서버 무결성 서명 (옵션)
+  integrity?: AnalysisIntegrity
 }
 
 // ===== 해석 (v2 확장) =====

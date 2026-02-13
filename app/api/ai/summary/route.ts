@@ -3,6 +3,7 @@ import OpenAI from 'openai'
 import { AIAnalysisResponse, AnalyzeV2Response } from '@/lib/v2/types'
 import { getClientIp } from '@/lib/server/client-ip'
 import { checkServerRateLimit, getRetryAfterSeconds } from '@/lib/server/rate-limit'
+import { isAnalysisIntegrityEnabled, verifyAnalysisIntegrity } from '@/lib/v2/integrity'
 
 // Node.js 런타임 명시 (Edge에서 OpenAI SDK 호환 문제 방지)
 export const runtime = 'nodejs'
@@ -138,7 +139,7 @@ function compactReportV2(data: AnalyzeV2Response) {
 
 export async function POST(req: NextRequest) {
   const clientIp = getClientIp(req)
-  const rateLimit = checkServerRateLimit(`ai-summary:${clientIp}`, AI_SUMMARY_RATE_LIMIT)
+  const rateLimit = await checkServerRateLimit(`ai-summary:${clientIp}`, AI_SUMMARY_RATE_LIMIT)
   const rateLimitHeaders = {
     'X-RateLimit-Limit': String(AI_SUMMARY_RATE_LIMIT.max),
     'X-RateLimit-Remaining': String(rateLimit.remaining),
@@ -183,6 +184,16 @@ export async function POST(req: NextRequest) {
         { error: 'v2 분석 데이터가 필요합니다.' },
         { status: 400, headers: rateLimitHeaders }
       )
+    }
+
+    if (isAnalysisIntegrityEnabled()) {
+      const verification = verifyAnalysisIntegrity(data)
+      if (!verification.valid) {
+        return NextResponse.json(
+          { error: verification.reason },
+          { status: 400, headers: rateLimitHeaders }
+        )
+      }
     }
 
     const payloadSize = JSON.stringify(data).length

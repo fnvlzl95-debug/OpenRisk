@@ -6,6 +6,8 @@
  * - 고정비/공백/변동성 키워드 사용
  */
 
+import type { BusinessCategory } from '../../categories'
+
 export type MetricType =
   | 'competition'      // 경쟁 밀도
   | 'traffic'          // 유동인구
@@ -58,6 +60,7 @@ export interface MetricContext {
   hasNearbyAnchor: boolean
 
   // 메타
+  categoryKey?: BusinessCategory
   categoryName: string
   h3Id?: string
 }

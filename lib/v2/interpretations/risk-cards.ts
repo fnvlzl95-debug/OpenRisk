@@ -49,13 +49,80 @@ function resolveTemplate(
   return typeof value === 'function' ? value(ctx) : value
 }
 
+const COMPETITION_MULTIPLIER_BY_CATEGORY: Record<BusinessCategory, number> = {
+  restaurant_korean: 1.2,
+  restaurant_western: 1.6,
+  restaurant_japanese: 1.5,
+  restaurant_chinese: 1.2,
+  restaurant_chicken: 1.3,
+  restaurant_pizza: 1.3,
+  restaurant_fastfood: 1.4,
+  cafe: 2.2,
+  bakery: 1.6,
+  dessert: 1.8,
+  bar: 1.4,
+  convenience: 1.1,
+  mart: 1.0,
+  beauty: 0.9,
+  nail: 0.8,
+  laundry: 0.6,
+  pharmacy: 0.5,
+  gym: 0.9,
+  academy: 0.8,
+}
+
+const CATEGORY_KEY_BY_NAME: Record<string, BusinessCategory> = {
+  한식: 'restaurant_korean',
+  양식: 'restaurant_western',
+  일식: 'restaurant_japanese',
+  중식: 'restaurant_chinese',
+  치킨: 'restaurant_chicken',
+  피자: 'restaurant_pizza',
+  패스트푸드: 'restaurant_fastfood',
+  카페: 'cafe',
+  베이커리: 'bakery',
+  디저트: 'dessert',
+  '술집/바': 'bar',
+  편의점: 'convenience',
+  슈퍼마켓: 'mart',
+  미용실: 'beauty',
+  네일샵: 'nail',
+  세탁소: 'laundry',
+  약국: 'pharmacy',
+  헬스장: 'gym',
+  학원: 'academy',
+}
+
+function resolveCategoryKey(ctx: MetricContext): BusinessCategory | null {
+  if (ctx.categoryKey) {
+    return ctx.categoryKey
+  }
+
+  if (ctx.categoryName && ctx.categoryName in CATEGORY_KEY_BY_NAME) {
+    return CATEGORY_KEY_BY_NAME[ctx.categoryName]
+  }
+
+  return null
+}
+
+function getCompetitionThreshold(base: number, ctx: MetricContext): number {
+  const categoryKey = resolveCategoryKey(ctx)
+  const multiplier = categoryKey
+    ? COMPETITION_MULTIPLIER_BY_CATEGORY[categoryKey]
+    : 1
+
+  return Math.max(1, Math.round(base * multiplier))
+}
+
 // ===== 경쟁 관련 카드 =====
 
 const competitionCards: RiskCardTemplate[] = [
   // 경쟁 높음 + 유동 낮음 (최악)
   {
     id: 'comp_high_traffic_low',
-    condition: (ctx) => ctx.sameCategory >= 10 && ctx.trafficLevel === 'low',
+    condition: (ctx) =>
+      ctx.sameCategory >= getCompetitionThreshold(10, ctx) &&
+      ctx.trafficLevel === 'low',
     severity: 'critical',
     priority: 1,
     flag: '파이 쪼개기 구조',
@@ -69,7 +136,9 @@ const competitionCards: RiskCardTemplate[] = [
   // 경쟁 높음 + 유동 높음
   {
     id: 'comp_high_traffic_high',
-    condition: (ctx) => ctx.sameCategory >= 10 && ctx.trafficLevel === 'high',
+    condition: (ctx) =>
+      ctx.sameCategory >= getCompetitionThreshold(10, ctx) &&
+      ctx.trafficLevel === 'high',
     severity: 'warning',
     priority: 3,
     flag: '체력전 구조',
@@ -96,7 +165,7 @@ const competitionCards: RiskCardTemplate[] = [
   // 경쟁 높음 일반
   {
     id: 'comp_high',
-    condition: (ctx) => ctx.sameCategory >= 8,
+    condition: (ctx) => ctx.sameCategory >= getCompetitionThreshold(8, ctx),
     severity: 'warning',
     priority: 5,
     flag: '포화 진입',
@@ -114,7 +183,9 @@ const costCards: RiskCardTemplate[] = [
   // 임대료 높음 + 경쟁 높음
   {
     id: 'cost_high_comp_high',
-    condition: (ctx) => ctx.rentLevel === 'high' && ctx.sameCategory >= 8,
+    condition: (ctx) =>
+      ctx.rentLevel === 'high' &&
+      ctx.sameCategory >= getCompetitionThreshold(8, ctx),
     severity: 'critical',
     priority: 2,
     flag: '이중 압박 구조',
@@ -289,7 +360,7 @@ const combinationCards: RiskCardTemplate[] = [
   {
     id: 'worst_triple',
     condition: (ctx) =>
-      ctx.sameCategory >= 8 &&
+      ctx.sameCategory >= getCompetitionThreshold(8, ctx) &&
       ctx.rentLevel === 'high' &&
       ctx.trafficLevel === 'low',
     severity: 'critical',

@@ -14,6 +14,7 @@ import {
   SurvivalMetrics,
   AnchorMetrics,
   InterpretationV2,
+  RiskScoreBreakdown,
 } from './types'
 import {
   generateContextualExplanations,
@@ -61,6 +62,20 @@ export function calculateRiskScore(
   },
   areaType?: AreaType
 ): number {
+  return calculateRiskScoreBreakdown(category, metrics, areaType).finalScore
+}
+
+export function calculateRiskScoreBreakdown(
+  category: BusinessCategory,
+  metrics: {
+    competition: CompetitionMetrics
+    traffic: TrafficMetrics
+    cost: CostMetrics
+    survival: SurvivalMetrics
+    anchors: AnchorMetrics
+  },
+  areaType?: AreaType
+): RiskScoreBreakdown {
   const weights = getCategoryWeights(category)
 
   // 각 지표를 0~100 스케일로 정규화 (높을수록 위험)
@@ -89,7 +104,23 @@ export function calculateRiskScore(
   const areaTypePenalty = getAreaTypePenalty(areaType)
   totalScore += areaTypePenalty
 
-  return Math.round(Math.min(100, Math.max(0, totalScore)))
+  const finalScore = Math.round(Math.min(100, Math.max(0, totalScore)))
+
+  return {
+    normalized: {
+      competition: Math.round(scores.competition),
+      traffic: Math.round(scores.traffic),
+      cost: Math.round(scores.cost),
+      survival: Math.round(scores.survival),
+      anchor: Math.round(scores.anchor),
+    },
+    adjustments: {
+      timePattern: timePatternAdjustment,
+      areaType: areaTypePenalty,
+    },
+    weightedBase: Math.round((totalScore - timePatternAdjustment - areaTypePenalty) * 10) / 10,
+    finalScore,
+  }
 }
 
 /**
@@ -357,7 +388,7 @@ export function determineAreaType(
 
   // 3. 상업 지역 판별
   // 유동인구 높음 + 상업 점포 비율 60% 이상
-  const isHighTraffic = traffic.index > 30  // 유동인구 지수 30 이상 (추정치 기준)
+  const isHighTraffic = traffic.level === 'high' || traffic.level === 'very_high'
   if (isHighTraffic && commercialRatio > 0.6) {
     return 'C_상업'
   }

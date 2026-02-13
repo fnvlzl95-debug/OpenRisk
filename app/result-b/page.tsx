@@ -295,33 +295,29 @@ function ResultBContent() {
   const riskStyle = RISK_STYLES[analysis.riskLevel]
   const areaTypeInfo = AREA_TYPE_INFO[analysis.areaType]
 
-  // 레이더 차트 데이터 - 모든 지표를 "리스크" 관점으로 통일 (높을수록 위험)
-  // 경쟁: 동종 15개 이상 = 100 (위험)
-  const competitionRisk = Math.min(100, (metrics.competition.sameCategory / 15) * 100)
-  // 유동인구: 적으면 위험 (백분위 기반: 평균 6, 최대 70)
-  // 2025.01 기준: ≤1 very_low, ≤6 low, ≤13 medium, ≤40 high, >40 very_high
-  // 40 이상이면 안전(20점), 0이면 위험(100점)
-  const trafficRisk = metrics.traffic.index >= 40
-    ? 20  // 상위 1% (핵심 상권) - 최소 리스크
-    : metrics.traffic.index >= 13
-      ? 35  // 상위 10% (역세권) - 낮은 리스크
-      : metrics.traffic.index >= 6
-        ? 50  // 상위 25% (소규모 상권) - 보통
-        : Math.round(100 - (metrics.traffic.index / 6) * 50)  // 0→100, 6→50
-  // 임대료: 높으면 위험
-  const costRisk = metrics.cost.level === 'high' ? 80 : metrics.cost.level === 'medium' ? 50 : 20
-  // 폐업률: 높으면 위험 (20% = 100)
-  const closureRisk = Math.min(100, (metrics.survival.closureRate / 20) * 100)
-  // 앵커: 시설 개수 기반 (많을수록 안전)
-  // 지하철(1), 스타벅스(실제 개수), 마트(1), 백화점(1)
-  const anchorCount =
-    (anchors.subway ? 1 : 0) +
-    (anchors.starbucks?.count || 0) +  // 스타벅스 실제 개수 반영
-    (anchors.mart ? 1 : 0) +
-    (anchors.department ? 1 : 0)
-  // 0개=100(위험), 5개=70, 10개+=20(안전)
-  // 10개 이상이어야 안전 (판별력 확보)
-  const anchorRisk = Math.max(20, Math.min(100, 100 - (anchorCount * 8)))
+  const normalizedScores = analysis.scoreBreakdown?.normalized
+
+  // 레이더 차트는 엔진 정규화 값(서버 계산)과 동일하게 표시
+  const competitionRisk = normalizedScores?.competition ?? Math.min(100, (metrics.competition.sameCategory / 15) * 100)
+  const trafficRisk = normalizedScores?.traffic ?? (
+    metrics.traffic.index >= 40
+      ? 20
+      : metrics.traffic.index >= 13
+        ? 35
+        : metrics.traffic.index >= 6
+          ? 50
+          : Math.round(100 - (metrics.traffic.index / 6) * 50)
+  )
+  const costRisk = normalizedScores?.cost ?? (metrics.cost.level === 'high' ? 80 : metrics.cost.level === 'medium' ? 50 : 20)
+  const closureRisk = normalizedScores?.survival ?? Math.min(100, (metrics.survival.closureRate / 20) * 100)
+  const anchorRisk = normalizedScores?.anchor ?? (() => {
+    const anchorCount =
+      (anchors.subway ? 1 : 0) +
+      (anchors.starbucks?.count || 0) +
+      (anchors.mart ? 1 : 0) +
+      (anchors.department ? 1 : 0)
+    return Math.max(20, Math.min(100, 100 - (anchorCount * 8)))
+  })()
 
   const radarData = [
     { subject: '경쟁 위험', score: Math.round(competitionRisk), fullMark: 100 },

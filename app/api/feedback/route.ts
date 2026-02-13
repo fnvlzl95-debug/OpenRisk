@@ -21,7 +21,7 @@ function sanitizePlainText(value: unknown, maxLength: number): string | null {
 
 export async function POST(request: NextRequest) {
   const clientIp = getClientIp(request)
-  const rateLimit = checkServerRateLimit(`feedback:${clientIp}`, FEEDBACK_RATE_LIMIT)
+  const rateLimit = await checkServerRateLimit(`feedback:${clientIp}`, FEEDBACK_RATE_LIMIT)
   const rateLimitHeaders = {
     'X-RateLimit-Limit': String(FEEDBACK_RATE_LIMIT.max),
     'X-RateLimit-Remaining': String(rateLimit.remaining),

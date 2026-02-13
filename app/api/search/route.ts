@@ -51,7 +51,7 @@ function sweepSearchCache(now: number) {
 
 export async function GET(request: NextRequest) {
   const clientIp = getClientIp(request)
-  const rateLimit = checkServerRateLimit(`search:${clientIp}`, SEARCH_RATE_LIMIT)
+  const rateLimit = await checkServerRateLimit(`search:${clientIp}`, SEARCH_RATE_LIMIT)
   const rateLimitHeaders = {
     'X-RateLimit-Limit': String(SEARCH_RATE_LIMIT.max),
     'X-RateLimit-Remaining': String(rateLimit.remaining),
