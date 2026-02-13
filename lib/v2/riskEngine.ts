@@ -24,11 +24,18 @@ import {
   type AllMetrics,
 } from './interpretations'
 
+interface CompetitionThresholds {
+  lowThreshold: number
+  mediumThreshold: number
+  highThreshold: number
+}
+
 // 정규화 기준값 (서울 평균 기준)
 const NORMALIZATION = {
   competition: {
     lowThreshold: 5,     // 5개 이하: 낮음
-    highThreshold: 15,   // 15개 이상: 높음 (강화: 20→15)
+    mediumThreshold: 15, // 15개 이하: 보통
+    highThreshold: 20,   // 20개 이상: 매우 높음
   },
   traffic: {
     // 2025.01 백분위 기반 (평균 6, 중앙값 3, 최대 70)
@@ -80,8 +87,17 @@ export function calculateRiskScoreBreakdown(
 
   // 각 지표를 0~100 스케일로 정규화 (높을수록 위험)
   const scores = {
-    competition: normalizeCompetition(metrics.competition.sameCategory),
-    cost: normalizeCost(metrics.cost.avgRent),
+    competition: normalizeCompetition(
+      metrics.competition.sameCategory,
+      metrics.competition.thresholds
+        ? {
+            lowThreshold: metrics.competition.thresholds.p50,
+            mediumThreshold: metrics.competition.thresholds.p75,
+            highThreshold: metrics.competition.thresholds.p90,
+          }
+        : undefined
+    ),
+    cost: normalizeCost(metrics.cost.avgRent, metrics.cost),
     survival: normalizeSurvival(metrics.survival.closureRate),
     traffic: normalizeTraffic(metrics.traffic.index),
     anchor: normalizeAnchor(metrics.anchors),
@@ -221,8 +237,13 @@ function calculateTimePatternAdjustment(
 /**
  * 경쟁 밀도 정규화 (동종 업종 수 기준)
  */
-function normalizeCompetition(sameCategoryCount: number): number {
-  const { lowThreshold, highThreshold } = NORMALIZATION.competition
+function normalizeCompetition(
+  sameCategoryCount: number,
+  thresholds?: CompetitionThresholds
+): number {
+  const active = thresholds || NORMALIZATION.competition
+  const lowThreshold = Math.max(1, active.lowThreshold)
+  const highThreshold = Math.max(lowThreshold + 1, active.highThreshold)
 
   if (sameCategoryCount <= lowThreshold) {
     return (sameCategoryCount / lowThreshold) * 30  // 0~30점
@@ -237,8 +258,14 @@ function normalizeCompetition(sameCategoryCount: number): number {
 /**
  * 임대료 정규화 (만원/평 기준)
  */
-function normalizeCost(avgRent: number): number {
-  const { lowThreshold, highThreshold } = NORMALIZATION.cost
+function normalizeCost(avgRent: number, costMetrics?: CostMetrics): number {
+  if (typeof costMetrics?.percentile === 'number') {
+    return Math.max(0, Math.min(100, costMetrics.percentile))
+  }
+
+  const dynamicThresholds = costMetrics?.thresholds
+  const lowThreshold = Math.max(1, dynamicThresholds?.p50 ?? NORMALIZATION.cost.lowThreshold)
+  const highThreshold = Math.max(lowThreshold + 1, dynamicThresholds?.p90 ?? NORMALIZATION.cost.highThreshold)
 
   if (avgRent <= lowThreshold) {
     return (avgRent / lowThreshold) * 30
@@ -406,9 +433,15 @@ export function determineAreaType(
 /**
  * 경쟁 밀도 레벨 판별
  */
-export function getCompetitionLevel(sameCategoryCount: number): 'low' | 'medium' | 'high' {
-  if (sameCategoryCount <= 5) return 'low'
-  if (sameCategoryCount <= 15) return 'medium'
+export function getCompetitionLevel(
+  sameCategoryCount: number,
+  thresholds?: CompetitionThresholds
+): 'low' | 'medium' | 'high' {
+  const lowThreshold = Math.max(1, thresholds?.lowThreshold ?? NORMALIZATION.competition.lowThreshold)
+  const mediumThreshold = Math.max(lowThreshold + 1, thresholds?.mediumThreshold ?? NORMALIZATION.competition.mediumThreshold)
+
+  if (sameCategoryCount <= lowThreshold) return 'low'
+  if (sameCategoryCount <= mediumThreshold) return 'medium'
   return 'high'
 }
 
@@ -555,9 +588,9 @@ function generateDetailedRisksAndOpportunities(
   const opportunities: string[] = []
 
   // 경쟁 분석
-  if (metrics.competition.sameCategory > 15) {
+  if (metrics.competition.densityLevel === 'high') {
     risks.push(`반경 500m 내 ${categoryName} ${metrics.competition.sameCategory}개 - 경쟁 치열`)
-  } else if (metrics.competition.sameCategory <= 3) {
+  } else if (metrics.competition.densityLevel === 'low') {
     opportunities.push(`동종 업종 ${metrics.competition.sameCategory}개 - 경쟁 적음`)
   }
 
@@ -569,9 +602,9 @@ function generateDetailedRisksAndOpportunities(
   }
 
   // 임대료 분석
-  if (metrics.cost.avgRent > 40) {
+  if (metrics.cost.level === 'high') {
     risks.push(`평당 임대료 ${metrics.cost.avgRent}만원 - 비용 부담 큼`)
-  } else if (metrics.cost.avgRent < 15) {
+  } else if (metrics.cost.level === 'low') {
     opportunities.push(`평당 임대료 ${metrics.cost.avgRent}만원 - 비용 효율적`)
   }
 
@@ -619,8 +652,17 @@ function calculateScoreContribution(
   const weights = getCategoryWeights(category)
 
   // 각 지표의 점수 영향 계산
-  const competitionScore = normalizeCompetition(metrics.competition.sameCategory)
-  const costScore = normalizeCost(metrics.cost.avgRent)
+  const competitionScore = normalizeCompetition(
+    metrics.competition.sameCategory,
+    metrics.competition.thresholds
+      ? {
+          lowThreshold: metrics.competition.thresholds.p50,
+          mediumThreshold: metrics.competition.thresholds.p75,
+          highThreshold: metrics.competition.thresholds.p90,
+        }
+      : undefined
+  )
+  const costScore = normalizeCost(metrics.cost.avgRent, metrics.cost)
   const survivalScore = normalizeSurvival(metrics.survival.closureRate)
   const trafficScore = normalizeTraffic(metrics.traffic.index)
   const anchorScore = normalizeAnchor(metrics.anchors)

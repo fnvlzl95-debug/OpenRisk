@@ -106,6 +106,13 @@ function resolveCategoryKey(ctx: MetricContext): BusinessCategory | null {
 }
 
 function getCompetitionThreshold(base: number, ctx: MetricContext): number {
+  if (ctx.competitionThresholds) {
+    const dynamicBase = base >= 10
+      ? ctx.competitionThresholds.p90
+      : ctx.competitionThresholds.p75
+    return Math.max(1, Math.round(dynamicBase))
+  }
+
   const categoryKey = resolveCategoryKey(ctx)
   const multiplier = categoryKey
     ? COMPETITION_MULTIPLIER_BY_CATEGORY[categoryKey]

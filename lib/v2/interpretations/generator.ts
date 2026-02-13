@@ -9,13 +9,10 @@ import {
   type AllMetrics,
   type DynamicVars,
   type Template,
-  getCompetitionLevel,
   getTrafficLevelSimple,
-  getCostLevelSimple,
   getSurvivalLevel,
-  buildContextKey,
-  simplifyKey,
   buildDynamicVars,
+  simplifyKey,
   selectPhrase,
   interpolate,
 } from './conditions'
@@ -106,7 +103,7 @@ function generateCompetitionExplanation(
   vars: DynamicVars,
   categoryKey?: CategoryKey
 ): string {
-  const level = getCompetitionLevel(metrics.competition.sameCategory)
+  const level = metrics.competition.densityLevel
   const contextKey = `comp_${level}`
 
   // 1. 업종별 특화 템플릿 확인 (high/low만 지원)
@@ -186,7 +183,7 @@ function generateCostExplanation(
   vars: DynamicVars,
   _categoryKey?: CategoryKey  // 현재 cost는 업종별 템플릿 없음
 ): string {
-  const level = getCostLevelSimple(metrics.cost.avgRent)
+  const level = metrics.cost.level
   const contextKey = `cost_${level}`
 
   // 1. 최악 조합 확인 (임대료 높음 + 생존율 낮음)
@@ -379,9 +376,9 @@ export function generateSummary(
   metrics: AllMetrics,
   vars: DynamicVars
 ): string {
-  const compLevel = getCompetitionLevel(metrics.competition.sameCategory)
+  const compLevel = metrics.competition.densityLevel
   const trafficLevel = getTrafficLevelSimple(metrics.traffic.index)
-  const costLevel = getCostLevelSimple(metrics.cost.avgRent)
+  const costLevel = metrics.cost.level
   const survivalLevel = getSurvivalLevel(metrics.survival.closureRate)
 
   // 점수 카운트
@@ -457,7 +454,7 @@ export function generateTopFactors(
   const opportunities: string[] = []
 
   // 경쟁
-  const compLevel = getCompetitionLevel(metrics.competition.sameCategory)
+  const compLevel = metrics.competition.densityLevel
   if (compLevel === 'high') {
     risks.push(`동종 ${vars.sameCategory}개`)
   } else if (compLevel === 'low') {
@@ -473,7 +470,7 @@ export function generateTopFactors(
   }
 
   // 임대료
-  const costLevel = getCostLevelSimple(metrics.cost.avgRent)
+  const costLevel = metrics.cost.level
   if (costLevel === 'high') {
     risks.push('임대료 높음')
   } else if (costLevel === 'low') {

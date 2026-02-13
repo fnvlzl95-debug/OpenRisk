@@ -298,26 +298,11 @@ function ResultBContent() {
   const normalizedScores = analysis.scoreBreakdown?.normalized
 
   // 레이더 차트는 엔진 정규화 값(서버 계산)과 동일하게 표시
-  const competitionRisk = normalizedScores?.competition ?? Math.min(100, (metrics.competition.sameCategory / 15) * 100)
-  const trafficRisk = normalizedScores?.traffic ?? (
-    metrics.traffic.index >= 40
-      ? 20
-      : metrics.traffic.index >= 13
-        ? 35
-        : metrics.traffic.index >= 6
-          ? 50
-          : Math.round(100 - (metrics.traffic.index / 6) * 50)
-  )
-  const costRisk = normalizedScores?.cost ?? (metrics.cost.level === 'high' ? 80 : metrics.cost.level === 'medium' ? 50 : 20)
-  const closureRisk = normalizedScores?.survival ?? Math.min(100, (metrics.survival.closureRate / 20) * 100)
-  const anchorRisk = normalizedScores?.anchor ?? (() => {
-    const anchorCount =
-      (anchors.subway ? 1 : 0) +
-      (anchors.starbucks?.count || 0) +
-      (anchors.mart ? 1 : 0) +
-      (anchors.department ? 1 : 0)
-    return Math.max(20, Math.min(100, 100 - (anchorCount * 8)))
-  })()
+  const competitionRisk = normalizedScores?.competition ?? 0
+  const trafficRisk = normalizedScores?.traffic ?? 0
+  const costRisk = normalizedScores?.cost ?? 0
+  const closureRisk = normalizedScores?.survival ?? 0
+  const anchorRisk = normalizedScores?.anchor ?? 0
 
   const radarData = [
     { subject: '경쟁 위험', score: Math.round(competitionRisk), fullMark: 100 },
@@ -546,7 +531,14 @@ function ResultBContent() {
                   />
                 ))}
               </div>
-              <div className="text-[10px] text-gray-400">{location.region} 평균</div>
+              <div className="text-[10px] text-gray-400">
+                {typeof metrics.cost.percentile === 'number'
+                  ? `${location.region} 상위 ${Math.round(metrics.cost.percentile)}%`
+                  : `${location.region} 평균`}
+              </div>
+              {metrics.cost.note && (
+                <div className="text-[10px] text-amber-600 mt-1">{metrics.cost.note}</div>
+              )}
             </div>
 
             {/* 상권 트렌드 */}

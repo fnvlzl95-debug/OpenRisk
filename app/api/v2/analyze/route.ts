@@ -65,6 +65,33 @@ const SUPPORTED_REGION_BOUNDS: Record<SupportedRegion, { latMin: number; latMax:
   인천: { latMin: 37.30, latMax: 37.65, lngMin: 126.35, lngMax: 126.95 },
   부산: { latMin: 34.95, latMax: 35.35, lngMin: 128.75, lngMax: 129.35 },
 }
+const REGION_ALIASES: Record<SupportedRegion, string[]> = {
+  서울: ['서울', 'seoul'],
+  경기: ['경기', 'gyeonggi'],
+  인천: ['인천', 'incheon'],
+  부산: ['부산', 'busan'],
+}
+const REGION_LOOKUP: Array<{ region: SupportedRegion; tokens: string[] }> = [
+  { region: '서울', tokens: ['서울', 'seoul'] },
+  { region: '경기', tokens: ['경기', 'gyeonggi'] },
+  { region: '인천', tokens: ['인천', 'incheon'] },
+  { region: '부산', tokens: ['부산', 'busan'] },
+]
+const REGION_PREPARE_MESSAGE = (region: SupportedRegion) => `${region} 지역 데이터는 현재 지원 준비중입니다.`
+
+interface CompetitionThresholdProfile {
+  p50: number
+  p75: number
+  p90: number
+  sampleSize: number
+}
+
+interface RentPercentileProfile {
+  p50: number
+  p75: number
+  p90: number
+  values: number[]
+}
 
 interface AnalyzeCacheEntry {
   value: AnalyzeV2Response
@@ -73,6 +100,12 @@ interface AnalyzeCacheEntry {
 
 const analyzeCache = new Map<string, AnalyzeCacheEntry>()
 const MAX_ANALYZE_CACHE_SIZE = 1000
+const COMPETITION_PROFILE_TTL_MS = 12 * 60 * 60 * 1000
+const RENT_PROFILE_TTL_MS = 12 * 60 * 60 * 1000
+const competitionProfileCache = new Map<string, { value: CompetitionThresholdProfile; expiresAt: number }>()
+const rentProfileCache = new Map<SupportedRegion, { value: RentPercentileProfile; expiresAt: number }>()
+const competitionProfileInFlight = new Map<string, Promise<CompetitionThresholdProfile | null>>()
+const rentProfileInFlight = new Map<SupportedRegion, Promise<RentPercentileProfile | null>>()
 
 function sweepAnalyzeCache(now: number) {
   for (const [key, entry] of analyzeCache.entries()) {
@@ -179,29 +212,44 @@ export async function POST(request: NextRequest) {
     const centerH3 = latLngToH3(lat, lng)
     const h3Cells = getH3CellsInRadius(lat, lng, ANALYSIS_RADIUS)
 
-    // 3. 역지오코딩 (주소 조회)
-    const addressInfo = await getAddressFromKakao(lat, lng)
-
-    // 4. 그리드 데이터 조회
-    const gridStoreData = await getGridStoreData(supabase, h3Cells)
-    const gridTrafficData = await getGridTrafficData(supabase, h3Cells)
+    // 3. 주소 + 그리드 데이터 조회
+    const [addressInfo, gridStoreData, gridTrafficData] = await Promise.all([
+      getAddressFromKakao(lat, lng, supportedRegion),
+      getGridStoreData(supabase, h3Cells),
+      getGridTrafficData(supabase, h3Cells),
+    ])
+    const analysisRegion = addressInfo.region
 
     // 4-1. 500m 반경 필터를 모든 지표에 동일 적용
     const filteredStoreData = filterStoreDataByRadius(gridStoreData, lat, lng)
     const filteredTrafficData = filterTrafficDataByRadius(gridTrafficData, lat, lng)
 
+    if (filteredStoreData.length === 0 || filteredTrafficData.length === 0) {
+      return NextResponse.json(
+        { error: REGION_PREPARE_MESSAGE(analysisRegion) },
+        { status: 422, headers: rateLimitHeaders }
+      )
+    }
+
+    const competitionProfile = await getCompetitionThresholdProfile(
+      supabase,
+      analysisRegion,
+      targetCategory
+    )
+
     // 5. 지표 계산
     // 5-1. 경쟁 지표
     const competition = calculateCompetition(
       filteredStoreData,
-      targetCategory
+      targetCategory,
+      competitionProfile
     )
 
     // 5-2. 유동인구 지표
     const traffic = calculateTraffic(filteredTrafficData)
 
     // 5-3. 임대료 지표
-    const cost = await calculateCost(supabase, addressInfo.region, addressInfo.district)
+    const cost = await calculateCost(supabase, analysisRegion, addressInfo.district)
 
     // 5-4. 앵커 시설
     const anchors = await calculateAnchors(supabase, lat, lng)
@@ -265,12 +313,14 @@ export async function POST(request: NextRequest) {
       sameCategory: competition.sameCategory,
       totalStores: competition.total,
       densityLevel: competition.densityLevel === 'low' ? 'low' : competition.densityLevel === 'medium' ? 'medium' : 'high',
+      competitionThresholds: competition.thresholds,
       trafficLevel: traffic.level === 'very_low' || traffic.level === 'low' ? 'low' :
                     traffic.level === 'medium' ? 'medium' : 'high',
       trafficIndex: traffic.index,
       isEstimated: true,
       rentLevel: cost.level,
       avgRent: cost.avgRent,
+      vsDistrictPercent: cost.percentile,
       closureRate: survival.closureRate,
       openingRate: survival.openingRate,
       netChange: survival.netChange,
@@ -374,15 +424,33 @@ function detectSupportedRegionByCoordinates(
   return null
 }
 
-function inferRegionByCoordinates(lat: number, lng: number): SupportedRegion {
-  return detectSupportedRegionByCoordinates(lat, lng) || '서울'
+function normalizeRegionLabel(raw: string | null | undefined): SupportedRegion | null {
+  if (!raw) return null
+  const normalized = raw.toLowerCase().replace(/\s+/g, '')
+
+  for (const { region, tokens } of REGION_LOOKUP) {
+    if (tokens.some((token) => normalized.includes(token.toLowerCase()))) {
+      return region
+    }
+  }
+
+  return null
+}
+
+function getRegionAliases(region: SupportedRegion): string[] {
+  return REGION_ALIASES[region]
+}
+
+function inferRegionByCoordinates(lat: number, lng: number): SupportedRegion | null {
+  return detectSupportedRegionByCoordinates(lat, lng)
 }
 
 async function getAddressFromKakao(
   lat: number,
-  lng: number
+  lng: number,
+  expectedRegion: SupportedRegion
 ): Promise<{ address: string; region: SupportedRegion; district: string }> {
-  const fallbackRegion = inferRegionByCoordinates(lat, lng)
+  const fallbackRegion = inferRegionByCoordinates(lat, lng) || expectedRegion
 
   if (!KAKAO_REST_KEY) {
     return { address: '주소 조회 불가', region: fallbackRegion, district: '' }
@@ -408,15 +476,15 @@ async function getAddressFromKakao(
     }
 
     const address = doc.road_address?.address_name || doc.address?.address_name || ''
-    const region1 = doc.address?.region_1depth_name || ''
-    const region2 = doc.address?.region_2depth_name || ''
+    const region1 = doc.address?.region_1depth_name || doc.road_address?.region_1depth_name || ''
+    const region2 = doc.address?.region_2depth_name || doc.road_address?.region_2depth_name || ''
+    const normalizedRegion = normalizeRegionLabel(region1)
 
-    let region: SupportedRegion = '서울'
-    if (region1.includes('경기')) region = '경기'
-    else if (region1.includes('인천')) region = '인천'
-    else if (region1.includes('부산')) region = '부산'
-
-    return { address, region, district: region2 }
+    return {
+      address,
+      region: normalizedRegion ?? fallbackRegion,
+      district: region2,
+    }
   } catch (error) {
     console.error('Kakao geocoding error:', error)
     return { address: '주소 조회 실패', region: fallbackRegion, district: '' }
@@ -507,7 +575,8 @@ function filterTrafficDataByRadius(
  */
 function calculateCompetition(
   gridData: GridStoreData[],
-  category: BusinessCategory
+  category: BusinessCategory,
+  profile: CompetitionThresholdProfile | null
 ): CompetitionMetrics {
   let total = 0
   let sameCategory = 0
@@ -534,8 +603,25 @@ function calculateCompetition(
     total,
     sameCategory,
     density,
-    densityLevel: getCompetitionLevel(sameCategory),
+    densityLevel: getCompetitionLevel(
+      sameCategory,
+      profile
+        ? {
+            lowThreshold: profile.p50,
+            mediumThreshold: profile.p75,
+            highThreshold: profile.p90,
+          }
+        : undefined
+    ),
     hasCategoryData, // DB에 해당 업종 데이터 존재 여부
+    thresholds: profile
+      ? {
+          p50: profile.p50,
+          p75: profile.p75,
+          p90: profile.p90,
+          sampleSize: profile.sampleSize,
+        }
+      : undefined,
   }
 }
 
@@ -650,20 +736,30 @@ async function calculateCost(
   region: SupportedRegion,
   district: string
 ): Promise<CostMetrics> {
+  const aliases = getRegionAliases(region)
+  const rentProfile = await getRentPercentileProfile(supabase, region)
+  const rentDataNote = rentProfile ? undefined : `${region} 임대료 데이터는 현재 지원 준비중입니다.`
+
   if (!district) {
-    return {
-      avgRent: 20,
-      level: 'medium',
-    }
+    const avgRent = rentProfile?.p50 ?? 20
+    return buildCostMetrics(
+      avgRent,
+      null,
+      rentProfile,
+      undefined,
+      rentProfile ? 'regional_median' : 'default',
+      rentDataNote
+    )
   }
 
-  const selectQuery = 'district_name, avg_rent_per_pyeong, rent_level'
+  const selectQuery = 'district_name, region, avg_rent_per_pyeong, rent_level'
 
-  // 1) 구/군 이름 exact match 우선
+  // 1) 구/군 이름 exact match 우선 (region alias 포함)
   const { data: exactMatch, error: exactError } = await supabase
     .from('district_rent')
     .select(selectQuery)
     .eq('district_name', district)
+    .in('region', aliases)
     .limit(1)
 
   if (exactError) {
@@ -672,13 +768,15 @@ async function calculateCost(
 
   const exactRow = (exactMatch?.[0] as DistrictRentRow | undefined) ?? null
   if (exactRow) {
-    const avgRent = exactRow.avg_rent_per_pyeong ?? 20
-    const level = resolveCostLevel(exactRow.rent_level, avgRent)
-    return {
+    const avgRent = exactRow.avg_rent_per_pyeong ?? (rentProfile?.p50 ?? 20)
+    return buildCostMetrics(
       avgRent,
-      level,
-      districtAvg: exactRow.avg_rent_per_pyeong ?? undefined,
-    }
+      exactRow.rent_level,
+      rentProfile,
+      exactRow.avg_rent_per_pyeong ?? undefined,
+      'district',
+      rentDataNote
+    )
   }
 
   // 2) 부분일치 후보 조회 후 지역/구군명을 함께 점수화해서 최적 선택
@@ -686,6 +784,7 @@ async function calculateCost(
     .from('district_rent')
     .select(selectQuery)
     .ilike('district_name', `%${district}%`)
+    .in('region', aliases)
     .limit(20)
 
   if (error) {
@@ -699,24 +798,32 @@ async function calculateCost(
   )
 
   if (best) {
-    const avgRent = best.avg_rent_per_pyeong ?? 20
-    const level = resolveCostLevel(best.rent_level, avgRent)
-    return {
+    const avgRent = best.avg_rent_per_pyeong ?? (rentProfile?.p50 ?? 20)
+    return buildCostMetrics(
       avgRent,
-      level,
-      districtAvg: best.avg_rent_per_pyeong ?? undefined,
-    }
+      best.rent_level,
+      rentProfile,
+      best.avg_rent_per_pyeong ?? undefined,
+      'district',
+      rentDataNote
+    )
   }
 
-  // 3) 기본값 (데이터 없음)
-  return {
-    avgRent: 20,
-    level: 'medium',
-  }
+  // 3) 구/군 데이터가 없으면 지역 중앙값, 없으면 기본값
+  const avgRent = rentProfile?.p50 ?? 20
+  return buildCostMetrics(
+    avgRent,
+    null,
+    rentProfile,
+    undefined,
+    rentProfile ? 'regional_median' : 'default',
+    rentDataNote
+  )
 }
 
 interface DistrictRentRow {
   district_name: string
+  region: string | null
   avg_rent_per_pyeong: number | null
   rent_level: string | null
 }
@@ -725,6 +832,7 @@ function normalizeDistrictName(value: string): string {
   return value
     .replace(/\s+/g, '')
     .replace(/(특별시|광역시|특별자치시|특별자치도|도)$/g, '')
+    .replace(/(시|군|구)$/g, '')
 }
 
 function pickBestRentCandidate(
@@ -735,15 +843,19 @@ function pickBestRentCandidate(
   if (candidates.length === 0) return null
 
   const normalizedDistrict = normalizeDistrictName(district)
+  const aliases = getRegionAliases(region)
 
   const scored = candidates.map((candidate) => {
     const name = candidate.district_name || ''
     const normalizedName = normalizeDistrictName(name)
+    const normalizedRegion = normalizeRegionLabel(candidate.region)
     let score = 0
 
     if (normalizedName === normalizedDistrict) score += 100
     if (normalizedName.includes(normalizedDistrict)) score += 50
     if (name.startsWith(`${region} ${district}`)) score += 40
+    if (candidate.region && aliases.includes(candidate.region)) score += 35
+    if (normalizedRegion === region) score += 35
     if (name.includes(region)) score += 30
     if (name.includes(district)) score += 20
 
@@ -756,12 +868,225 @@ function pickBestRentCandidate(
 
 function resolveCostLevel(
   rentLevel: string | null,
-  avgRent: number
+  avgRent: number,
+  profile: RentPercentileProfile | null
 ): 'low' | 'medium' | 'high' {
+  if (profile) {
+    if (avgRent >= profile.p75) return 'high'
+    if (avgRent >= profile.p50) return 'medium'
+    return 'low'
+  }
+
   if (rentLevel === 'low' || rentLevel === 'medium' || rentLevel === 'high') {
     return rentLevel
   }
   return getCostLevel(avgRent)
+}
+
+function buildCostMetrics(
+  avgRent: number,
+  rentLevel: string | null,
+  profile: RentPercentileProfile | null,
+  districtAvg: number | undefined,
+  source: 'district' | 'regional_median' | 'default',
+  note?: string
+): CostMetrics {
+  const level = resolveCostLevel(rentLevel, avgRent, profile)
+  const percentile = profile ? calculatePercentileRank(profile.values, avgRent) : undefined
+
+  return {
+    avgRent: Math.round(avgRent * 10) / 10,
+    level,
+    districtAvg,
+    percentile,
+    thresholds: profile
+      ? {
+          p50: profile.p50,
+          p75: profile.p75,
+          p90: profile.p90,
+          sampleSize: profile.values.length,
+        }
+      : undefined,
+    source,
+    note,
+  }
+}
+
+function getPercentileValue(sortedValues: number[], percentile: number): number {
+  if (sortedValues.length === 0) return 0
+  if (sortedValues.length === 1) return sortedValues[0]
+
+  const index = (sortedValues.length - 1) * percentile
+  const lower = Math.floor(index)
+  const upper = Math.ceil(index)
+
+  if (lower === upper) {
+    return sortedValues[lower]
+  }
+
+  const weight = index - lower
+  return sortedValues[lower] * (1 - weight) + sortedValues[upper] * weight
+}
+
+function calculatePercentileRank(values: number[], target: number): number {
+  if (values.length === 0) return 50
+
+  let belowOrEqual = 0
+  for (const value of values) {
+    if (value <= target) belowOrEqual++
+  }
+
+  return Math.round((belowOrEqual / values.length) * 1000) / 10
+}
+
+function sanitizeCategoryCount(value: string | number | null | undefined): number {
+  const parsed = typeof value === 'number' ? value : Number.parseFloat(value ?? '0')
+  if (!Number.isFinite(parsed)) return 0
+  return Math.max(0, parsed)
+}
+
+async function getCompetitionThresholdProfile(
+  supabase: SupabaseClient,
+  region: SupportedRegion,
+  category: BusinessCategory
+): Promise<CompetitionThresholdProfile | null> {
+  const cacheKey = `${region}:${category}`
+  const now = Date.now()
+  const cached = competitionProfileCache.get(cacheKey)
+  if (cached && cached.expiresAt > now) {
+    return cached.value
+  }
+
+  const inFlight = competitionProfileInFlight.get(cacheKey)
+  if (inFlight) {
+    return inFlight
+  }
+
+  const task = (async (): Promise<CompetitionThresholdProfile | null> => {
+    const aliases = getRegionAliases(region)
+    const pageSize = 1000
+
+    const { count, error: countError } = await supabase
+      .from('grid_store_counts')
+      .select('*', { count: 'exact', head: true })
+      .in('region', aliases)
+
+    if (countError || !count || count <= 0) {
+      if (countError) {
+        console.error('Competition profile count error:', countError)
+      }
+      return null
+    }
+
+    const pageCount = Math.ceil(count / pageSize)
+    const values: number[] = []
+
+    for (let page = 0; page < pageCount; page++) {
+      const from = page * pageSize
+      const to = from + pageSize - 1
+      const { data, error } = await supabase
+        .from('grid_store_counts')
+        .select(`category_count:store_counts->>${category}`)
+        .in('region', aliases)
+        .range(from, to)
+
+      if (error) {
+        console.error('Competition profile page error:', error)
+        continue
+      }
+
+      for (const row of (data ?? []) as Array<{ category_count: string | number | null }>) {
+        values.push(sanitizeCategoryCount(row.category_count))
+      }
+    }
+
+    if (values.length < 10) {
+      return null
+    }
+
+    const sorted = values.sort((a, b) => a - b)
+    const profile: CompetitionThresholdProfile = {
+      p50: Math.round(getPercentileValue(sorted, 0.5) * 10) / 10,
+      p75: Math.round(getPercentileValue(sorted, 0.75) * 10) / 10,
+      p90: Math.round(getPercentileValue(sorted, 0.9) * 10) / 10,
+      sampleSize: sorted.length,
+    }
+
+    competitionProfileCache.set(cacheKey, {
+      value: profile,
+      expiresAt: now + COMPETITION_PROFILE_TTL_MS,
+    })
+
+    return profile
+  })()
+
+  competitionProfileInFlight.set(cacheKey, task)
+
+  try {
+    return await task
+  } finally {
+    competitionProfileInFlight.delete(cacheKey)
+  }
+}
+
+async function getRentPercentileProfile(
+  supabase: SupabaseClient,
+  region: SupportedRegion
+): Promise<RentPercentileProfile | null> {
+  const now = Date.now()
+  const cached = rentProfileCache.get(region)
+  if (cached && cached.expiresAt > now) {
+    return cached.value
+  }
+
+  const inFlight = rentProfileInFlight.get(region)
+  if (inFlight) {
+    return inFlight
+  }
+
+  const task = (async (): Promise<RentPercentileProfile | null> => {
+    const aliases = getRegionAliases(region)
+    const { data, error } = await supabase
+      .from('district_rent')
+      .select('avg_rent_per_pyeong')
+      .in('region', aliases)
+
+    if (error) {
+      console.error('Rent profile error:', error)
+      return null
+    }
+
+    const values = ((data ?? []) as Array<{ avg_rent_per_pyeong: number | null }>)
+      .map((row) => row.avg_rent_per_pyeong ?? 0)
+      .filter((value) => Number.isFinite(value) && value > 0)
+
+    if (values.length === 0) {
+      return null
+    }
+
+    const sorted = values.sort((a, b) => a - b)
+    const profile: RentPercentileProfile = {
+      p50: Math.round(getPercentileValue(sorted, 0.5) * 10) / 10,
+      p75: Math.round(getPercentileValue(sorted, 0.75) * 10) / 10,
+      p90: Math.round(getPercentileValue(sorted, 0.9) * 10) / 10,
+      values: sorted,
+    }
+
+    rentProfileCache.set(region, {
+      value: profile,
+      expiresAt: now + RENT_PROFILE_TTL_MS,
+    })
+
+    return profile
+  })()
+
+  rentProfileInFlight.set(region, task)
+
+  try {
+    return await task
+  } finally {
+    rentProfileInFlight.delete(region)
+  }
 }
 
 /**

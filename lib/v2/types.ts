@@ -160,6 +160,12 @@ export interface CompetitionMetrics {
   density: number            // 경쟁 밀도 (0~1)
   densityLevel: 'low' | 'medium' | 'high'
   hasCategoryData?: boolean  // DB에 해당 업종 데이터 존재 여부
+  thresholds?: {
+    p50: number
+    p75: number
+    p90: number
+    sampleSize: number
+  }
   nearestCompetitor?: {
     name: string
     distance: number
@@ -200,6 +206,15 @@ export interface CostMetrics {
   avgRent: number            // 평균 임대료 (만원/평)
   level: 'low' | 'medium' | 'high'
   districtAvg?: number       // 해당 구 평균
+  percentile?: number        // 지역 내 백분위 (0~100)
+  thresholds?: {
+    p50: number
+    p75: number
+    p90: number
+    sampleSize: number
+  }
+  source?: 'district' | 'regional_median' | 'default'
+  note?: string
 }
 
 export interface SurvivalMetrics {

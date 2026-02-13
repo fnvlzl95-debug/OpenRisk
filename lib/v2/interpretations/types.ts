@@ -29,6 +29,12 @@ export interface MetricContext {
   sameCategory: number
   totalStores: number
   densityLevel: RiskLevel
+  competitionThresholds?: {
+    p50: number
+    p75: number
+    p90: number
+    sampleSize: number
+  }
 
   // 유동인구
   trafficLevel: RiskLevel

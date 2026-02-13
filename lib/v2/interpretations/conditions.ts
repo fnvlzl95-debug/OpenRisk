@@ -121,7 +121,7 @@ export function buildContextKey(metrics: AllMetrics): string {
   const parts: string[] = []
 
   // 경쟁
-  const compLevel = getCompetitionLevel(metrics.competition.sameCategory)
+  const compLevel = metrics.competition.densityLevel
   parts.push(`comp_${compLevel}`)
 
   // 유동인구
@@ -129,7 +129,7 @@ export function buildContextKey(metrics: AllMetrics): string {
   parts.push(`traffic_${trafficLevel}`)
 
   // 임대료
-  const costLevel = getCostLevelSimple(metrics.cost.avgRent)
+  const costLevel = metrics.cost.level
   parts.push(`cost_${costLevel}`)
 
   return parts.join('_')

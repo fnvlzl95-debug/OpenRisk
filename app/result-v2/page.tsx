@@ -308,8 +308,15 @@ function ResultV2Content() {
                  metrics.cost.level === 'medium' ? '보통' : '높음'}
               </div>
               <div className="text-[10px] text-white/40 mt-1">
-                {location.region} 평균 대비
+                {typeof metrics.cost.percentile === 'number'
+                  ? `${location.region} 상위 ${Math.round(metrics.cost.percentile)}%`
+                  : `${location.region} 평균 대비`}
               </div>
+              {metrics.cost.note && (
+                <div className="text-[9px] text-amber-400/90 mt-1">
+                  {metrics.cost.note}
+                </div>
+              )}
             </div>
           </div>
 
