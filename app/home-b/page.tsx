@@ -36,6 +36,8 @@ export default function HomeEditorial() {
   const [noResults, setNoResults] = useState(false)
   const [selectedCoords, setSelectedCoords] = useState<{ lat: number; lng: number } | null>(null)
   const [recentPosts, setRecentPosts] = useState<Post[]>([])
+  const [currentDate, setCurrentDate] = useState('')
+  const [mobileDate, setMobileDate] = useState('')
   const skipNextSearchRef = useRef(false)
   const searchContainerRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
@@ -117,6 +119,27 @@ export default function HomeEditorial() {
     fetchPopularPosts()
   }, [])
 
+  // 날짜 텍스트는 클라이언트에서만 계산 (hydration mismatch 방지)
+  useEffect(() => {
+    const now = new Date()
+    setCurrentDate(
+      new Intl.DateTimeFormat('ko-KR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        weekday: 'long',
+        timeZone: 'Asia/Seoul',
+      }).format(now)
+    )
+    setMobileDate(
+      new Intl.DateTimeFormat('ko-KR', {
+        month: 'short',
+        day: 'numeric',
+        timeZone: 'Asia/Seoul',
+      }).format(now)
+    )
+  }, [])
+
   // 키보드 네비게이션
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!showSuggestions || suggestions.length === 0) return
@@ -173,13 +196,6 @@ export default function HomeEditorial() {
     router.push(url)
   }
 
-  const currentDate = new Date().toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    weekday: 'long',
-  })
-
   return (
     <div className="min-h-screen bg-[#FAFAF8] text-black selection:bg-black/10 overflow-x-hidden">
       {/* Newspaper Header */}
@@ -188,7 +204,7 @@ export default function HomeEditorial() {
           {/* Top bar */}
           <div className="flex justify-between items-center text-[9px] sm:text-[10px] font-mono text-gray-500 mb-2">
             <span className="hidden sm:inline">{currentDate}</span>
-            <span className="sm:hidden">{new Date().toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })}</span>
+            <span className="sm:hidden">{mobileDate}</span>
             <span className="hidden sm:inline">VOL. 2026 NO. 001</span>
           </div>
 

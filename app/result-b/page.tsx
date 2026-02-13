@@ -66,8 +66,17 @@ function ResultBContent() {
   // PDF 다운로드 상태
   const [pdfLoading, setPdfLoading] = useState(false)
   const [fabOpen, setFabOpen] = useState(false)
+  const [today, setToday] = useState('')
 
-  const today = new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })
+  useEffect(() => {
+    const formattedToday = new Intl.DateTimeFormat('ko-KR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZone: 'Asia/Seoul',
+    }).format(new Date())
+    setToday(formattedToday)
+  }, [])
 
   // 로딩 단계별 메시지
   const LOADING_STEPS = [
