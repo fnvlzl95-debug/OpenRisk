@@ -216,6 +216,9 @@ function InfoBoardContent() {
                         .replace(/&gt;/g, '>')
                         .replace(/<[^>]*>/g, '')
                         .replace(/&amp;/g, '&')
+                        .replace(/&quot;/g, '"')
+                        .replace(/&#39;/g, "'")
+                        .replace(/\n+/g, ' ')
                         .substring(0, 100)}
                     </p>
 

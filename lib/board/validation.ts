@@ -6,7 +6,7 @@ export function sanitizeHtml(text: string): string {
   const normalized = text
     .replace(/[“”]/g, '"')
     .replace(/[‘’]/g, "'")
-    .replace(/[\u0000-\u001F\u007F]/g, '')
+    .replace(/[\u0000-\u0009\u000B\u000C\u000E-\u001F\u007F]/g, '')
 
   // HTML 특수문자 이스케이프
   return normalized
