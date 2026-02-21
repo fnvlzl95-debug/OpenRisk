@@ -1,6 +1,8 @@
 import { MetadataRoute } from 'next'
 import { createClient } from '@supabase/supabase-js'
 
+export const revalidate = 300
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://openrisk.info'
 
@@ -33,15 +35,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
 
-    const posts: Array<{ id: number; created_at: string }> = []
+    const posts: Array<{ id: number; created_at: string; updated_at: string | null }> = []
     const pageSize = 1000
     let offset = 0
 
     while (true) {
       const { data, error } = await supabase
         .from('active_posts')
-        .select('id, created_at')
-        .order('created_at', { ascending: false })
+        .select('id, created_at, updated_at')
+        .order('updated_at', { ascending: false })
         .range(offset, offset + pageSize - 1)
 
       if (error) {
@@ -63,7 +65,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     const postPages: MetadataRoute.Sitemap = posts.map((post) => ({
       url: `${baseUrl}/board/${post.id}`,
-      lastModified: new Date(post.created_at),
+      lastModified: new Date(post.updated_at ?? post.created_at),
       changeFrequency: 'weekly' as const,
       priority: 0.6,
     }))

@@ -5,14 +5,39 @@ interface Props {
   params: Promise<{ id: string }>
 }
 
+const getMissingPostMetadata = (canonicalPath: string): Metadata => ({
+  title: '게시글을 찾을 수 없습니다 - 오픈리스크',
+  description: '요청한 게시글이 없거나 삭제되었습니다.',
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+      'max-snippet': 0,
+      'max-image-preview': 'none',
+      'max-video-preview': 0,
+    },
+  },
+  alternates: {
+    canonical: canonicalPath,
+  },
+  openGraph: {
+    title: '게시글을 찾을 수 없습니다 - 오픈리스크',
+    description: '요청한 게시글이 없거나 삭제되었습니다.',
+    url: `https://openrisk.info${canonicalPath}`,
+    type: 'website',
+    siteName: '오픈리스크',
+    locale: 'ko_KR',
+  },
+})
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
-  const postId = parseInt(id)
+  const postId = parseInt(id, 10)
 
   if (isNaN(postId)) {
-    return {
-      title: '게시글 - 오픈리스크 커뮤니티',
-    }
+    return getMissingPostMetadata('/board')
   }
 
   try {
@@ -28,9 +53,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       .single()
 
     if (!post) {
-      return {
-        title: '게시글을 찾을 수 없습니다 - 오픈리스크',
-      }
+      return getMissingPostMetadata(`/board/${postId}`)
     }
 
     const description = post.content.slice(0, 150).replace(/\n/g, ' ') + (post.content.length > 150 ? '...' : '')
@@ -59,9 +82,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
   } catch (error) {
     console.error('Metadata generation error:', error)
-    return {
-      title: '게시글 - 오픈리스크 커뮤니티',
-    }
+    return getMissingPostMetadata('/board')
   }
 }
 
