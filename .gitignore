@@ -44,5 +44,13 @@ PLAN_V1.md
 
 # 로컬 데이터/스크립트
 scripts/
+!scripts/
+scripts/*
+!scripts/incheon/
+!scripts/incheon/**
 공공데이터/
 data/
+!data/
+data/*
+!data/openrisk-incheon/
+!data/openrisk-incheon/**

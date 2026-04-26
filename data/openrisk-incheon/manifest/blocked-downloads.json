@@ -1,0 +1,34 @@
+[
+  {
+    "name": "어린이집 기본정보 API",
+    "provider": "보건복지부",
+    "url": "https://www.data.go.kr/data/15101154/openapi.do",
+    "reason": "공공데이터포털 OpenAPI 인증키가 필요할 수 있습니다.",
+    "neededFields": ["시설명", "위도", "경도", "정원", "현원", "입소대기", "연령별 아동 수"],
+    "userAction": "공공데이터포털 인증키 또는 파일 추출본을 제공해주세요."
+  },
+  {
+    "name": "행정동별 성별·연령별 주민등록 인구",
+    "provider": "행정안전부",
+    "url": "https://jumin.mois.go.kr/index.jsp",
+    "reason": "조회 조건 선택 후 파일 다운로드가 필요한 통계 사이트입니다.",
+    "neededFields": ["행정동 코드", "행정동명", "0-9세", "10-19세", "65세 이상", "기준월"],
+    "userAction": "인천 행정동 단위 최신 월 CSV 또는 XLSX를 내려받아 제공해주세요."
+  },
+  {
+    "name": "한국부동산원 소규모상가 공실률",
+    "provider": "한국부동산원",
+    "url": "https://www.data.go.kr/",
+    "reason": "기관 자체 통계 화면 또는 공공데이터포털 바로가기에서 파일 확보가 필요합니다.",
+    "neededFields": ["권역명", "공실률", "분기", "상가유형"],
+    "userAction": "인천 포함 소규모상가 공실률 CSV 또는 XLSX를 제공해주세요."
+  },
+  {
+    "name": "행정동·시군구 경계 데이터",
+    "provider": "행정안전부 또는 통계청",
+    "url": "https://www.data.go.kr/",
+    "reason": "공간 경계 데이터는 배포처별 포맷이 달라 수동 확인이 필요합니다.",
+    "neededFields": ["행정동 코드", "행정동명", "시군구명", "geometry"],
+    "userAction": "인천 행정동 경계 GeoJSON 또는 SHP 묶음을 제공해주세요."
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "updatedAt": "2026-04-26",
+  "overall": "medium",
+  "checks": [
+    {
+      "name": "public-data-only",
+      "status": "pass",
+      "note": "Incheon API sources are limited to public data manifest entries."
+    },
+    {
+      "name": "blocked-downloads",
+      "status": "needs-user-file",
+      "note": "Some official datasets require API key, manual query, or direct user download."
+    }
+  ]
+}

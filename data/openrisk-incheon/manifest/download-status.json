@@ -1,0 +1,14 @@
+{
+  "updatedAt": "2026-04-26",
+  "policy": "public-data-only",
+  "localCandidates": [
+    "data/bus/incheon/ridership_2025.csv",
+    "data/subway/incheon/stations.csv",
+    "data/rent/commercial_rent_2025Q3.xlsx",
+    "data/incheon_taxi_h3_data.json"
+  ],
+  "notes": [
+    "로컬 후보 파일은 경연대회 제출 전 원 URL, 기준일, 이용조건을 public-data-sources.json에 확정해야 합니다.",
+    "Kakao와 OpenAI는 분석 근거와 점수 계산 출처로 등록하지 않습니다."
+  ]
+}
