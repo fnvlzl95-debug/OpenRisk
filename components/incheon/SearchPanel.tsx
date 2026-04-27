@@ -192,7 +192,7 @@ export default function SearchPanel({
         const merged = mergeSuggestions([...localSuggestions, ...remoteResults]).slice(0, 7)
         setSuggestions(merged)
         setSearchStatus(
-          merged.length > 0 ? null : '검색 결과가 없습니다. 인천 본토의 주소나 장소명을 더 구체적으로 입력하세요.'
+          merged.length > 0 ? null : '검색 결과가 없습니다. 인천 지역(섬 지역 제외)의 주소나 장소명을 더 구체적으로 입력하세요.'
         )
       } catch (error) {
         if (error instanceof DOMException && error.name === 'AbortError') {
@@ -200,7 +200,7 @@ export default function SearchPanel({
         }
         setSearchStatus(
           localSuggestions.length > 0
-            ? '외부 장소 검색을 불러오지 못해 기본 후보만 표시합니다.'
+            ? '검색이 원활하지 않아 주요 지역 후보만 먼저 보여드려요.'
             : '검색을 불러오지 못했습니다. 잠시 후 다시 입력해 주세요.'
         )
       } finally {
@@ -225,7 +225,7 @@ export default function SearchPanel({
     }
 
     if (!isInAnalysisBounds(place)) {
-      setValidationError('현재 MVP는 인천 본토 분석 범위 안의 위치만 지원합니다.')
+      setValidationError('현재는 인천 지역(섬 지역 제외)만 분석할 수 있어요.')
       setShowSuggestions(true)
       return
     }
@@ -468,7 +468,7 @@ export default function SearchPanel({
 
       <div className="mt-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <button className="h-16 bg-[linear-gradient(180deg,#FF9E2C,#FF5B1D)] px-12 text-xl font-black text-white shadow-[0_16px_36px_rgba(255,103,28,0.28)] transition-transform active:scale-[0.98] md:min-w-[330px]">
-          위험도 분석 시작
+          상권 위험도 확인하기
         </button>
         <p className="flex items-center gap-2 text-sm font-bold text-[#1D57B8]">
           <span className="flex h-6 w-6 items-center justify-center border border-[#1D57B8]/30">

@@ -34,7 +34,7 @@ const featureCards = [
   {
     icon: BarChart3,
     title: '5대 핵심 지표',
-    body: '높을수록 위험한 5대 요인 분석',
+    body: '창업 전 꼭 확인해야 할 5가지 위험 요인',
   },
   {
     icon: ShieldCheck,
@@ -64,8 +64,8 @@ const steps = [
 const trustItems = [
   {
     icon: Gauge,
-    title: '직관적 점수',
-    body: '높을수록 위험한 0~100 점수',
+    title: '직관적인 위험도',
+    body: '0~100점으로 한눈에 보는 위험 수준',
   },
   {
     icon: Map,
@@ -141,9 +141,9 @@ export default function IncheonHomePage() {
                 데이터로 <span className="text-[#1F7AFF]">더 선명하게</span>
               </h1>
               <p className="mt-7 text-xl font-semibold leading-9 text-white/86">
-                위치와 업종만 입력하면
+                위치와 업종만 입력하세요.
                 <br />
-                상권 위험도를 빠르게 분석합니다.
+                우리 동네 상권의 위험도를 바로 알려드립니다.
               </p>
 
               <div className="mt-9 max-w-[690px]">
@@ -220,7 +220,7 @@ export default function IncheonHomePage() {
             <div className="grid items-center gap-8 md:grid-cols-[1fr_auto_260px]">
               <div>
                 <h2 className="text-3xl font-black tracking-[-0.02em]">지금 우리 동네를 분석해보세요</h2>
-                <p className="mt-4 text-lg font-semibold text-white/78">상권의 기회와 위험을 더 빠르게 파악하세요</p>
+                <p className="mt-4 text-lg font-semibold text-white/78">상권의 기회와 위험, 지금 바로 확인해 보세요</p>
               </div>
               <a
                 href="/incheon/result?lat=37.3897&lng=126.6454&category=cafe&query=%EC%9D%B8%EC%B2%9C%20%EC%97%B0%EC%88%98%EA%B5%AC%20%EC%86%A1%EB%8F%84%EB%8F%99"

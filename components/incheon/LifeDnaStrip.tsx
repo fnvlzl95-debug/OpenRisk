@@ -16,7 +16,7 @@ function levelText(metric: IncheonMetricCard) {
   if (metric.level === 'high') return '높음'
   if (metric.level === 'medium') return '보통'
   if (metric.level === 'low') return '낮음'
-  return '확인 필요'
+  return '정보 부족'
 }
 
 export default function LifeDnaStrip({ data }: { data: IncheonAnalyzeResponse['lifeDNA'] }) {

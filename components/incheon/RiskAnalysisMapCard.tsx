@@ -93,8 +93,8 @@ function getCellStyle(cell: RiskMapCell) {
 }
 
 function getCellTooltip(cell: RiskMapCell) {
-  if (cell.status === 'masked') return cell.reason ?? '비상권 보정 영역'
-  if (cell.status === 'no_data' || cell.score === null) return cell.reason ?? '공공데이터 신호 없음'
+  if (cell.status === 'masked') return cell.reason ?? '상권 분석 제외 구역'
+  if (cell.status === 'no_data' || cell.score === null) return cell.reason ?? '수집된 상권 데이터가 부족한 구역'
   return `위험도 점수 ${cell.score}`
 }
 
@@ -126,7 +126,7 @@ export default function RiskAnalysisMapCard({
   center = DEFAULT_INCHEON_CENTER,
   radius = 500,
   riskCells = [],
-  locationLabel = '분석 중심 위치',
+  locationLabel = '분석 기준점',
   className,
 }: RiskAnalysisMapCardProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
@@ -220,7 +220,7 @@ export default function RiskAnalysisMapCard({
       }) as DivIcon
 
       const marker = L.marker([center.lat, center.lng], { icon: pinIcon, zIndexOffset: 1000 })
-        .bindTooltip('분석 중심 위치<br/>반경 500m 상권 위험도 기준점', {
+        .bindTooltip('분석 기준점<br/>이곳을 중심으로 반경 500m를 분석해요', {
           direction: 'top',
           offset: [0, -78],
           className: styles.leafletTooltip,
@@ -333,8 +333,8 @@ export default function RiskAnalysisMapCard({
           ))}
         </div>
         <div className={styles.legendLabels}>
-          <span>낮음</span>
-          <span>높음</span>
+          <span>위험 낮음</span>
+          <span>위험 높음</span>
         </div>
       </aside>
     </section>

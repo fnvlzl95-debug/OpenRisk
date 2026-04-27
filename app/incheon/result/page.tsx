@@ -24,11 +24,11 @@ import type { IncheonAnalyzeResponse } from '@/lib/incheon/types'
 import { INCHEON_DEFAULT_CATEGORY } from '@/lib/incheon/constants'
 
 const metricConfig = [
-  { key: 'competition', label: '경쟁 과밀', body: '동종 업종이 몰린 정도', icon: Users, color: '#FF8A1F' },
-  { key: 'transit', label: '유입 부족', body: '교통·보행 유입이 약한 정도', icon: Route, color: '#2D8CFF' },
-  { key: 'cost', label: '비용 부담', body: '임대료·공실 비용 부담', icon: Building2, color: '#20C7E8' },
-  { key: 'survival', label: '폐업 위험', body: '업종이 버티기 어려운 정도', icon: ShieldCheck, color: '#47C978' },
-  { key: 'anchor', label: '앵커 부족', body: '주변 핵심 유입 시설 부족', icon: Store, color: '#8B5CF6' },
+  { key: 'competition', label: '경쟁 과밀', body: '비슷한 매장이 몰려 있는 정도', icon: Users, color: '#FF8A1F' },
+  { key: 'transit', label: '유입 부족', body: '고객이 찾아오기 불편한 정도', icon: Route, color: '#2D8CFF' },
+  { key: 'cost', label: '비용 부담', body: '예상되는 임대료와 공실 부담', icon: Building2, color: '#20C7E8' },
+  { key: 'survival', label: '폐업 위험', body: '주변 매장들이 버티기 어려운 정도', icon: ShieldCheck, color: '#47C978' },
+  { key: 'anchor', label: '앵커 부족', body: '사람을 모으는 주요 시설(역, 학교 등) 부족', icon: Store, color: '#8B5CF6' },
 ] as const
 
 function riskBand(score: number | null) {
@@ -40,7 +40,7 @@ function riskBand(score: number | null) {
 
 function interpretationTitle(label: string, score: number | null) {
   const band = riskBand(score)
-  if (band === 'unknown') return `${label} 확인 필요`
+  if (band === 'unknown') return `${label} 정보 부족`
   if (band === 'high') return `${label}이 높아요`
   if (band === 'medium') return `${label}은 주의 단계예요`
   return `${label}은 낮은 편이에요`
@@ -53,8 +53,8 @@ const interpretationConfig = [
     body: (score: number | null) => {
       const band = riskBand(score)
       if (band === 'high') return '반경 내 같은 업종이 밀집해 고객 분산과 가격 경쟁 압박이 큽니다.'
-      if (band === 'medium') return '동종 업종 분포를 보면 경쟁 압박이 생길 수 있어 주변 점포 구성을 비교해야 합니다.'
-      return '동종 업종 밀집 부담은 낮은 편이지만 수요 규모와 기존 단골 구조는 확인해야 합니다.'
+      if (band === 'medium') return '비슷한 매장 분포를 보면 경쟁 압박이 생길 수 있어 주변 점포 구성을 비교해야 합니다.'
+      return '비슷한 매장 밀집 부담은 낮은 편이지만 수요 규모와 기존 단골 구조는 확인해야 합니다.'
     },
     icon: Users,
     color: '#FF6B1D',
@@ -65,7 +65,7 @@ const interpretationConfig = [
     label: '유입 부족',
     body: (score: number | null) => {
       const band = riskBand(score)
-      if (band === 'high') return '교통·보행 접근 신호가 약해 워킹 유입을 기대하기 어려운 구조입니다.'
+      if (band === 'high') return '교통과 보행 접근성이 떨어져, 지나가다 들르는 손님을 기대하기 어렵습니다.'
       if (band === 'medium') return '기본 유입은 있지만 시간대와 보행 동선에 따라 매출 공백이 생길 수 있습니다.'
       return '정류장과 역 접근 신호가 있어 유입 부족 위험은 상대적으로 작습니다.'
     },
@@ -79,8 +79,8 @@ const interpretationConfig = [
     body: (score: number | null) => {
       const band = riskBand(score)
       if (band === 'unknown') return '비용 데이터가 충분하지 않아 실제 임대 조건을 별도로 확인해야 합니다.'
-      if (band === 'high') return '임대료·공실률 기준 비용 부담이 커 손익분기점이 높아질 수 있습니다.'
-      if (band === 'medium') return '공식 통계상 비용 부담은 평균권이지만 실제 임대 조건 확인이 필요합니다.'
+      if (band === 'high') return '임대료와 공실률을 보면 매월 나가는 고정비용이 매출에 큰 부담이 될 수 있습니다.'
+      if (band === 'medium') return '통계상 임대료는 평균 수준이지만, 실제 매장의 보증금과 권리금은 꼭 따로 확인하세요.'
       return '비용 부담은 낮은 편이지만 보증금, 권리금, 관리비까지 함께 비교해야 합니다.'
     },
     icon: Building2,
@@ -105,8 +105,8 @@ const interpretationConfig = [
     label: '앵커 부족',
     body: (score: number | null) => {
       const band = riskBand(score)
-      if (band === 'high') return '주변 핵심 유입 시설이 약해 브랜드력이나 목적 방문을 직접 만들어야 합니다.'
-      if (band === 'medium') return '주변 유입 시설이 일부 있지만 자체 집객력도 함께 확인해야 합니다.'
+      if (band === 'high') return '주변에 사람을 모으는 시설이 부족해, 고객이 일부러 찾아오게 만들 강력한 무기(브랜드/마케팅)가 필요합니다.'
+      if (band === 'medium') return '사람을 모으는 시설이 일부 있지만 우리 매장 자체의 방문 이유도 함께 확인해야 합니다.'
       return '앵커 부족 위험은 낮은 편이라 주변 시설 유입을 활용할 여지가 있습니다.'
     },
     icon: Store,
@@ -124,32 +124,40 @@ function riskLevelText(result: IncheonAnalyzeResponse | null) {
 }
 
 function qualitativeSignal(level: 'high' | 'medium' | 'low' | 'unknown') {
-  if (level === 'high') return '강함'
+  if (level === 'high') return '높음'
   if (level === 'medium') return '보통'
-  if (level === 'low') return '약함'
-  return '확인 필요'
+  if (level === 'low') return '낮음'
+  return '직접 확인'
 }
 
 function riskSignal(score: number | null) {
   const band = riskBand(score)
   if (band === 'high') return '높음'
-  if (band === 'medium') return '주의'
+  if (band === 'medium') return '보통'
   if (band === 'low') return '낮음'
-  return '확인 필요'
+  return '정보 부족'
+}
+
+function positiveSignalFromRisk(score: number | null) {
+  const band = riskBand(score)
+  if (band === 'high') return '낮음'
+  if (band === 'medium') return '보통'
+  if (band === 'low') return '높음'
+  return '정보 부족'
 }
 
 function summarySentence(result: IncheonAnalyzeResponse, topRows: ReturnType<typeof buildInterpretationRows>) {
   const first = topRows[0]?.label ?? '주요 위험 요인'
   const second = topRows[1]?.label
-  const pair = second ? `${first}과 ${second}` : first
+  const pair = second ? `${first}, ${second}` : first
 
   if (result.risk.score >= 67) {
-    return `${pair}이 두드러져 현장 확인을 먼저 해야 하는 위치입니다.`
+    return `${pair} 위험이 큽니다. 계약 전 현장 확인이 꼭 필요한 위치입니다.`
   }
   if (result.risk.score >= 45) {
-    return `${pair}을 중심으로 조건을 점검해야 하는 주의 단계입니다.`
+    return `${pair}을(를) 중심으로 꼼꼼히 따져봐야 하는 주의 단계입니다.`
   }
-  return `${pair}은 상대적으로 낮지만 실제 동선과 임대 조건 확인은 필요합니다.`
+  return `${pair}은 상대적으로 낮지만 실제 이동 경로와 임대 조건 확인은 필요합니다.`
 }
 
 function buildInterpretationRows(result: IncheonAnalyzeResponse) {
@@ -171,36 +179,36 @@ function buildLivingSignals(result: IncheonAnalyzeResponse, rows: ReturnType<typ
 
   return [
     {
-      label: '교육·가족 생활권',
+      label: '교육·가족 중심의 동네',
       status: qualitativeSignal(education.level),
-      body: '교육·보육 접근성은 분석에 반영했습니다. 실제 고객 동선은 현장에서 확인해야 합니다.',
+      body: '학교와 어린이집이 가깝지만, 학생과 학부모가 실제로 우리 매장 앞을 지나가는지는 직접 확인해 보세요.',
     },
     {
-      label: '유입 신호',
-      status: byKey.transit?.status ?? '확인 필요',
-      body: byKey.transit?.body ?? '교통·보행 접근 신호를 확인해야 합니다.',
+      label: '고객이 찾아오기 쉬운 정도',
+      status: positiveSignalFromRisk(byKey.transit?.score ?? null),
+      body: byKey.transit?.body ?? '교통과 보행 접근성을 확인해야 합니다.',
     },
     {
-      label: '경쟁 구조',
-      status: byKey.competition?.status ?? '확인 필요',
-      body: byKey.competition?.body ?? '동종 업종 밀집 구조를 확인해야 합니다.',
+      label: '주변 매장들과의 경쟁',
+      status: byKey.competition?.status ?? '정보 부족',
+      body: byKey.competition?.body ?? '비슷한 매장 밀집 구조를 확인해야 합니다.',
     },
     {
       label: '비용 부담',
-      status: byKey.cost?.status ?? '확인 필요',
+      status: byKey.cost?.status ?? '정보 부족',
       body: byKey.cost?.body ?? '임대료·공실률 기반 비용 부담을 확인해야 합니다.',
     },
   ]
 }
 
 function statusTone(status: string) {
-  if (status === '높음' || status === '위험' || status === '강함') {
+  if (status === '높음' || status === '위험') {
     return 'bg-[#FFF1E8] text-[#F06A1A]'
   }
   if (status === '주의' || status === '보통') {
     return 'bg-[#EEF5FF] text-[#0B66FF]'
   }
-  if (status === '낮음' || status === '약함') {
+  if (status === '낮음') {
     return 'bg-[#ECFDF3] text-[#1C9B5F]'
   }
   return 'bg-[#F2F5F9] text-[#6B7A90]'
@@ -220,11 +228,11 @@ function SummaryIllustration() {
 }
 
 function scoreLevel(score: number | null) {
-  if (score === null) return { text: '확인 필요', color: '#6B7A90', bars: 2, caption: '데이터 확보 전' }
+  if (score === null) return { text: '정보 부족', color: '#6B7A90', bars: 2, caption: '직접 확인' }
   const bars = Math.round(score / 10)
-  if (score >= 67) return { text: '위험 큼', color: '#FF6B1D', bars, caption: '우선 확인 필요' }
-  if (score >= 45) return { text: '주의', color: '#0B66FF', bars, caption: '조건 확인 필요' }
-  return { text: '낮음', color: '#25B866', bars, caption: '상대적으로 양호' }
+  if (score >= 67) return { text: '높음', color: '#FF6B1D', bars, caption: '우선 확인' }
+  if (score >= 45) return { text: '보통', color: '#0B66FF', bars, caption: '조건 점검' }
+  return { text: '낮음', color: '#25B866', bars, caption: '상대적으로 낮음' }
 }
 
 function RiskPanel({ result }: { result: IncheonAnalyzeResponse }) {
@@ -280,7 +288,7 @@ function RiskPanel({ result }: { result: IncheonAnalyzeResponse }) {
                   <span className="text-xs font-bold text-white/45">{level.caption}</span>
                 </div>
                 <p className="mt-1 text-sm font-semibold text-white/58">{row.body}</p>
-                <div className="mt-3 flex h-5 gap-1.5" aria-label={`${row.label} ${row.score ?? '확인 필요'}`}>
+                <div className="mt-3 flex h-5 gap-1.5" aria-label={`${row.label} ${row.score ?? '정보 부족'}`}>
                   {Array.from({ length: 10 }).map((_, index) => (
                     <span
                       key={index}

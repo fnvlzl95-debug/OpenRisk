@@ -48,7 +48,7 @@ export const INCHEON_PUBLIC_DATA_SOURCES: IncheonDataSource[] = [
     granularity: ['radius_500m'],
     scoringUse: true,
     status: 'planned',
-    notes: '인천 CSV 확보 후 H3 10, 반경 500m 동종업종 밀집도 산정',
+    notes: '인천 CSV 확보 후 H3 10, 반경 500m 비슷한 매장 밀집도 산정',
   },
   {
     sourceId: 'incheon-bus-stops',
@@ -192,16 +192,16 @@ export const INCHEON_PUBLIC_DATA_SOURCES: IncheonDataSource[] = [
   },
   {
     sourceId: 'osm-noncommercial-mask',
-    name: 'OpenStreetMap 공원·수면 보정 레이어',
+    name: 'OpenStreetMap 상권 분석 제외 구역 레이어',
     provider: 'OpenStreetMap contributors',
     url: 'https://www.openstreetmap.org/copyright',
     license: 'ODbL',
     costFree: true,
     updateCycle: '수시',
-    dataPeriod: 'Overpass API 수집 시점',
+    dataPeriod: '최신 지도 데이터 수집 시점',
     granularity: ['radius_500m'],
     scoringUse: false,
     status: 'planned',
-    notes: '공원·수면 등 비상권 셀 마스킹 보조에만 사용하며 점수 산식에는 포함하지 않음',
+    notes: '공원, 바다 등 상권이 형성되지 않는 구역을 제외할 때만 사용하며 점수 산식에는 포함하지 않음',
   },
 ]

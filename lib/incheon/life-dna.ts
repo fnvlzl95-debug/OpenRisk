@@ -17,7 +17,7 @@ function levelLabel(level: IncheonMetricLevel) {
   if (level === 'high') return '높음'
   if (level === 'medium') return '보통'
   if (level === 'low') return '낮음'
-  return '확인 필요'
+  return '정보 부족'
 }
 
 function metricCard(args: Omit<IncheonMetricCard, 'value' | 'level'> & { score: number }): IncheonMetricCard {
@@ -47,7 +47,7 @@ export function buildIncheonLifeDNA(params: {
 
   return {
     educationFamily: metricCard({
-      label: '교육·가족 생활권',
+      label: '교육·가족 중심의 동네',
       score: educationScore,
       granularity: ['radius_500m', 'admin_dong_reference'],
       period: params.actualSignals?.generatedAt ?? '공공데이터 확보 후 갱신',
@@ -57,9 +57,9 @@ export function buildIncheonLifeDNA(params: {
           ? evidence.educationFamily.sourceIds
           : ['school-location-standard', 'incheon-school-status', 'childcare-basic', 'resident-age-admin-dong']
       ),
-      summary: '교육·가족 생활권 신호를 학교·어린이집 접근성과 행정동 아동·청소년 인구 참고값으로 해석합니다.',
+      summary: '학교와 어린이집 접근성, 행정동 아동·청소년 인구를 함께 보고 해석합니다.',
       cautions: ['학교·어린이집이 가까워도 실제 고객 동선이 이어진다는 뜻은 아닙니다.'],
-      evidence: evidence?.educationFamily.evidence ?? ['교육·가족 원천 데이터 확보 전'],
+      evidence: evidence?.educationFamily.evidence ?? ['교육·가족 데이터가 아직 부족합니다.'],
       facts: evidence?.educationFamily.facts ?? [],
     }),
     transitAccess: metricCard({
@@ -69,9 +69,9 @@ export function buildIncheonLifeDNA(params: {
       period: params.actualSignals?.generatedAt ?? '2025 후보',
       confidence: evidence?.transit.confidence ?? 'low',
       sources: sourceRefs(['incheon-bus-stops', 'incheon-bus-ridership', 'incheon-subway-ridership']),
-      summary: '버스 승하차와 지하철 수송인원 기반의 교통 접근 유입 신호입니다.',
+      summary: '버스와 지하철 이용 데이터를 바탕으로 고객이 찾아오기 쉬운 정도를 봅니다.',
       cautions: ['실제 보행 동선, 횡단보도, 큰 도로 단절 여부는 현장 확인이 필요합니다.'],
-      evidence: evidence?.transit.evidence ?? ['교통 원천 데이터 확보 전'],
+      evidence: evidence?.transit.evidence ?? ['교통 데이터가 아직 부족합니다.'],
     }),
     categoryDensity: metricCard({
       label: '경쟁 과밀',
@@ -80,9 +80,9 @@ export function buildIncheonLifeDNA(params: {
       period: params.actualSignals?.generatedAt ?? '2025 후보',
       confidence: evidence?.competition.confidence ?? 'low',
       sources: sourceRefs(['store-small-business']),
-      summary: '반경 500m 안의 동일·유사 업종 밀집도를 경쟁 압박 신호로 보여줍니다.',
-      cautions: ['밀집도는 수요 신호일 수 있지만 같은 고객을 나누는 경쟁 압박이기도 합니다.'],
-      evidence: evidence?.competition.evidence ?? [`동종업종 ${params.sameCategoryCount}곳`, `전체 점포 ${params.totalStores}곳`],
+      summary: '반경 500m 안에 비슷한 매장이 얼마나 모여 있는지 보여줍니다.',
+      cautions: ['매장이 많이 모인 곳은 수요 신호일 수 있지만, 같은 고객층을 나눠 갖는 경쟁 부담도 함께 봐야 합니다.'],
+      evidence: evidence?.competition.evidence ?? [`비슷한 매장 ${params.sameCategoryCount}곳`, `전체 점포 ${params.totalStores}곳`],
     }),
     costPressure: {
       label: '비용 부담',
@@ -94,7 +94,7 @@ export function buildIncheonLifeDNA(params: {
       sources: sourceRefs(['reb-small-rent', 'reb-small-vacancy']),
       summary: '한국부동산원 공식 통계 기반 비용 부담 참고 지표입니다.',
       cautions: ['개별 점포의 실제 임대료, 보증금, 권리금과 다를 수 있습니다.'],
-      evidence: evidence?.cost.evidence ?? (params.costScore === null ? ['비용 데이터 확보 전'] : ['소규모상가 임대료·공실률 권역 참고']),
+      evidence: evidence?.cost.evidence ?? (params.costScore === null ? ['비용 데이터가 아직 부족합니다.'] : ['소규모상가 임대료·공실률 권역 참고']),
     },
   }
 }

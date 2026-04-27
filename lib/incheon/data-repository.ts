@@ -417,7 +417,7 @@ export function calculateActualIncheonRisk(params: {
         sourceIds: ['osm-noncommercial-mask'],
         confidence: 'medium',
         method: 'actual',
-        reason: '공원·수면 등 비상권 보정 영역',
+        reason: '공원, 바다 등 상권이 형성되지 않는 구역',
       } satisfies RiskMapCell
     }
 
@@ -437,7 +437,7 @@ export function calculateActualIncheonRisk(params: {
         sourceIds,
         confidence: 'low',
         method: 'actual',
-        reason: '셀 중심 기준 공공데이터 신호 없음',
+        reason: '수집된 상권 데이터가 부족한 구역',
       } satisfies RiskMapCell
     }
 
@@ -497,7 +497,7 @@ export function calculateActualIncheonRisk(params: {
           confidence: 'high',
           method: 'actual',
           sourceIds: datasets.stores.sourceIds,
-          evidence: [`반경 500m 동종업종 약 ${sameCategoryCount}곳`, `반경 500m 전체 점포 약 ${totalStores}곳`],
+          evidence: [`반경 500m 비슷한 매장 약 ${sameCategoryCount}곳`, `반경 500m 전체 점포 약 ${totalStores}곳`],
         },
         transit: {
           score: transitRisk,
@@ -520,7 +520,7 @@ export function calculateActualIncheonRisk(params: {
                 `어린이집 ${educationTotal.childcareCount}곳`,
                 `학생수 ${Math.round(educationTotal.studentCount).toLocaleString('ko-KR')}명`,
               ]
-            : ['학교 위치/어린이집 좌표 데이터 확보 전'],
+            : ['학교 위치/어린이집 위치 데이터가 아직 부족합니다.'],
           facts: hasEducationFamily
             ? [
                 {
@@ -564,7 +564,7 @@ export function calculateActualIncheonRisk(params: {
           confidence: 'medium',
           method: 'estimated',
           sourceIds,
-          evidence: ['실제 개폐업 데이터 확보 전: 경쟁·유입·비용·앵커 조합으로 추정'],
+          evidence: ['주변 경쟁, 고객 접근성, 비용 부담, 주요 시설 접근성을 종합해 예측'],
         },
         cost: {
           score: costScore,

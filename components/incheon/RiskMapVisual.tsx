@@ -318,8 +318,8 @@ export default function RiskMapVisual({
             ))}
           </div>
           <div className="mt-2 flex justify-between text-[11px] font-bold text-white/72">
-            <span>낮음</span>
-            <span>높음</span>
+            <span>위험 낮음</span>
+            <span>위험 높음</span>
           </div>
         </div>
       )}

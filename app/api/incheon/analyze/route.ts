@@ -36,21 +36,21 @@ function isBusinessCategory(value: unknown): value is BusinessCategory {
 function buildLifestyleCards(lifeDNA: IncheonAnalyzeResponse['lifeDNA']): IncheonLifestyleCard[] {
   return [
     {
-      title: '교육·가족 생활권 신호',
+      title: '교육·가족 중심의 동네',
       body: lifeDNA.educationFamily.summary,
       evidence: lifeDNA.educationFamily.evidence,
       cautions: lifeDNA.educationFamily.cautions,
       metricKey: 'educationFamily',
     },
     {
-      title: '유입 부족 판단 신호',
+      title: '고객 방문 불편 정도',
       body: lifeDNA.transitAccess.summary,
       evidence: lifeDNA.transitAccess.evidence,
       cautions: lifeDNA.transitAccess.cautions,
       metricKey: 'transitAccess',
     },
     {
-      title: '경쟁 과밀 구조',
+      title: '주변 매장들과의 경쟁',
       body: lifeDNA.categoryDensity.summary,
       evidence: lifeDNA.categoryDensity.evidence,
       cautions: lifeDNA.categoryDensity.cautions,
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json()
   } catch {
-    return NextResponse.json({ error: '요청 본문이 올바른 JSON이어야 합니다.' }, { status: 400 })
+    return NextResponse.json({ error: '데이터 요청 형식이 잘못되었습니다. (관리자에게 문의하세요)' }, { status: 400 })
   }
 
   const { lat, lng, targetCategory } = body
@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           code: 'DATASET_NOT_READY',
-          error: '인천 공공데이터 가공 결과가 아직 준비되지 않았습니다.',
+          error: '인천 지역 데이터를 최신화하고 있습니다. 잠시 후 다시 시도해 주세요.',
           missingDatasets: error.missingDatasets,
           expectedFiles: [
             'data/openrisk-incheon/processed/h3-store-counts/store-counts-h3.json',
@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
     location: {
       lat,
       lng,
-      label: '인천 분석 중심 위치',
+      label: '인천 분석 기준점',
       radiusMeters: INCHEON_RADIUS_METERS,
       h3Resolution: INCHEON_H3_RESOLUTION,
     },
@@ -159,16 +159,16 @@ export async function POST(request: NextRequest) {
       }),
       lifestyle: buildLifestyleCards(lifeDNA),
       fieldChecks: [
-        '학교·어린이집에서 점포까지 실제 동선이 이어지는지 확인하세요.',
-        '정류장·역에서 점포까지 큰 도로, 횡단보도, 지하도 단절로 유입 부족이 생기는지 확인하세요.',
-        '경쟁 과밀이 같은 고객을 나누는 구조인지 주변 점포 구성을 비교하세요.',
+        '학교나 어린이집에서 매장까지 걸어오는 길이 자연스럽게 이어지는지 걸어보세요.',
+        '정류장이나 역에서 올 때, 큰 도로나 지하도로 인해 길이 끊기거나 돌아가야 하는지 확인하세요.',
+        '주변 경쟁 매장들이 내 타겟 고객층과 겹치는지, 그 매장들의 장단점은 무엇인지 비교해 보세요.',
         '공식 통계와 실제 임대 조건의 차이가 비용 부담으로 이어지는지 확인하세요.',
       ],
     },
     dataQuality,
     sources,
     auxiliary: {
-      note: '주소 검색이나 AI 요약은 분석 근거와 점수 계산에 포함되지 않습니다.',
+      note: '주소 검색과 요약은 이해를 돕기 위한 기능이며, 실제 위험도 점수는 신뢰할 수 있는 공공데이터만으로 계산됩니다.',
       datasetGeneratedAt: signals.generatedAt,
       missingOptionalDatasets: signals.missingOptionalDatasets,
     },
