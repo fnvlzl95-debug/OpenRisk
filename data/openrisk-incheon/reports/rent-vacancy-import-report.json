@@ -1,0 +1,24 @@
+{
+  "updatedAt": "2026-04-27T05:25:30.131Z",
+  "status": "ready",
+  "inputFiles": [
+    "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\rent-vacancy\\20260427_reb-small-rent_한국부동산원_RONE_소규모상가_임대료.json",
+    "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\rent-vacancy\\20260427_reb-small-vacancy_한국부동산원_RONE_소규모상가_공실률.json"
+  ],
+  "outputFile": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\processed\\cost-pressure\\cost-pressure.json",
+  "regions": 10,
+  "fileStats": [
+    {
+      "file": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\rent-vacancy\\20260427_reb-small-rent_한국부동산원_RONE_소규모상가_임대료.json",
+      "rows": 276,
+      "matched": 10,
+      "parser": "rone-json"
+    },
+    {
+      "file": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\rent-vacancy\\20260427_reb-small-vacancy_한국부동산원_RONE_소규모상가_공실률.json",
+      "rows": 276,
+      "matched": 10,
+      "parser": "rone-json"
+    }
+  ]
+}

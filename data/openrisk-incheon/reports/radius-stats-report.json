@@ -1,0 +1,8 @@
+{
+  "updatedAt": "2026-04-27T07:37:32.129Z",
+  "status": "ready",
+  "outputFile": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\processed\\radius-stats\\radius-stats-500m.json",
+  "centerCellCount": 14017,
+  "radiusMeters": 500,
+  "h3Resolution": 10
+}

@@ -14,6 +14,7 @@ interface SearchResult {
   id: string
   name: string
   district: string
+  region?: string
   display: string
   lat: number
   lng: number
@@ -33,8 +34,11 @@ interface KakaoSearchDocument {
   address_name?: string
   road_address?: {
     address_name?: string
+    region_1depth_name?: string
+    region_2depth_name?: string
   }
   address?: {
+    region_1depth_name?: string
     region_2depth_name?: string
   }
 }
@@ -73,6 +77,8 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url)
   const q = searchParams.get('q')?.trim() || ''
+  const regionMode = searchParams.get('region')
+  const allowedRegions = regionMode === 'incheon' ? ['인천'] : SUPPORTED_REGIONS
 
   if (q.length < 2) {
     return NextResponse.json([], { headers: rateLimitHeaders })
@@ -83,7 +89,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json([], { headers: rateLimitHeaders })
   }
 
-  const cacheKey = q.toLowerCase()
+  const cacheKey = `${regionMode || 'all'}:${q.toLowerCase()}`
   const now = Date.now()
   if (searchCache.size > MAX_SEARCH_CACHE_SIZE) {
     sweepSearchCache(now)
@@ -106,9 +112,7 @@ export async function GET(request: NextRequest) {
   try {
     const results = await searchKakao(q)
     // 지원 지역만 필터링
-    const filtered = results.filter(r =>
-      SUPPORTED_REGIONS.some(region => r.district.startsWith(region) || r.name.startsWith(region))
-    )
+    const filtered = results.filter((result) => isAllowedRegion(result, allowedRegions))
     const sliced = filtered.slice(0, 8)
     searchCache.set(cacheKey, {
       results: sliced,
@@ -125,6 +129,13 @@ export async function GET(request: NextRequest) {
     console.error('Search error:', error)
     return NextResponse.json([], { headers: rateLimitHeaders })
   }
+}
+
+function isAllowedRegion(result: SearchResult, allowedRegions: string[]) {
+  const fields = [result.region, result.district, result.name, result.display].filter(Boolean) as string[]
+  return allowedRegions.some((region) =>
+    fields.some((field) => field.startsWith(region) || field.includes(`${region} `))
+  )
 }
 
 /**
@@ -167,6 +178,7 @@ async function searchKakao(query: string) {
           id: `kakao-addr-${doc.x}-${doc.y}`,
           name: doc.address_name || doc.road_address?.address_name || query,
           district: doc.address?.region_2depth_name || '',
+          region: doc.address?.region_1depth_name || doc.road_address?.region_1depth_name || '',
           display: doc.address_name || doc.road_address?.address_name || query,
           lat,
           lng,
@@ -196,6 +208,7 @@ async function searchKakao(query: string) {
           pushUniqueResult({
             id: `kakao-place-${doc.id}`,
             name: doc.place_name || query,
+            region: doc.address_name?.split(' ')[0] || '',
             district: doc.address_name?.split(' ').slice(0, 2).join(' ') || '',
             display: `${doc.place_name || query} (${doc.address_name?.split(' ').slice(1, 3).join(' ') || ''})`,
             lat,

@@ -1,0 +1,37 @@
+{
+  "updatedAt": "2026-04-27T04:27:34.096Z",
+  "status": "ready",
+  "inputFiles": [
+    "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\transit\\bus-ridership\\20260427_인천광역시_정류장별_이용승객_현황.csv",
+    "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\transit\\bus-stops\\20260427_인천광역시_시내버스_정류소_현황.csv",
+    "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\transit\\subway-ridership\\20260427_인천교통공사_역별_수송인원_현황.csv"
+  ],
+  "outputFile": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\processed\\h3-transit\\transit-h3.json",
+  "cells": 5073,
+  "stops": 7085,
+  "ridership": 6742,
+  "subway": 0,
+  "fileStats": [
+    {
+      "file": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\transit\\bus-ridership\\20260427_인천광역시_정류장별_이용승객_현황.csv",
+      "rows": 6742,
+      "stopCount": 0,
+      "ridershipCount": 6742,
+      "subwayCount": 0
+    },
+    {
+      "file": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\transit\\bus-stops\\20260427_인천광역시_시내버스_정류소_현황.csv",
+      "rows": 7237,
+      "stopCount": 7085,
+      "ridershipCount": 0,
+      "subwayCount": 0
+    },
+    {
+      "file": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\transit\\subway-ridership\\20260427_인천교통공사_역별_수송인원_현황.csv",
+      "rows": 819,
+      "stopCount": 0,
+      "ridershipCount": 0,
+      "subwayCount": 0
+    }
+  ]
+}

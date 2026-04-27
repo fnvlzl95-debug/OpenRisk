@@ -3,10 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "incheon:data:download": "tsx scripts/incheon/download-public-data.ts",
+    "incheon:data:stores": "tsx scripts/incheon/import-stores.ts",
+    "incheon:data:transit": "tsx scripts/incheon/import-transit.ts",
+    "incheon:data:education": "tsx scripts/incheon/import-education.ts",
+    "incheon:data:cost": "tsx scripts/incheon/import-rent-vacancy.ts",
+    "incheon:data:osm": "tsx scripts/incheon/import-osm-mask.ts",
+    "incheon:data:radius-stats": "tsx scripts/incheon/build-radius-stats.ts",
+    "incheon:data:check": "tsx scripts/incheon/build-life-dna.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

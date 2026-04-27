@@ -1,14 +1,102 @@
 {
-  "updatedAt": "2026-04-26",
-  "policy": "public-data-only",
-  "localCandidates": [
-    "data/bus/incheon/ridership_2025.csv",
-    "data/subway/incheon/stations.csv",
-    "data/rent/commercial_rent_2025Q3.xlsx",
-    "data/incheon_taxi_h3_data.json"
+  "updatedAt": "2026-04-27T05:23:31.389Z",
+  "downloaded": [
+    {
+      "sourceId": "store-small-business",
+      "status": "skipped-existing",
+      "pageUrl": "https://www.data.go.kr/data/15083033/fileData.do",
+      "downloadUrl": null,
+      "filePath": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\stores\\20260427_소상공인시장진흥공단_상가정보.zip",
+      "bytes": 338211286
+    },
+    {
+      "sourceId": "incheon-bus-stops",
+      "status": "skipped-existing",
+      "pageUrl": "https://www.data.go.kr/data/15074309/fileData.do",
+      "downloadUrl": null,
+      "filePath": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\transit\\bus-stops\\20260427_인천광역시_시내버스_정류소_현황.csv",
+      "bytes": 736842
+    },
+    {
+      "sourceId": "national-bus-stops",
+      "status": "skipped-existing",
+      "pageUrl": "https://www.data.go.kr/data/15067528/fileData.do",
+      "downloadUrl": null,
+      "filePath": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\transit\\national-bus-stops\\20260427_국토교통부_전국_버스정류장_위치정보.png",
+      "bytes": 827267
+    },
+    {
+      "sourceId": "incheon-bus-ridership",
+      "status": "skipped-existing",
+      "pageUrl": "https://www.data.go.kr/data/15048264/fileData.do",
+      "downloadUrl": null,
+      "filePath": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\transit\\bus-ridership\\20260427_인천광역시_정류장별_이용승객_현황.csv",
+      "bytes": 355209
+    },
+    {
+      "sourceId": "incheon-subway-ridership",
+      "status": "skipped-existing",
+      "pageUrl": "https://www.data.go.kr/data/15060441/fileData.do",
+      "downloadUrl": null,
+      "filePath": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\transit\\subway-ridership\\20260427_인천교통공사_역별_수송인원_현황.csv",
+      "bytes": 32257
+    },
+    {
+      "sourceId": "incheon-school-status",
+      "status": "skipped-existing",
+      "pageUrl": "https://www.data.go.kr/data/15004947/fileData.do",
+      "downloadUrl": null,
+      "filePath": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\education\\school-status\\20260427_인천광역시교육청_학교현황.xlsx",
+      "bytes": 536208
+    },
+    {
+      "sourceId": "resident-age-admin-dong",
+      "status": "skipped-existing",
+      "pageUrl": "https://www.data.go.kr/data/15097972/fileData.do",
+      "downloadUrl": null,
+      "filePath": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\population\\20260427_행정안전부_행정동_성별_연령별_주민등록_인구수.csv",
+      "bytes": 2564015
+    },
+    {
+      "sourceId": "admin-boundaries",
+      "status": "skipped-existing",
+      "pageUrl": "https://www.data.go.kr/data/15129688/fileData.do",
+      "downloadUrl": null,
+      "filePath": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\boundaries\\20260427_국가데이터처_SGIS_행정구역_통계_및_경계.zip",
+      "bytes": 251294559
+    },
+    {
+      "sourceId": "school-location-standard",
+      "status": "skipped-existing",
+      "pageUrl": "https://www.data.go.kr/data/15021148/standard.do",
+      "downloadUrl": null,
+      "filePath": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\education\\school-location\\20260427_전국초중등학교위치표준데이터.json",
+      "bytes": 9541872
+    },
+    {
+      "sourceId": "childcare-basic",
+      "status": "skipped-existing",
+      "pageUrl": "https://www.data.go.kr/data/15101154/openapi.do",
+      "downloadUrl": null,
+      "filePath": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\childcare\\어린이집기본정보조회(정기)-기준일(20260331).xls",
+      "bytes": 1776640
+    },
+    {
+      "sourceId": "reb-small-rent",
+      "status": "downloaded",
+      "pageUrl": "https://www.reb.or.kr/r-one/portal/stat/easyStatPage/T248223134698125.do",
+      "downloadUrl": "https://www.reb.or.kr/r-one/portal/stat/sttsDataPreviewList.do",
+      "filePath": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\rent-vacancy\\20260427_reb-small-rent_한국부동산원_RONE_소규모상가_임대료.json",
+      "bytes": 91121
+    },
+    {
+      "sourceId": "reb-small-vacancy",
+      "status": "downloaded",
+      "pageUrl": "https://www.reb.or.kr/r-one/portal/stat/easyStatPage/T241833134686576.do",
+      "downloadUrl": "https://www.reb.or.kr/r-one/portal/stat/sttsDataPreviewList.do",
+      "filePath": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\rent-vacancy\\20260427_reb-small-vacancy_한국부동산원_RONE_소규모상가_공실률.json",
+      "bytes": 89977
+    }
   ],
-  "notes": [
-    "로컬 후보 파일은 경연대회 제출 전 원 URL, 기준일, 이용조건을 public-data-sources.json에 확정해야 합니다.",
-    "Kakao와 OpenAI는 분석 근거와 점수 계산 출처로 등록하지 않습니다."
-  ]
+  "blocked": []
 }

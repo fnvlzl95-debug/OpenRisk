@@ -1,0 +1,30 @@
+{
+  "updatedAt": "2026-04-27T05:09:35.946Z",
+  "status": "ready",
+  "inputFiles": [
+    "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\education\\school-location\\20260427_전국초중등학교위치표준데이터.json",
+    "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\education\\school-status\\20260427_인천광역시교육청_학교현황.xlsx",
+    "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\childcare\\어린이집기본정보조회(정기)-기준일(20260331).xls"
+  ],
+  "outputFile": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\processed\\h3-education-family\\education-family-h3.json",
+  "cells": 2627,
+  "schoolRows": 547,
+  "childcareRows": 2985,
+  "fileStats": [
+    {
+      "file": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\education\\school-location\\20260427_전국초중등학교위치표준데이터.json",
+      "rows": 12014,
+      "statusRows": 0
+    },
+    {
+      "file": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\education\\school-status\\20260427_인천광역시교육청_학교현황.xlsx",
+      "rows": 28,
+      "statusRows": 0
+    },
+    {
+      "file": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\raw\\childcare\\어린이집기본정보조회(정기)-기준일(20260331).xls",
+      "rows": 3049,
+      "childcareRows": 2985
+    }
+  ]
+}

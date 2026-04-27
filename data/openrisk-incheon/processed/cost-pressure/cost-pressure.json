@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-04-27T05:25:30.130Z",
+  "sourceIds": [
+    "reb-small-rent",
+    "reb-small-vacancy"
+  ],
+  "dataPeriod": "2025Q4",
+  "unit": {
+    "rentPerSquareMeter": "천원/㎡",
+    "vacancyRate": "%"
+  },
+  "regions": [
+    {
+      "regionName": "인천",
+      "rentPerSquareMeter": 21.5,
+      "rentPeriod": "2025Q4",
+      "vacancyRate": 11.8,
+      "vacancyPeriod": "2025Q4",
+      "costScore": 66,
+      "confidence": "high"
+    },
+    {
+      "regionName": "간석오거리",
+      "rentPerSquareMeter": 19.1,
+      "rentPeriod": "2025Q4",
+      "vacancyRate": 5.5,
+      "vacancyPeriod": "2025Q4",
+      "costScore": 37,
+      "confidence": "high"
+    },
+    {
+      "regionName": "검단사거리완정역",
+      "rentPerSquareMeter": 23.8,
+      "rentPeriod": "2025Q4",
+      "vacancyRate": 13.7,
+      "vacancyPeriod": "2025Q4",
+      "costScore": 76,
+      "confidence": "high"
+    },
+    {
+      "regionName": "계양계산",
+      "rentPerSquareMeter": 24.4,
+      "rentPeriod": "2025Q4",
+      "vacancyRate": 2.2,
+      "vacancyPeriod": "2025Q4",
+      "costScore": 54,
+      "confidence": "high"
+    },
+    {
+      "regionName": "구월",
+      "rentPerSquareMeter": 20.2,
+      "rentPeriod": "2025Q4",
+      "vacancyRate": 34,
+      "vacancyPeriod": "2025Q4",
+      "costScore": 78,
+      "confidence": "high"
+    },
+    {
+      "regionName": "부평",
+      "rentPerSquareMeter": 35.8,
+      "rentPeriod": "2025Q4",
+      "vacancyRate": 15.9,
+      "vacancyPeriod": "2025Q4",
+      "costScore": 91,
+      "confidence": "high"
+    },
+    {
+      "regionName": "석남/가정중앙시장",
+      "rentPerSquareMeter": 17,
+      "rentPeriod": "2025Q4",
+      "vacancyRate": 7.8,
+      "vacancyPeriod": "2025Q4",
+      "costScore": 24,
+      "confidence": "high"
+    },
+    {
+      "regionName": "신포동",
+      "rentPerSquareMeter": 17.9,
+      "rentPeriod": "2025Q4",
+      "vacancyRate": 19.2,
+      "vacancyPeriod": "2025Q4",
+      "costScore": 63,
+      "confidence": "high"
+    },
+    {
+      "regionName": "인천서구청",
+      "rentPerSquareMeter": 17.7,
+      "rentPeriod": "2025Q4",
+      "vacancyRate": 6.6,
+      "vacancyPeriod": "2025Q4",
+      "costScore": 30,
+      "confidence": "high"
+    },
+    {
+      "regionName": "주안",
+      "rentPerSquareMeter": 17.6,
+      "rentPeriod": "2025Q4",
+      "vacancyRate": 11.5,
+      "vacancyPeriod": "2025Q4",
+      "costScore": 34,
+      "confidence": "high"
+    }
+  ]
+}

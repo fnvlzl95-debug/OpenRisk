@@ -8,10 +8,13 @@ import {
   INCHEON_RADIUS_METERS,
 } from '@/lib/incheon/constants'
 import { buildDataQuality } from '@/lib/incheon/data-quality'
+import { calculateActualIncheonRisk, IncheonDatasetNotReadyError } from '@/lib/incheon/data-repository'
 import { buildIncheonLifeDNA } from '@/lib/incheon/life-dna'
-import { calculateIncheonRisk, buildIncheonRiskCards } from '@/lib/incheon/scoring'
+import { buildIncheonRiskCards } from '@/lib/incheon/scoring'
 import { assertPublicDataOnlySources, getIncheonPublicDataSources } from '@/lib/incheon/source-policy'
 import type { IncheonAnalyzeRequest, IncheonAnalyzeResponse, IncheonLifestyleCard } from '@/lib/incheon/types'
+
+export const runtime = 'nodejs'
 
 function isFiniteNumber(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value)
@@ -40,21 +43,21 @@ function buildLifestyleCards(lifeDNA: IncheonAnalyzeResponse['lifeDNA']): Incheo
       metricKey: 'educationFamily',
     },
     {
-      title: '교통 접근 기반 유입 신호',
+      title: '유입 부족 판단 신호',
       body: lifeDNA.transitAccess.summary,
       evidence: lifeDNA.transitAccess.evidence,
       cautions: lifeDNA.transitAccess.cautions,
       metricKey: 'transitAccess',
     },
     {
-      title: '동종업종 밀집 구조',
+      title: '경쟁 과밀 구조',
       body: lifeDNA.categoryDensity.summary,
       evidence: lifeDNA.categoryDensity.evidence,
       cautions: lifeDNA.categoryDensity.cautions,
       metricKey: 'categoryDensity',
     },
     {
-      title: '비용 압박 참고',
+      title: '비용 부담 참고',
       body: lifeDNA.costPressure.summary,
       evidence: lifeDNA.costPressure.evidence,
       cautions: lifeDNA.costPressure.cautions,
@@ -86,38 +89,46 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: '지원하지 않는 업종입니다.' }, { status: 400 })
   }
 
-  const riskWithSignals = calculateIncheonRisk({
-    lat,
-    lng,
-    category: targetCategory,
-    costDataAvailable: true,
-  })
-  const { signals, ...risk } = riskWithSignals
+  let actual
+  try {
+    actual = calculateActualIncheonRisk({ lat, lng, category: targetCategory })
+  } catch (error) {
+    if (error instanceof IncheonDatasetNotReadyError) {
+      return NextResponse.json(
+        {
+          code: 'DATASET_NOT_READY',
+          error: '인천 공공데이터 가공 결과가 아직 준비되지 않았습니다.',
+          missingDatasets: error.missingDatasets,
+          expectedFiles: [
+            'data/openrisk-incheon/processed/h3-store-counts/store-counts-h3.json',
+            'data/openrisk-incheon/processed/h3-transit/transit-h3.json',
+          ],
+        },
+        { status: 503 }
+      )
+    }
+    throw error
+  }
+
+  const { risk, signals, riskMapCells } = actual
   const lifeDNA = buildIncheonLifeDNA({
     lat,
     lng,
     category: targetCategory,
     sameCategoryCount: signals.sameCategoryCount,
     totalStores: signals.totalStores,
-    transitScore: signals.transitScore,
+    transitScore: signals.transitAccessScore,
     costScore: signals.costScore,
+    actualSignals: signals,
   })
   const dataQuality = buildDataQuality(lifeDNA)
-  const sources = getIncheonPublicDataSources().filter((source) =>
-    [
-      'store-small-business',
-      'incheon-bus-stops',
-      'incheon-bus-ridership',
-      'incheon-subway-ridership',
-      'school-location-standard',
-      'incheon-school-status',
-      'childcare-basic',
-      'resident-age-admin-dong',
-      'reb-small-rent',
-      'reb-small-vacancy',
-      'admin-boundaries',
-    ].includes(source.sourceId)
+  const responseSourceIds = Array.from(
+    new Set([
+      ...signals.sourceIds,
+      ...(riskMapCells.some((cell) => cell.status === 'masked') ? ['osm-noncommercial-mask'] : []),
+    ])
   )
+  const sources = getIncheonPublicDataSources().filter((source) => responseSourceIds.includes(source.sourceId))
 
   assertPublicDataOnlySources(sources)
 
@@ -136,6 +147,7 @@ export async function POST(request: NextRequest) {
       name: getCategoryName(targetCategory),
     },
     risk,
+    riskMapCells,
     lifeDNA,
     cards: {
       riskTop3: buildIncheonRiskCards({
@@ -148,15 +160,17 @@ export async function POST(request: NextRequest) {
       lifestyle: buildLifestyleCards(lifeDNA),
       fieldChecks: [
         '학교·어린이집에서 점포까지 실제 동선이 이어지는지 확인하세요.',
-        '정류장·역에서 점포까지 큰 도로, 횡단보도, 지하도 단절이 있는지 확인하세요.',
-        '같은 업종이 같은 고객을 나누는 구조인지 주변 점포 구성을 비교하세요.',
-        '공식 통계와 실제 임대 조건의 차이를 임장 단계에서 확인하세요.',
+        '정류장·역에서 점포까지 큰 도로, 횡단보도, 지하도 단절로 유입 부족이 생기는지 확인하세요.',
+        '경쟁 과밀이 같은 고객을 나누는 구조인지 주변 점포 구성을 비교하세요.',
+        '공식 통계와 실제 임대 조건의 차이가 비용 부담으로 이어지는지 확인하세요.',
       ],
     },
     dataQuality,
     sources,
     auxiliary: {
       note: '주소 검색이나 AI 요약은 분석 근거와 점수 계산에 포함되지 않습니다.',
+      datasetGeneratedAt: signals.generatedAt,
+      missingOptionalDatasets: signals.missingOptionalDatasets,
     },
   }
 

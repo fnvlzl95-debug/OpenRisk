@@ -1,0 +1,7 @@
+{
+  "updatedAt": "2026-04-27T04:28:04.753Z",
+  "status": "ready",
+  "outputFile": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\processed\\osm-mask\\noncommercial-polygons.json",
+  "polygons": 12571,
+  "policy": "점수 산식에는 포함하지 않고 지도 비상권 셀 마스킹에만 사용합니다."
+}

@@ -18,11 +18,11 @@ import SearchPanel from '@/components/incheon/SearchPanel'
 import RiskMapVisual from '@/components/incheon/RiskMapVisual'
 
 const indicatorRows = [
-  ['경쟁', 68, 'bg-[#FDBA3B]'],
-  ['유입', 72, 'bg-[#2D8CFF]'],
-  ['임대료', 55, 'bg-[#20C7E8]'],
-  ['생존', 61, 'bg-[#50D19C]'],
-  ['앵커', 74, 'bg-[#8B5CF6]'],
+  ['경쟁 과밀', 68, 'bg-[#FDBA3B]'],
+  ['유입 부족', 72, 'bg-[#2D8CFF]'],
+  ['비용 부담', 55, 'bg-[#20C7E8]'],
+  ['폐업 위험', 61, 'bg-[#50D19C]'],
+  ['앵커 부족', 74, 'bg-[#8B5CF6]'],
 ]
 
 const featureCards = [
@@ -34,7 +34,7 @@ const featureCards = [
   {
     icon: BarChart3,
     title: '5대 핵심 지표',
-    body: '경쟁·유입·임대료·생존·앵커 분석',
+    body: '높을수록 위험한 5대 요인 분석',
   },
   {
     icon: ShieldCheck,
@@ -65,7 +65,7 @@ const trustItems = [
   {
     icon: Gauge,
     title: '직관적 점수',
-    body: '0~100 점수로 쉽게 이해',
+    body: '높을수록 위험한 0~100 점수',
   },
   {
     icon: Map,
@@ -111,7 +111,7 @@ function HeroRiskPanel() {
         <h3 className="text-lg font-black">5대 핵심 지표</h3>
         <div className="mt-5 space-y-5">
           {indicatorRows.map(([label, value, color]) => (
-            <div key={label as string} className="grid grid-cols-[62px_1fr_34px] items-center gap-3">
+            <div key={label as string} className="grid grid-cols-[88px_1fr_34px] items-center gap-3">
               <span className="text-base font-black text-white/86">{label as string}</span>
               <span className="h-3 overflow-hidden bg-white/10">
                 <span className={`block h-full ${color as string}`} style={{ width: `${value}%` }} />

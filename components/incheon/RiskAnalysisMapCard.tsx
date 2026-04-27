@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef } from 'react'
 import { cellToBoundary } from 'h3-js'
 import styles from './RiskAnalysisMapCard.module.css'
 import type { RiskMapCell, RiskMapCenter } from '@/lib/incheon/risk-map-types'
-import { GANGNAM_TEHERAN_CENTER, gangnamTeheranMockRiskCells } from '@/lib/incheon/mock-risk-map'
 import type {
   Circle,
   DivIcon,
@@ -21,10 +20,14 @@ type RiskAnalysisMapCardProps = {
   center?: RiskMapCenter
   radius?: number
   riskCells?: RiskMapCell[]
+  locationLabel?: string
   className?: string
 }
 
 const LEGEND_COLORS = ['#2D8CFF', '#20C7E8', '#47D78D', '#F6D84A', '#FDBA3B', '#FF9E2C', '#FF6B1D', '#FF4B4B']
+const DEFAULT_INCHEON_CENTER: RiskMapCenter = { lat: 37.3897, lng: 126.6454 }
+const RADIUS_BOUNDS_SCALE = 1.16
+const MAP_FIT_PADDING: [number, number] = [28, 28]
 
 function getRiskColor(score: number) {
   if (score >= 86) return '#FF4B4B'
@@ -59,9 +62,40 @@ function destinationPoint(center: RiskMapCenter, distanceMeters: number, bearing
 
 function getRadiusBounds(center: RiskMapCenter, radius: number): LatLngBoundsExpression {
   return [
-    destinationPoint(center, radius * 1.34, 225),
-    destinationPoint(center, radius * 1.34, 45),
+    destinationPoint(center, radius * RADIUS_BOUNDS_SCALE, 225),
+    destinationPoint(center, radius * RADIUS_BOUNDS_SCALE, 45),
   ]
+}
+
+function getCellStyle(cell: RiskMapCell) {
+  if (cell.status === 'masked') {
+    return {
+      color: '#8CA3B7',
+      fillColor: '#D8E5EE',
+      fillOpacity: 0.18,
+      opacity: 0.2,
+    }
+  }
+  if (cell.status === 'no_data' || cell.score === null) {
+    return {
+      color: '#7A93A8',
+      fillColor: '#BFD0DD',
+      fillOpacity: 0.1,
+      opacity: 0.15,
+    }
+  }
+  return {
+    color: '#87E8FF',
+    fillColor: getRiskColor(cell.score),
+    fillOpacity: Math.min(0.6, 0.14 + (cell.score / 100) * 0.46),
+    opacity: 0.28,
+  }
+}
+
+function getCellTooltip(cell: RiskMapCell) {
+  if (cell.status === 'masked') return cell.reason ?? '비상권 보정 영역'
+  if (cell.status === 'no_data' || cell.score === null) return cell.reason ?? '공공데이터 신호 없음'
+  return `위험도 점수 ${cell.score}`
 }
 
 function createPinElement() {
@@ -89,9 +123,10 @@ function createPinElement() {
 }
 
 export default function RiskAnalysisMapCard({
-  center = GANGNAM_TEHERAN_CENTER,
+  center = DEFAULT_INCHEON_CENTER,
   radius = 500,
-  riskCells = gangnamTeheranMockRiskCells,
+  riskCells = [],
+  locationLabel = '분석 중심 위치',
   className,
 }: RiskAnalysisMapCardProps) {
   const mapContainerRef = useRef<HTMLDivElement | null>(null)
@@ -107,7 +142,7 @@ export default function RiskAnalysisMapCard({
       riskCells.map((cell) => ({
         ...cell,
         positions: cellToBoundary(cell.h3Id).map(([lat, lng]) => [lat, lng] as LatLngExpression),
-        color: getRiskColor(cell.score),
+        style: getCellStyle(cell),
       })),
     [riskCells]
   )
@@ -127,12 +162,11 @@ export default function RiskAnalysisMapCard({
         zoom: 15,
         zoomControl: false,
         attributionControl: false,
-        preferCanvas: true,
       })
 
       mapRef.current = map
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         maxZoom: 20,
         attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
         subdomains: 'abcd',
@@ -151,6 +185,7 @@ export default function RiskAnalysisMapCard({
         opacity: 0.96,
         fillColor: '#0B66FF',
         fillOpacity: 0.08,
+        interactive: false,
         className: styles.radiusCircle,
       }).addTo(overlayGroup)
       radiusLayerRef.current = radiusLayer
@@ -160,15 +195,15 @@ export default function RiskAnalysisMapCard({
 
       cellPolygons.forEach((cell) => {
         const polygon = L.polygon(cell.positions, {
-          color: '#87E8FF',
+          color: cell.style.color,
           weight: 0.8,
-          opacity: 0.34,
-          fillColor: cell.color,
-          fillOpacity: Math.min(0.76, 0.2 + (cell.score / 100) * 0.58),
+          opacity: cell.style.opacity,
+          fillColor: cell.style.fillColor,
+          fillOpacity: cell.style.fillOpacity,
           className: styles.h3Cell,
         }) as Polygon
 
-        polygon.bindTooltip(`위험도 점수 ${cell.score}`, {
+        polygon.bindTooltip(getCellTooltip(cell), {
           sticky: true,
           direction: 'top',
           className: styles.leafletTooltip,
@@ -208,7 +243,12 @@ export default function RiskAnalysisMapCard({
       }).addTo(map)
       radiusBadgeRef.current = radiusBadge
 
-      map.fitBounds(getRadiusBounds(center, radius), { padding: [70, 70], animate: false })
+      map.fitBounds(getRadiusBounds(center, radius), { padding: MAP_FIT_PADDING, animate: false })
+      requestAnimationFrame(() => {
+        if (!cancelled && mapRef.current === map) {
+          map.invalidateSize()
+        }
+      })
     }
 
     initMap()
@@ -239,17 +279,21 @@ export default function RiskAnalysisMapCard({
     radiusBadge.setLatLng(destinationPoint(center, radius, 45))
     cellLayer.clearLayers()
 
+    let cancelled = false
+    let resizeFrame: number | null = null
+
     import('leaflet').then((L) => {
+      if (cancelled || mapRef.current !== map) return
       cellPolygons.forEach((cell) => {
         const polygon = L.polygon(cell.positions, {
-          color: '#87E8FF',
+          color: cell.style.color,
           weight: 0.8,
-          opacity: 0.34,
-          fillColor: cell.color,
-          fillOpacity: Math.min(0.76, 0.2 + (cell.score / 100) * 0.58),
+          opacity: cell.style.opacity,
+          fillColor: cell.style.fillColor,
+          fillOpacity: cell.style.fillOpacity,
           className: styles.h3Cell,
         })
-        polygon.bindTooltip(`위험도 점수 ${cell.score}`, {
+        polygon.bindTooltip(getCellTooltip(cell), {
           sticky: true,
           direction: 'top',
           className: styles.leafletTooltip,
@@ -257,15 +301,30 @@ export default function RiskAnalysisMapCard({
         polygon.addTo(cellLayer)
       })
       radiusLayer.bringToFront()
+      map.fitBounds(getRadiusBounds(center, radius), { padding: MAP_FIT_PADDING, animate: false })
+      resizeFrame = requestAnimationFrame(() => {
+        if (!cancelled && mapRef.current === map) {
+          map.invalidateSize()
+        }
+      })
     })
 
-    map.fitBounds(getRadiusBounds(center, radius), { padding: [70, 70], animate: false })
+    return () => {
+      cancelled = true
+      if (resizeFrame !== null) {
+        cancelAnimationFrame(resizeFrame)
+      }
+    }
   }, [cellPolygons, center, radius])
 
   return (
     <section className={`${styles.card} ${className ?? ''}`} aria-label="상권 위험도 분석 지도">
       <div ref={mapContainerRef} className={styles.mapCanvas} />
       <div className={styles.glassOverlay} />
+      <div className={styles.locationBadge} aria-label="분석 위치">
+        <span className={styles.locationLabel}>분석 위치</span>
+        <span className={styles.locationName}>{locationLabel}</span>
+      </div>
       <aside className={styles.legend} aria-label="위험도 수준 범례">
         <h3 className={styles.legendTitle}>위험도 수준</h3>
         <div className={styles.legendScale}>

@@ -1,4 +1,5 @@
 import type { BusinessCategory } from '@/lib/categories'
+import type { RiskMapCell } from './risk-map-types'
 
 export type IncheonProductMode = 'openrisk-incheon'
 export type IncheonDataPolicy = 'public-data-only'
@@ -6,6 +7,7 @@ export type IncheonDataPolicy = 'public-data-only'
 export type IncheonRiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'VERY_HIGH'
 export type IncheonMetricLevel = 'low' | 'medium' | 'high' | 'unknown'
 export type IncheonConfidence = 'high' | 'medium' | 'low'
+export type IncheonEvidenceMethod = 'actual' | 'estimated'
 
 export type IncheonGranularity =
   | 'radius_500m'
@@ -31,7 +33,7 @@ export interface IncheonDataSource {
   dataPeriod: string
   granularity: IncheonGranularity[]
   scoringUse: boolean
-  status: 'ready' | 'local-candidate' | 'blocked' | 'planned'
+  status: 'ready' | 'local-candidate' | 'blocked' | 'planned' | 'manual'
   notes: string
 }
 
@@ -39,6 +41,13 @@ export interface IncheonMetricSourceRef {
   sourceId: string
   name: string
   provider: string
+}
+
+export interface IncheonMetricFact {
+  label: string
+  value: number | string
+  unit?: string
+  caption?: string
 }
 
 export interface IncheonMetricCard {
@@ -52,6 +61,7 @@ export interface IncheonMetricCard {
   summary: string
   cautions: string[]
   evidence: string[]
+  facts?: IncheonMetricFact[]
 }
 
 export interface IncheonRiskBreakdown {
@@ -74,6 +84,9 @@ export interface IncheonRiskResult {
   level: IncheonRiskLevel
   scoreBreakdown: IncheonRiskBreakdown
   excludedMetrics: string[]
+  sourceIds?: string[]
+  confidence?: IncheonConfidence
+  method?: IncheonEvidenceMethod
 }
 
 export interface IncheonRiskCard {
@@ -122,6 +135,7 @@ export interface IncheonAnalyzeResponse {
     name: string
   }
   risk: IncheonRiskResult
+  riskMapCells: RiskMapCell[]
   lifeDNA: IncheonLifeDNA
   cards: {
     riskTop3: IncheonRiskCard[]
@@ -132,5 +146,7 @@ export interface IncheonAnalyzeResponse {
   sources: IncheonDataSource[]
   auxiliary?: {
     note: string
+    datasetGeneratedAt?: string
+    missingOptionalDatasets?: string[]
   }
 }

@@ -3,10 +3,10 @@
     "sourceId": "store-small-business",
     "name": "소상공인 상가정보",
     "provider": "소상공인시장진흥공단",
-    "url": "https://www.data.go.kr/data/15083033/fileData.do?recommendDataYn=Y",
+    "url": "https://www.data.go.kr/data/15083033/fileData.do",
     "costFree": true,
-    "updateCycle": "월간",
-    "dataPeriod": "2025-10 후보",
+    "updateCycle": "분기",
+    "dataPeriod": "2025-12 후보",
     "granularity": ["radius_500m"],
     "scoringUse": true,
     "status": "planned"
@@ -15,13 +15,25 @@
     "sourceId": "incheon-bus-stops",
     "name": "인천 시내버스 정류소 현황",
     "provider": "인천광역시",
-    "url": "https://www.data.go.kr/",
+    "url": "https://www.data.go.kr/data/15074309/fileData.do",
     "costFree": true,
-    "updateCycle": "수시",
-    "dataPeriod": "확보 필요",
+    "updateCycle": "반기",
+    "dataPeriod": "2026-03 후보",
     "granularity": ["radius_500m"],
     "scoringUse": true,
-    "status": "blocked"
+    "status": "planned"
+  },
+  {
+    "sourceId": "national-bus-stops",
+    "name": "전국 버스정류장 위치정보",
+    "provider": "국토교통부",
+    "url": "https://www.data.go.kr/data/15067528/fileData.do",
+    "costFree": true,
+    "updateCycle": "연간",
+    "dataPeriod": "2025 후보",
+    "granularity": ["radius_500m"],
+    "scoringUse": false,
+    "status": "planned"
   },
   {
     "sourceId": "incheon-bus-ridership",
@@ -30,10 +42,10 @@
     "url": "https://www.data.go.kr/data/15048264/fileData.do",
     "costFree": true,
     "updateCycle": "월간",
-    "dataPeriod": "2025 후보",
+    "dataPeriod": "2026-03 후보",
     "granularity": ["radius_500m"],
     "scoringUse": true,
-    "status": "local-candidate"
+    "status": "planned"
   },
   {
     "sourceId": "incheon-subway-ridership",
@@ -41,20 +53,20 @@
     "provider": "인천교통공사",
     "url": "https://www.data.go.kr/data/15060441/fileData.do",
     "costFree": true,
-    "updateCycle": "월간",
+    "updateCycle": "연간",
     "dataPeriod": "2025 후보",
     "granularity": ["radius_500m"],
     "scoringUse": true,
-    "status": "local-candidate"
+    "status": "planned"
   },
   {
     "sourceId": "school-location-standard",
     "name": "전국초중등학교위치표준데이터",
     "provider": "한국지방교육행정연구재단",
-    "url": "https://www.data.go.kr/data/15021148/standard.do?recommendDataYn=Y",
+    "url": "https://www.data.go.kr/data/15021148/standard.do",
     "costFree": true,
     "updateCycle": "반기",
-    "dataPeriod": "2025 후보",
+    "dataPeriod": "2026 후보",
     "granularity": ["radius_500m"],
     "scoringUse": false,
     "status": "planned"
@@ -66,7 +78,7 @@
     "url": "https://www.data.go.kr/data/15004947/fileData.do",
     "costFree": true,
     "updateCycle": "연간",
-    "dataPeriod": "2025-04 후보",
+    "dataPeriod": "2026 후보",
     "granularity": ["radius_500m", "admin_dong_reference"],
     "scoringUse": false,
     "status": "planned"
@@ -77,7 +89,7 @@
     "provider": "보건복지부",
     "url": "https://www.data.go.kr/data/15101154/openapi.do",
     "costFree": true,
-    "updateCycle": "수시",
+    "updateCycle": "실시간",
     "dataPeriod": "API 기준",
     "granularity": ["radius_500m"],
     "scoringUse": false,
@@ -87,48 +99,60 @@
     "sourceId": "resident-age-admin-dong",
     "name": "행정동별 성별·연령별 주민등록 인구",
     "provider": "행정안전부",
-    "url": "https://jumin.mois.go.kr/index.jsp",
+    "url": "https://www.data.go.kr/data/15097972/fileData.do",
     "costFree": true,
     "updateCycle": "월간",
-    "dataPeriod": "확보 필요",
+    "dataPeriod": "2026 후보",
     "granularity": ["admin_dong_reference"],
     "scoringUse": false,
-    "status": "blocked"
+    "status": "planned"
   },
   {
     "sourceId": "reb-small-rent",
     "name": "한국부동산원 소규모상가 임대료",
     "provider": "한국부동산원",
-    "url": "https://www.reb.or.kr/r-one/portal/stat/easyStatPage/T241883134877452.do",
+    "url": "https://www.reb.or.kr/r-one/portal/stat/easyStatPage/T248223134698125.do",
     "costFree": true,
     "updateCycle": "분기",
-    "dataPeriod": "2025 후보",
+    "dataPeriod": "2025Q4",
     "granularity": ["regional_reference"],
     "scoringUse": true,
-    "status": "local-candidate"
+    "status": "ready"
   },
   {
     "sourceId": "reb-small-vacancy",
     "name": "한국부동산원 소규모상가 공실률",
     "provider": "한국부동산원",
-    "url": "https://www.data.go.kr/",
+    "url": "https://www.reb.or.kr/r-one/portal/stat/easyStatPage/T241833134686576.do",
     "costFree": true,
     "updateCycle": "분기",
-    "dataPeriod": "확보 필요",
+    "dataPeriod": "2025Q4",
     "granularity": ["regional_reference"],
     "scoringUse": true,
-    "status": "blocked"
+    "status": "ready"
   },
   {
     "sourceId": "admin-boundaries",
     "name": "행정동·시군구 경계 데이터",
-    "provider": "행정안전부 또는 통계청",
-    "url": "https://www.data.go.kr/",
+    "provider": "국가데이터처",
+    "url": "https://www.data.go.kr/data/15129688/fileData.do",
     "costFree": true,
-    "updateCycle": "수시",
-    "dataPeriod": "확보 필요",
+    "updateCycle": "반기",
+    "dataPeriod": "2026 후보",
     "granularity": ["admin_dong_reference", "district_reference"],
     "scoringUse": false,
-    "status": "blocked"
+    "status": "planned"
+  },
+  {
+    "sourceId": "osm-noncommercial-mask",
+    "name": "OpenStreetMap 공원·수면 보정 레이어",
+    "provider": "OpenStreetMap contributors",
+    "url": "https://www.openstreetmap.org/copyright",
+    "costFree": true,
+    "updateCycle": "수시",
+    "dataPeriod": "Overpass API 수집 시점",
+    "granularity": ["radius_500m"],
+    "scoringUse": false,
+    "status": "planned"
   }
 ]

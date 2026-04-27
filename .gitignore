@@ -20,6 +20,8 @@ dist/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.next-dev*.log
+nul
 
 # IDE
 .idea/
@@ -54,3 +56,6 @@ data/
 data/*
 !data/openrisk-incheon/
 !data/openrisk-incheon/**
+data/openrisk-incheon/raw/**
+!data/openrisk-incheon/raw/**/
+!data/openrisk-incheon/raw/**/.gitkeep

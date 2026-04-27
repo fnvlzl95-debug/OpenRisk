@@ -1,0 +1,19 @@
+{
+  "updatedAt": "2026-04-27T05:25:45.345Z",
+  "status": "ready",
+  "ready": [
+    "stores",
+    "transit",
+    "educationFamily",
+    "costPressure",
+    "mapMask"
+  ],
+  "missing": [],
+  "optionalMissing": [],
+  "outputContract": {
+    "educationFamily": "생활권 DNA 해석 레이어",
+    "transitAccess": "교통 접근 기반 유입 신호",
+    "categoryDensity": "동종업종 밀집도",
+    "costPressure": "비용 압박 참고"
+  }
+}
