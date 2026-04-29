@@ -1,13 +1,16 @@
+import Image from 'next/image'
+
 function FooterLogo() {
   return (
-    <div className="flex items-center gap-3">
-      <div className="relative h-9 w-9">
-        <div className="absolute left-1 top-1 h-4 w-4 bg-[#1B65F2]" />
-        <div className="absolute right-1 top-1 h-4 w-4 bg-[#F4B32D]" />
-        <div className="absolute bottom-1 left-1/2 h-4 w-4 -translate-x-1/2 bg-[#E8EEF7]" />
-        <div className="absolute inset-[10px] bg-[#0F57D6]" />
-      </div>
-      <span className="text-2xl font-black tracking-[-0.02em] text-white">OpenRisk</span>
+    <div className="inline-flex items-center">
+      <Image
+        src="/incheon/openrisk-incheon-footer-logo.png"
+        alt="오픈리스크"
+        width={740}
+        height={156}
+        unoptimized
+        className="h-11 w-auto"
+      />
     </div>
   )
 }
