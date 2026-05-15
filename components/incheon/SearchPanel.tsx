@@ -345,12 +345,12 @@ export default function SearchPanel({
     return (
       <form
         onSubmit={onSubmit}
-        className="grid gap-4 border border-[#155396] bg-[#061B3A]/92 p-5 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:grid-cols-[1.1fr_0.72fr_0.52fr_auto]"
+        className="grid gap-[clamp(10px,1.5svh,16px)] border border-[#155396] bg-[#061B3A]/92 p-[clamp(14px,1.8svh,20px)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:grid-cols-[1.1fr_0.72fr_0.52fr_auto]"
       >
-        <div className="relative flex min-w-0 items-center gap-4 border-[#244B78] md:border-r md:pr-7">
-          <MapPin className="h-9 w-9 shrink-0 text-[#20D6F4]" />
+        <div className="relative flex min-w-0 items-center gap-[clamp(10px,1.5svh,16px)] border-[#244B78] md:border-r md:pr-7">
+          <MapPin className="h-[clamp(28px,3.3svh,36px)] w-[clamp(28px,3.3svh,36px)] shrink-0 text-[#20D6F4]" />
           <div className="min-w-0 flex-1">
-            <label htmlFor={inputId} className="block text-sm font-bold text-white/62">
+            <label htmlFor={inputId} className="block text-[clamp(12px,1.35svh,14px)] font-bold text-white/62">
               검색 위치
             </label>
             <input
@@ -364,7 +364,7 @@ export default function SearchPanel({
               aria-autocomplete="list"
               aria-controls={listboxId}
               aria-expanded={showSuggestions}
-              className="mt-1 w-full min-w-0 bg-transparent text-lg font-black text-white outline-none"
+              className="mt-1 w-full min-w-0 bg-transparent text-[clamp(15px,1.7svh,18px)] font-black text-white outline-none"
               aria-label="검색 위치"
             />
             {validationError && <p className="mt-2 text-xs font-bold text-[#FFB999]">{validationError}</p>}
@@ -372,14 +372,14 @@ export default function SearchPanel({
           {renderSuggestionList(true)}
         </div>
 
-        <label className="flex min-w-0 items-center gap-4 border-[#244B78] md:border-r md:pr-7">
-          <Coffee className="h-9 w-9 shrink-0 text-[#20D6F4]" />
+        <label className="flex min-w-0 items-center gap-[clamp(10px,1.5svh,16px)] border-[#244B78] md:border-r md:pr-7">
+          <Coffee className="h-[clamp(28px,3.3svh,36px)] w-[clamp(28px,3.3svh,36px)] shrink-0 text-[#20D6F4]" />
           <span className="min-w-0">
-            <span className="block text-sm font-bold text-white/62">업종</span>
+            <span className="block text-[clamp(12px,1.35svh,14px)] font-bold text-white/62">업종</span>
             <select
               value={category}
               onChange={(event) => setCategory(event.target.value as BusinessCategory)}
-              className="mt-1 w-full min-w-0 bg-[#061B3A] text-lg font-black text-white outline-none"
+              className="mt-1 w-full min-w-0 bg-[#061B3A] text-[clamp(15px,1.7svh,18px)] font-black text-white outline-none"
               aria-label="업종"
             >
               {CATEGORY_LIST.map((item) => (
@@ -391,15 +391,15 @@ export default function SearchPanel({
           </span>
         </label>
 
-        <div className="flex items-center gap-4">
-          <Target className="h-9 w-9 shrink-0 text-[#20D6F4]" />
+        <div className="flex items-center gap-[clamp(10px,1.5svh,16px)]">
+          <Target className="h-[clamp(28px,3.3svh,36px)] w-[clamp(28px,3.3svh,36px)] shrink-0 text-[#20D6F4]" />
           <span>
-            <span className="block text-sm font-bold text-white/62">반경</span>
-            <span className="mt-1 block text-lg font-black">500m 고정</span>
+            <span className="block text-[clamp(12px,1.35svh,14px)] font-bold text-white/62">반경</span>
+            <span className="mt-1 block text-[clamp(15px,1.7svh,18px)] font-black">500m 고정</span>
           </span>
         </div>
 
-        <button className="inline-flex min-h-12 items-center justify-center gap-3 border border-white/20 px-6 text-base font-black text-white transition-colors hover:bg-white/8 active:scale-[0.98]">
+        <button className="inline-flex min-h-[clamp(42px,5.2svh,48px)] items-center justify-center gap-3 border border-white/20 px-[clamp(18px,2.4svh,24px)] text-[clamp(14px,1.55svh,16px)] font-black text-white transition-colors hover:bg-white/8 active:scale-[0.98]">
           <RefreshCw className="h-5 w-5" />
           다시 검색
         </button>

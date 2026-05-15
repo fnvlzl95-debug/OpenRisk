@@ -242,22 +242,22 @@ function RiskPanel({ result }: { result: IncheonAnalyzeResponse }) {
   })
 
   return (
-    <section className="h-full border border-[#3845A0] bg-[#06112A]/92 p-8 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-      <h2 className="text-center text-2xl font-black">예상 위험도</h2>
-      <div className="mt-5 flex items-center justify-center gap-5">
-        <span className="bg-[linear-gradient(180deg,#FFB14A,#FF651F)] bg-clip-text text-8xl font-black leading-none text-transparent">
+    <section className="h-full border border-[#3845A0] bg-[#06112A]/92 p-[clamp(14px,2svh,28px)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+      <h2 className="text-center text-[clamp(18px,2.2svh,24px)] font-black">예상 위험도</h2>
+      <div className="mt-[clamp(8px,1.4svh,20px)] flex items-center justify-center gap-4">
+        <span className="bg-[linear-gradient(180deg,#FFB14A,#FF651F)] bg-clip-text text-[clamp(54px,7.6svh,88px)] font-black leading-none text-transparent">
           {result.risk.score}
         </span>
-        <span className="border border-[#FF8A1F] bg-[#2B1B09] px-5 py-3 text-2xl font-black text-[#FFB14A]">
+        <span className="border border-[#FF8A1F] bg-[#2B1B09] px-[clamp(14px,1.7svh,20px)] py-[clamp(8px,1.1svh,12px)] text-[clamp(18px,2.1svh,24px)] font-black text-[#FFB14A]">
           {riskLevelText(result)}
         </span>
       </div>
 
-      <div className="mt-8">
+      <div className="mt-[clamp(10px,1.8svh,28px)]">
         <div className="relative h-2 bg-[linear-gradient(90deg,#47D78D_0%,#47D78D_24%,#2D8CFF_24%,#2D8CFF_50%,#FDBA3B_50%,#FDBA3B_74%,#FF4B4B_74%,#FF4B4B_100%)]">
-          <span className="absolute top-1/2 h-7 w-7 -translate-y-1/2 border-4 border-white bg-[#FF8A1F]" style={{ left: `${Math.min(92, result.risk.score)}%` }} />
+          <span className="absolute top-1/2 h-[clamp(22px,2.6svh,28px)] w-[clamp(22px,2.6svh,28px)] -translate-y-1/2 border-4 border-white bg-[#FF8A1F]" style={{ left: `${Math.min(92, result.risk.score)}%` }} />
         </div>
-        <div className="mt-4 grid grid-cols-4 text-center text-base font-black text-white/82">
+        <div className="mt-[clamp(6px,1.3svh,16px)] grid grid-cols-4 text-center text-[clamp(12px,1.45svh,16px)] font-black text-white/82">
           <span>안전</span>
           <span>보통</span>
           <span className="text-[#FFB14A]">주의</span>
@@ -265,30 +265,30 @@ function RiskPanel({ result }: { result: IncheonAnalyzeResponse }) {
         </div>
       </div>
 
-      <p className="mt-7 border-b border-white/12 pb-7 text-center text-lg font-bold text-white/84">
+      <p className="mt-[clamp(10px,1.8svh,28px)] border-b border-white/12 pb-[clamp(10px,1.8svh,28px)] text-center text-[clamp(13px,1.65svh,18px)] font-bold text-white/84">
         5대 요인은 모두 높을수록 위험합니다.
       </p>
 
-      <div className="mt-7 space-y-5">
+      <div className="mt-[clamp(10px,1.8svh,28px)] space-y-[clamp(5px,0.8svh,18px)]">
         {rows.map((row) => {
           const level = scoreLevel(row.score)
           const filledBars = row.score === null ? 0 : Math.max(0, Math.min(10, level.bars))
           const Icon = row.icon
           return (
-            <div key={row.key} className="grid gap-3 border-t border-white/10 pt-4 first:border-t-0 first:pt-0 sm:grid-cols-[42px_minmax(0,1fr)_44px] sm:items-center">
-              <span className="flex h-9 w-9 items-center justify-center bg-white/8">
-                <Icon className="h-5 w-5" style={{ color: row.color }} />
+            <div key={row.key} className="grid gap-2 border-t border-white/10 pt-[clamp(6px,1.1svh,16px)] first:border-t-0 first:pt-0 sm:grid-cols-[clamp(28px,3.5svh,42px)_minmax(0,1fr)_clamp(34px,4.1svh,44px)] sm:items-center">
+              <span className="flex h-[clamp(28px,3.3svh,36px)] w-[clamp(28px,3.3svh,36px)] items-center justify-center bg-white/8">
+                <Icon className="h-[clamp(14px,1.8svh,20px)] w-[clamp(14px,1.8svh,20px)]" style={{ color: row.color }} />
               </span>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  <span className="text-lg font-black">{row.label}</span>
-                  <span className="text-sm font-black" style={{ color: level.color }}>
+                  <span className="text-[clamp(14px,1.7svh,18px)] font-black">{row.label}</span>
+                  <span className="text-[clamp(12px,1.45svh,14px)] font-black" style={{ color: level.color }}>
                     {level.text}
                   </span>
-                  <span className="text-xs font-bold text-white/45">{level.caption}</span>
+                  <span className="text-[clamp(10px,1.2svh,12px)] font-bold text-white/45">{level.caption}</span>
                 </div>
-                <p className="mt-1 text-sm font-semibold text-white/58">{row.body}</p>
-                <div className="mt-3 flex h-5 gap-1.5" aria-label={`${row.label} ${row.score ?? '정보 부족'}`}>
+                <p className="mt-0.5 text-[clamp(10.5px,1.25svh,14px)] font-semibold leading-[1.25] text-white/58">{row.body}</p>
+                <div className="mt-[clamp(4px,0.75svh,12px)] flex h-[clamp(8px,1.25svh,20px)] gap-1.5" aria-label={`${row.label} ${row.score ?? '정보 부족'}`}>
                   {Array.from({ length: 10 }).map((_, index) => (
                     <span
                       key={index}
@@ -298,7 +298,7 @@ function RiskPanel({ result }: { result: IncheonAnalyzeResponse }) {
                   ))}
                 </div>
               </div>
-              <span className="text-right text-lg font-black">{row.score ?? '-'}</span>
+              <span className="text-right text-[clamp(14px,1.7svh,18px)] font-black">{row.score ?? '-'}</span>
             </div>
           )
         })}
@@ -476,14 +476,14 @@ function ResultContent() {
     <main className="min-h-screen bg-white text-[#081A34]">
       <IncheonHeader />
 
-      <section className="min-h-[calc(100dvh-78px)] bg-[#031B37] px-4 pb-6 pt-4 lg:px-6">
-        <div className="flex min-h-[calc(100dvh-108px)] w-full flex-col">
+      <section className="min-h-[calc(100svh-77px)] bg-[#031B37] px-4 py-[clamp(10px,1.5svh,16px)] lg:px-6">
+        <div className="flex min-h-[calc(100svh-109px)] w-full flex-col lg:min-h-[calc(100svh-109px)]">
           <SearchPanel compact initialQuery={query} initialCategory={category} />
 
           {loading && (
-            <div className="mt-6 grid flex-1 gap-6 lg:grid-cols-[minmax(0,1.45fr)_minmax(430px,0.72fr)]">
-              <div className="min-h-[620px] animate-pulse border border-[#155396] bg-[#072A54]" />
-              <div className="min-h-[620px] animate-pulse border border-[#155396] bg-[#06112A]" />
+            <div className="mt-[clamp(14px,2.2svh,24px)] grid flex-1 gap-[clamp(14px,2.2svh,24px)] lg:min-h-0 lg:grid-cols-[minmax(0,1.45fr)_minmax(430px,0.72fr)]">
+              <div className="min-h-[clamp(500px,calc(100svh-244px),620px)] animate-pulse border border-[#155396] bg-[#072A54]" />
+              <div className="min-h-[clamp(500px,calc(100svh-244px),620px)] animate-pulse border border-[#155396] bg-[#06112A]" />
             </div>
           )}
 
@@ -495,7 +495,7 @@ function ResultContent() {
           )}
 
           {result && !loading && (
-            <div className="mt-6 grid flex-1 gap-6 lg:grid-cols-[minmax(0,1.45fr)_minmax(430px,0.72fr)] lg:items-stretch">
+            <div className="mt-[clamp(14px,2.2svh,24px)] grid flex-1 gap-[clamp(14px,2.2svh,24px)] lg:min-h-0 lg:grid-cols-[minmax(0,1.45fr)_minmax(430px,0.72fr)] lg:items-stretch">
               <RiskAnalysisMapCard center={mapCenter} radius={500} riskCells={result.riskMapCells} locationLabel={query} />
               <RiskPanel result={result} />
             </div>

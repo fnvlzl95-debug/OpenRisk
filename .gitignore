@@ -48,8 +48,11 @@ PLAN_V1.md
 scripts/
 !scripts/
 scripts/*
+!scripts/tistory-publish.ts
 !scripts/incheon/
 !scripts/incheon/**
+.tistory-session/
+.tistory-debug/
 공공데이터/
 data/
 !data/

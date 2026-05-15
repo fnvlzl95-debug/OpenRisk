@@ -14,7 +14,11 @@
     "incheon:data:cost": "tsx scripts/incheon/import-rent-vacancy.ts",
     "incheon:data:osm": "tsx scripts/incheon/import-osm-mask.ts",
     "incheon:data:radius-stats": "tsx scripts/incheon/build-radius-stats.ts",
-    "incheon:data:check": "tsx scripts/incheon/build-life-dna.ts"
+    "incheon:data:check": "tsx scripts/incheon/build-life-dna.ts",
+    "tistory:publish": "tsx scripts/tistory-publish.ts",
+    "tistory:login": "tsx scripts/tistory-publish.ts --login-only",
+    "tistory:draft:all": "tsx scripts/tistory-publish.ts --all",
+    "tistory:publish:all": "tsx scripts/tistory-publish.ts --all --publish"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

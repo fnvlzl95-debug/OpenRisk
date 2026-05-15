@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OPEN RISK - 신문 스타일 게시판 예시</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: Georgia, "Times New Roman", serif;
+    }
+  </style>
+</head>
+<body class="bg-[#f8f6f1]">
+  <!-- Masthead - 신문 헤더 -->
+  <header class="border-b-4 border-black bg-white">
+    <div class="max-w-6xl mx-auto px-6 py-8">
+      <!-- 날짜 -->
+      <div class="text-center mb-4">
+        <p class="text-xs tracking-widest text-gray-600 uppercase" id="current-date"></p>
+      </div>
+
+      <!-- 신문 제호 -->
+      <div class="text-center border-y-2 border-black py-6 mb-4">
+        <h1 class="text-6xl font-black tracking-tight mb-1">
+          OPEN RISK
+        </h1>
+        <p class="text-sm tracking-[0.3em] text-gray-700">
+          THE COMMERCIAL DISTRICT JOURNAL
+        </p>
+      </div>
+
+      <!-- 네비게이션 -->
+      <nav class="flex justify-center gap-8 text-xs uppercase tracking-wider">
+        <a href="#" class="hover:text-red-700 transition-colors">Analysis</a>
+        <span class="text-gray-300">|</span>
+        <a href="#" class="hover:text-red-700 transition-colors">Trends</a>
+        <span class="text-gray-300">|</span>
+        <a href="#" class="hover:text-red-700 transition-colors">Case Studies</a>
+        <span class="text-gray-300">|</span>
+        <a href="#" class="hover:text-red-700 transition-colors">Opinion</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-6 py-10">
+    <!-- Grid Layout - 신문 레이아웃 -->
+    <div class="grid grid-cols-12 gap-8">
+      <!-- Lead Story - 메인 기사 -->
+      <article class="col-span-12 md:col-span-7 border-b-2 border-black pb-8">
+        <span class="inline-block px-3 py-1 bg-red-700 text-white text-[10px] font-bold tracking-widest mb-3">
+          BREAKING NEWS
+        </span>
+        <a href="#" class="group">
+          <h2 class="text-4xl md:text-5xl font-black leading-tight mb-4 group-hover:text-red-700 transition-colors">
+            강남역 상권 분석: 2024년 트렌드와 전망
+          </h2>
+          <p class="text-lg leading-relaxed text-gray-700 mb-4">
+            강남역 일대의 상권이 급격한 변화를 맞이하고 있습니다. 특히 테헤란로를 중심으로 한 IT 기업들의 입주가 늘어나면서 주변 상권의 구조가 크게 바뀌고 있습니다. 전통적인 유흥가와 신규 업무지구가 공존하면서 새로운 비즈니스 기회가 창출되고 있습니다.
+          </p>
+          <div class="flex items-center gap-4 text-xs uppercase tracking-wider text-gray-600">
+            <span class="font-bold">편집국</span>
+            <span>•</span>
+            <time>Jan 15, 2026</time>
+            <span>•</span>
+            <span>1,247 reads</span>
+            <span>•</span>
+            <span>23 comments</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- Secondary Stories - 부기사 -->
+      <aside class="col-span-12 md:col-span-5 space-y-6 border-b-2 md:border-b-0 border-black pb-8 md:pb-0">
+        <article class="border-b border-gray-300 pb-6">
+          <a href="#" class="group">
+            <h3 class="text-2xl font-bold leading-tight mb-2 group-hover:text-red-700 transition-colors">
+              소상공인을 위한 데이터 분석 가이드
+            </h3>
+            <p class="text-sm leading-relaxed text-gray-700 mb-3 line-clamp-2">
+              공공데이터를 활용한 상권 분석 방법론을 소개합니다. 초보자도 쉽게 따라할 수 있는 단계별 가이드를 통해 최적의 창업 입지를 찾아보세요.
+            </p>
+            <div class="flex items-center gap-3 text-[10px] uppercase tracking-wider text-gray-600">
+              <span class="font-bold">김상권</span>
+              <span>•</span>
+              <time>Jan 15, 2026</time>
+            </div>
+          </a>
+        </article>
+
+        <article class="pb-6">
+          <a href="#" class="group">
+            <h3 class="text-2xl font-bold leading-tight mb-2 group-hover:text-red-700 transition-colors">
+              홍대 상권 변화의 숨은 이유
+            </h3>
+            <p class="text-sm leading-relaxed text-gray-700 mb-3 line-clamp-2">
+              최근 5년간 홍대 상권의 변화를 데이터로 분석했습니다. 젠트리피케이션의 영향과 새로운 기회를 함께 살펴봅니다.
+            </p>
+            <div class="flex items-center gap-3 text-[10px] uppercase tracking-wider text-gray-600">
+              <span class="font-bold">이창업</span>
+              <span>•</span>
+              <time>Jan 15, 2026</time>
+            </div>
+          </a>
+        </article>
+      </aside>
+    </div>
+
+    <!-- Divider -->
+    <div class="border-t-2 border-black my-10"></div>
+
+    <!-- Additional Stories - 추가 기사들 -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <article class="border-t-2 border-black pt-4">
+        <a href="#" class="group">
+          <h4 class="text-xl font-bold leading-tight mb-2 group-hover:text-red-700 transition-colors">
+            성수동 카페 창업 성공 사례
+          </h4>
+          <p class="text-sm leading-relaxed text-gray-700 mb-3 line-clamp-3">
+            성수동에서 카페를 시작한 창업자의 이야기. 데이터 분석을 통해 최적의 입지를 찾아낸 과정을 공유합니다.
+          </p>
+          <div class="flex items-center gap-3 text-[10px] uppercase tracking-wider text-gray-600">
+            <span class="font-bold">박카페</span>
+            <span>•</span>
+            <time>Jan 15, 2026</time>
+          </div>
+        </a>
+      </article>
+
+      <article class="border-t-2 border-black pt-4">
+        <a href="#" class="group">
+          <h4 class="text-xl font-bold leading-tight mb-2 group-hover:text-red-700 transition-colors">
+            2026 상권 트렌드 예측
+          </h4>
+          <p class="text-sm leading-relaxed text-gray-700 mb-3 line-clamp-3">
+            올해 주목해야 할 상권 트렌드를 데이터로 미리 살펴봅니다. 전문가들의 인사이트를 함께 제공합니다.
+          </p>
+          <div class="flex items-center gap-3 text-[10px] uppercase tracking-wider text-gray-600">
+            <span class="font-bold">정분석</span>
+            <span>•</span>
+            <time>Jan 14, 2026</time>
+          </div>
+        </a>
+      </article>
+
+      <article class="border-t-2 border-black pt-4">
+        <a href="#" class="group">
+          <h4 class="text-xl font-bold leading-tight mb-2 group-hover:text-red-700 transition-colors">
+            신촌 상권 재조명
+          </h4>
+          <p class="text-sm leading-relaxed text-gray-700 mb-3 line-clamp-3">
+            젊음의 거리로 알려진 신촌이 다시 주목받고 있습니다. 최신 데이터를 통해 변화의 조짐을 포착합니다.
+          </p>
+          <div class="flex items-center gap-3 text-[10px] uppercase tracking-wider text-gray-600">
+            <span class="font-bold">최트렌드</span>
+            <span>•</span>
+            <time>Jan 14, 2026</time>
+          </div>
+        </a>
+      </article>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="mt-16 border-4 border-black p-8 text-center">
+      <h3 class="text-3xl font-black mb-3">JOIN THE CONVERSATION</h3>
+      <p class="text-lg mb-6 text-gray-700">
+        Share your insights on commercial district analysis
+      </p>
+      <a
+        href="#"
+        class="inline-block px-8 py-3 bg-black text-white font-bold text-sm uppercase tracking-widest hover:bg-red-700 transition-colors"
+      >
+        Submit Your Story
+      </a>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t-4 border-black bg-white mt-16">
+    <div class="max-w-6xl mx-auto px-6 py-8">
+      <div class="text-center">
+        <p class="text-xs uppercase tracking-widest text-gray-600 mb-2">
+          © 2026 Open Risk Journal. All Rights Reserved.
+        </p>
+        <p class="text-xs text-gray-500">
+          Commercial District Intelligence • Public Data Analysis • Entrepreneurship Research
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 현재 날짜 표시
+    const dateElement = document.getElementById('current-date');
+    const now = new Date();
+    const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+    dateElement.textContent = now.toLocaleDateString('en-US', options);
+  </script>
+</body>
+</html>
