@@ -162,12 +162,20 @@ function scoreLevel(score: number | null) {
 }
 
 function RiskPanel({ result }: { result: IncheonAnalyzeResponse }) {
+  const rows = metricConfig.map((item) => {
+    const score = result.risk.scoreBreakdown[item.key]
+    const excluded = result.risk.excludedMetrics.includes(item.key)
+    const degraded = result.risk.degradedMetrics.includes(item.key)
+    const state = deriveMetricState(score, { excluded, degraded, confidence: result.risk.confidence })
+    return { ...item, score, state }
+  })
+  const survival = result.risk.survival
   const gaugeScore = result.risk.score ?? 0
 
   return (
-    <section className="flex h-full flex-col justify-center border border-[#3845A0] bg-[#06112A]/92 p-8 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+    <section className="h-full border border-[#3845A0] bg-[#06112A]/92 p-8 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
       <h2 className="text-center text-2xl font-black">예상 위험도</h2>
-      <div className="mt-6 flex items-center justify-center gap-5">
+      <div className="mt-5 flex items-center justify-center gap-5">
         <span className="bg-[linear-gradient(180deg,#FFB14A,#FF651F)] bg-clip-text text-8xl font-black leading-none text-transparent">
           {result.risk.score ?? '—'}
         </span>
@@ -176,14 +184,14 @@ function RiskPanel({ result }: { result: IncheonAnalyzeResponse }) {
         </span>
       </div>
 
-      <div className="mt-5 flex items-center justify-center gap-2 text-sm font-bold">
+      <div className="mt-4 flex items-center justify-center gap-2 text-sm font-bold">
         <span className="bg-white/10 px-3 py-1 text-white/78">신뢰도 {confidenceLabel(result.risk.confidence ?? 'medium')}</span>
         {result.risk.degradedMetrics.length > 0 && (
           <span className="bg-[#3a2a12] px-3 py-1 text-[#FFC780]">일부 데이터 제한</span>
         )}
       </div>
 
-      <div className="mt-8">
+      <div className="mt-7">
         <div className="relative h-2 bg-[linear-gradient(90deg,#47D78D_0%,#47D78D_24%,#2D8CFF_24%,#2D8CFF_50%,#FDBA3B_50%,#FDBA3B_74%,#FF4B4B_74%,#FF4B4B_100%)]">
           <span className="absolute top-1/2 h-7 w-7 -translate-y-1/2 border-4 border-white bg-[#FF8A1F]" style={{ left: `${Math.min(92, gaugeScore)}%` }} />
         </div>
@@ -195,9 +203,70 @@ function RiskPanel({ result }: { result: IncheonAnalyzeResponse }) {
         </div>
       </div>
 
-      <p className="mt-8 border-t border-white/12 pt-6 text-center text-sm font-semibold leading-6 text-white/64">
-        0~100 종합 위험 점수입니다. 높을수록 위험하며,<br className="hidden sm:block" /> 세부 지표는 아래 진단 결과에서 확인하세요.
+      <p className="mt-7 border-b border-white/12 pb-7 text-center text-lg font-bold text-white/84">
+        4대 요인은 모두 높을수록 위험합니다. (복합 위험 신호는 참고용)
       </p>
+
+      <div className="mt-7 space-y-5">
+        {rows.map((row) => {
+          const level = scoreLevel(row.score)
+          const filledBars = row.score === null ? 0 : Math.max(0, Math.min(10, level.bars))
+          const tag = metricStateTag(row.state)
+          const available = row.state.status === 'available' || row.state.status === 'degraded'
+          const Icon = row.icon
+          return (
+            <div key={row.key} className="grid gap-3 border-t border-white/10 pt-4 first:border-t-0 first:pt-0 sm:grid-cols-[42px_minmax(0,1fr)_44px] sm:items-center">
+              <span className="flex h-9 w-9 items-center justify-center bg-white/8">
+                <Icon className="h-5 w-5" style={{ color: row.color }} />
+              </span>
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <span className="text-lg font-black">{row.label}</span>
+                  {available ? (
+                    <span className="text-sm font-black" style={{ color: level.color }}>
+                      {level.text}
+                    </span>
+                  ) : (
+                    <span className="text-sm font-black text-white/50">{tag}</span>
+                  )}
+                  {available && tag ? (
+                    <span className="bg-[#3a2a12] px-2 py-0.5 text-xs font-bold text-[#FFC780]">{tag}</span>
+                  ) : (
+                    available && <span className="text-xs font-bold text-white/45">{level.caption}</span>
+                  )}
+                </div>
+                <p className="mt-1 text-sm font-semibold text-white/58">{row.body}</p>
+                <div className="mt-3 flex h-5 gap-1.5" aria-label={`${row.label} ${metricScoreText(row.state)}`}>
+                  {Array.from({ length: 10 }).map((_, index) => (
+                    <span
+                      key={index}
+                      className="min-w-0 flex-1"
+                      style={{ backgroundColor: index < filledBars ? row.color : 'rgba(255,255,255,0.12)' }}
+                    />
+                  ))}
+                </div>
+              </div>
+              <span className="text-right text-lg font-black">{metricScoreText(row.state)}</span>
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="mt-7 grid gap-3 border-t border-white/10 pt-5 sm:grid-cols-[42px_minmax(0,1fr)_44px] sm:items-center">
+        <span className="flex h-9 w-9 items-center justify-center bg-white/8">
+          <ShieldCheck className="h-5 w-5 text-[#47C978]" />
+        </span>
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span className="text-lg font-black">{survival.label}</span>
+            <span className="bg-white/10 px-2 py-0.5 text-xs font-bold text-white/60">종합 점수 미반영 · 참고</span>
+          </div>
+          <p className="mt-1 text-sm font-semibold text-white/58">
+            경쟁·비용·접근성을 조합한 참고 신호입니다. 실제 폐업률 데이터가 아닙니다.
+          </p>
+        </div>
+        <span className="text-right text-lg font-black text-white/80">{survival.score}</span>
+      </div>
     </section>
   )
 }
@@ -361,29 +430,17 @@ function ResultDashboard({
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            {metricCards.map((m) => {
-              const lvl = scoreLevel(m.score)
-              const tag = metricStateTag(m.state)
-              const Icon = m.icon
+            {stats.map((s) => {
+              const Icon = s.icon
               return (
-                <div key={m.key} className="rounded-2xl border border-[#E3EAF4] bg-white p-5 shadow-[0_8px_22px_rgba(8,26,52,0.04)]">
+                <div key={s.label} className="flex flex-col justify-center rounded-2xl border border-[#E3EAF4] bg-white p-5 shadow-[0_8px_22px_rgba(8,26,52,0.04)]">
                   <div className="flex items-center gap-2">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-md" style={{ backgroundColor: `${m.color}1A` }}>
-                      <Icon className="h-4 w-4" style={{ color: m.color }} strokeWidth={2} />
+                    <span className="flex h-7 w-7 items-center justify-center rounded-md bg-[#EFF5FC]">
+                      <Icon className="h-4 w-4 text-[#0B66FF]" strokeWidth={2} />
                     </span>
-                    <span className="text-sm font-black text-[#0E1F38]">{m.label}</span>
+                    <span className="text-xs font-bold text-[#6B7A90]">{s.label}</span>
                   </div>
-                  <p className="mt-3 text-[32px] font-black leading-none tabular-nums" style={{ color: lvl.color }}>
-                    {metricScoreText(m.state)}
-                    {tag && <span className="ml-2 align-middle text-xs font-bold text-[#9AA8BA]">{tag}</span>}
-                  </p>
-                  <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#EDF2F8]">
-                    <div className="h-full rounded-full" style={{ width: `${Math.min(100, m.score ?? 0)}%`, background: lvl.color }} />
-                  </div>
-                  <div className="mt-1.5 flex justify-between text-[10px] font-bold text-[#AEB9C8]">
-                    <span>0</span>
-                    <span>100</span>
-                  </div>
+                  <p className="mt-2 text-[26px] font-black leading-none tracking-[-0.02em] text-[#0E1F38]">{s.value}</p>
                 </div>
               )
             })}
@@ -469,30 +526,28 @@ function ResultDashboard({
           </div>
 
           <div className="rounded-2xl border border-[#E3EAF4] bg-white p-6 shadow-[0_8px_22px_rgba(8,26,52,0.04)]">
-            <span className="inline-flex items-center gap-2 text-base font-black text-[#0E1F38]">
-              <ShieldCheck className="h-5 w-5 text-[#0B66FF]" strokeWidth={2} /> 진단 지표 요약
-            </span>
-            <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
-              {stats.map((s) => {
-                const Icon = s.icon
-                return (
-                  <div key={s.label} className="text-center">
-                    <Icon className="mx-auto h-7 w-7 text-[#0B66FF]" strokeWidth={1.8} />
-                    <p className="mt-2 text-xs font-bold text-[#6B7A90]">{s.label}</p>
-                    <p className="mt-1 text-lg font-black text-[#0E1F38]">{s.value}</p>
-                  </div>
-                )
-              })}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-2 text-base font-black text-[#0E1F38]">
+                <ShieldCheck className="h-5 w-5 text-[#0B66FF]" strokeWidth={2} /> 데이터 신뢰도 상세
+              </span>
+              <span className={`px-2 py-0.5 text-[11px] font-black ${confChip[conf] ?? confChip['중간']}`}>종합 {conf}</span>
             </div>
-            {(result.risk.confidenceReasons ?? []).length > 0 && (
-              <ul className="mt-5 space-y-1.5 border-t border-[#EDF2F8] pt-4">
+            {(result.risk.confidenceReasons ?? []).length > 0 ? (
+              <ul className="mt-4 space-y-2">
                 {(result.risk.confidenceReasons ?? []).map((reason) => (
-                  <li key={reason} className="flex gap-2 text-xs font-semibold leading-5 text-[#6B7A90]">
-                    <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[#AEB9C8]" />{reason}
+                  <li key={reason} className="flex gap-2 text-sm font-semibold leading-6 text-[#53657E]">
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#9AA8BA]" />{reason}
                   </li>
                 ))}
               </ul>
+            ) : (
+              <p className="mt-4 text-sm font-semibold leading-6 text-[#53657E]">
+                주요 지표가 모두 정상 수집되어 신뢰도에 큰 제약이 없습니다.
+              </p>
             )}
+            <p className="mt-4 border-t border-[#EDF2F8] pt-3 text-xs font-semibold leading-5 text-[#9AA8BA]">
+              모든 지표는 공공데이터 기반 추정치이며 실제와 차이가 있을 수 있습니다.
+            </p>
           </div>
         </section>
 
