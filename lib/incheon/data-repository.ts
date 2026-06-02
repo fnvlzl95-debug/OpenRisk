@@ -671,8 +671,8 @@ export function calculateActualIncheonRisk(params: {
           sourceIds: datasets.educationFamily.sourceIds,
           evidence: hasEducationFamily
             ? [
-                `학교 ${educationTotal.schoolCount}곳`,
-                `어린이집 ${educationTotal.childcareCount}곳`,
+                `학교 ${Math.round(educationTotal.schoolCount)}곳`,
+                `어린이집 ${Math.round(educationTotal.childcareCount)}곳`,
                 ...(health.studentDegraded
                   ? ['학생수 데이터는 현재 미반영']
                   : [`학생수 ${Math.round(educationTotal.studentCount).toLocaleString('ko-KR')}명`]),

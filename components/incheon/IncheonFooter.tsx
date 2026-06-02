@@ -31,11 +31,10 @@ const columns: Array<{ title: string; links: Array<{ label: string; href: string
   },
   {
     title: '데이터',
-    links: [{ label: '데이터 출처', href: '/incheon#data' }],
-  },
-  {
-    title: '문의',
-    links: [{ label: '문의하기', href: '/incheon#contact' }],
+    links: [
+      { label: '데이터 출처·품질', href: '/incheon/data' },
+      { label: '데이터 기준일', href: '/incheon/data#freshness' },
+    ],
   },
 ]
 
@@ -45,7 +44,7 @@ export default function IncheonFooter() {
   return (
     <footer id="contact" className="bg-[#031B37] text-white">
       <div className="mx-auto max-w-7xl px-5 py-9 lg:px-8">
-        <div className="grid gap-10 border-b border-white/10 pb-9 md:grid-cols-[1.4fr_1fr_1fr_1fr_1fr]">
+        <div className="grid gap-10 border-b border-white/10 pb-9 md:grid-cols-[1.8fr_1fr_1fr_1fr]">
           <div>
             <FooterLogo />
             <p className="mt-4 max-w-xs text-sm leading-7 text-white/64">

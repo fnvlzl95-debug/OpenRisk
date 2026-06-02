@@ -6,7 +6,6 @@ import {
   BookOpen,
   Building2,
   CheckCircle2,
-  ChevronDown,
   ClipboardCheck,
   Download,
   FileText,
@@ -204,19 +203,6 @@ function statusTone(status: string) {
   return 'bg-[#F2F5F9] text-[#6B7A90]'
 }
 
-function SummaryIllustration() {
-  return (
-    <div className="relative hidden min-h-[170px] md:block" aria-hidden="true">
-      <div className="absolute left-10 top-12 h-20 w-20 rounded-[18px] bg-[#DFF7EC] shadow-[0_18px_34px_rgba(11,102,255,0.08)]" />
-      <div className="absolute left-28 top-6 h-24 w-24 rounded-[20px] bg-[#FFE6B8] shadow-[0_20px_42px_rgba(240,106,26,0.13)]" />
-      <div className="absolute left-36 top-20 h-24 w-24 rounded-[20px] bg-[#FF8A2A] shadow-[0_22px_44px_rgba(240,106,26,0.18)]" />
-      <div className="absolute left-48 top-36 h-16 w-16 rounded-[14px] bg-[#2F72FF] shadow-[0_18px_34px_rgba(11,102,255,0.2)]" />
-      <div className="absolute left-8 top-3 h-24 w-24 rounded-full border-[10px] border-[#CDE9FF] bg-white/80 shadow-[0_16px_34px_rgba(8,26,52,0.12)]" />
-      <div className="absolute left-0 top-20 h-16 w-5 rotate-45 rounded-full bg-[#496CE9] shadow-[0_14px_24px_rgba(73,108,233,0.2)]" />
-    </div>
-  )
-}
-
 function scoreLevel(score: number | null) {
   if (score === null) return { text: '정보 부족', color: '#6B7A90', bars: 2, caption: '직접 확인' }
   const bars = Math.round(score / 10)
@@ -383,6 +369,13 @@ function InsufficientPanel({ result }: { result: IncheonAnalyzeResponse }) {
   )
 }
 
+function verdictTone(level: IncheonAnalyzeResponse['risk']['level']) {
+  if (level === 'VERY_HIGH') return '#E8400C'
+  if (level === 'HIGH') return '#F06A1A'
+  if (level === 'MEDIUM') return '#0B66FF'
+  return '#1C9B5F'
+}
+
 function ResultDashboard({
   result,
   rows,
@@ -400,98 +393,120 @@ function ResultDashboard({
     ...result.cards.fieldChecks,
     '점포 전면 가시성, 간판 노출, 주차·배달 여건을 체크하세요.',
   ].slice(0, 5)
+  const tone = verdictTone(result.risk.level)
 
   return (
-    <section className="grid gap-4 lg:grid-cols-2">
-      <article className="min-h-[260px] border border-[#D7E1F0] bg-white p-6 shadow-[0_12px_30px_rgba(8,26,52,0.04)] md:p-8">
-        <div className="flex items-center gap-2 text-sm font-black text-[#2F52D9]">
-          <Sparkles className="h-5 w-5" strokeWidth={1.8} />
-          <span>분석 요약</span>
-        </div>
-        <div className="mt-8 grid gap-6 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">
-          <div>
-            <h2 className="text-5xl font-black leading-tight tracking-[-0.04em] text-[#061B3A]">
-              <span className="text-[#FF7A1A]">{riskLevelText(result)}</span> 단계입니다.
+    <div className="space-y-5">
+      {/* 분석 요약 배너 */}
+      <section className="overflow-hidden border border-[#D7E1F0] bg-white shadow-[0_12px_30px_rgba(8,26,52,0.05)]">
+        <div className="grid md:grid-cols-[1.25fr_1fr]">
+          <div className="p-7 md:p-9">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#EEF5FF] px-3 py-1 text-xs font-black text-[#2F52D9]">
+              <Sparkles className="h-4 w-4" strokeWidth={2} /> 분석 요약
+            </span>
+            <h2 className="mt-5 text-[34px] font-black leading-[1.12] tracking-[-0.03em] text-[#061B3A] md:text-[40px]">
+              종합 위험 <span style={{ color: tone }}>{riskLevelText(result)}</span> 단계
             </h2>
-            <p className="mt-5 max-w-[46ch] text-base font-semibold leading-7 text-[#53657E]">
+            <p className="mt-4 max-w-[48ch] text-base font-semibold leading-7 text-[#53657E]">
               {summarySentence(result, topRows)}
             </p>
           </div>
-          <SummaryIllustration />
-        </div>
-      </article>
-
-      <article className="min-h-[260px] border border-[#D7E1F0] bg-white p-6 shadow-[0_12px_30px_rgba(8,26,52,0.04)] md:p-8">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-sm font-black text-[#F06A1A]">
-            <FileText className="h-5 w-5" strokeWidth={1.8} />
-            <span>핵심 요인 하이라이트</span>
+          <div className="border-t border-[#E6EDF6] bg-[#F7FAFF] p-7 md:border-l md:border-t-0">
+            <p className="text-xs font-black uppercase tracking-wide text-[#6B7A90]">가장 큰 위험 요인</p>
+            <div className="mt-4 space-y-4">
+              {topRows.map((row, index) => {
+                const lvl = scoreLevel(row.score)
+                return (
+                  <div key={row.key}>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-black text-[#061B3A]">{index + 1}. {row.label}</span>
+                      <span className="text-sm font-black" style={{ color: lvl.color }}>{row.score}</span>
+                    </div>
+                    <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-[#E6EDF6]">
+                      <div className="h-full rounded-full" style={{ width: `${Math.min(100, row.score ?? 0)}%`, background: lvl.color }} />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
           </div>
-          <span className="border border-[#D7E1F0] px-3 py-1 text-xs font-black text-[#6B7A90]">모두 보기</span>
         </div>
+      </section>
 
-        <div className="mt-6 divide-y divide-[#EDF2F8]">
-          {rankedRows.map((row, index) => (
-            <div key={row.key} className="grid gap-3 py-3 first:pt-0 md:grid-cols-[36px_minmax(0,1fr)_80px_24px] md:items-center">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#EEF5FF] text-xs font-black text-[#0B66FF]">
-                {String(index + 1).padStart(2, '0')}
-              </span>
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-sm font-black text-[#061B3A]">{row.label}</p>
-                  <span className={`px-2 py-0.5 text-xs font-black ${statusTone(row.status)}`}>{row.status}</span>
-                </div>
-                <p className="mt-1 truncate text-xs font-semibold text-[#6B7A90]">{row.body}</p>
-              </div>
-              <span className="text-xs font-black text-[#6B7A90] md:text-right">
-                {topRows.some((topRow) => topRow.key === row.key) ? '우선 확인' : '참고'}
-              </span>
-              <ChevronDown className="hidden h-4 w-4 text-[#9AA8BA] md:block" strokeWidth={2} />
-            </div>
-          ))}
+      {/* 핵심 위험 요인 */}
+      <section className="border border-[#D7E1F0] bg-white p-7 shadow-[0_12px_30px_rgba(8,26,52,0.04)] md:p-9">
+        <div className="flex items-center justify-between gap-4">
+          <span className="inline-flex items-center gap-2 text-base font-black text-[#061B3A]">
+            <FileText className="h-5 w-5 text-[#F06A1A]" strokeWidth={1.9} /> 핵심 위험 요인
+          </span>
+          <span className="text-xs font-bold text-[#9AA8BA]">막대가 길수록 위험</span>
         </div>
-      </article>
-
-      <article className="border border-[#D7E1F0] bg-white p-6 shadow-[0_12px_30px_rgba(8,26,52,0.04)] md:p-8">
-        <div className="flex items-center gap-2 text-sm font-black text-[#2F52D9]">
-          <BookOpen className="h-5 w-5" strokeWidth={1.8} />
-          <span>완전 초보도 이해하는 해석</span>
-        </div>
-
-        <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          {signals.map((signal) => (
-            <div key={signal.label} className="border border-[#E3EAF4] bg-[#FBFDFF] p-4">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5 text-[#0B66FF]" strokeWidth={1.8} />
-                <p className="text-sm font-black text-[#061B3A]">{signal.label}</p>
-                <span className={`ml-auto px-2 py-0.5 text-xs font-black ${statusTone(signal.status)}`}>
-                  {signal.status}
+        <div className="mt-6 space-y-5">
+          {rankedRows.map((row, index) => {
+            const lvl = scoreLevel(row.score)
+            const priority = topRows.some((topRow) => topRow.key === row.key)
+            return (
+              <div key={row.key} className="grid grid-cols-[28px_minmax(0,1fr)_auto] items-start gap-4">
+                <span className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-full bg-[#F2F5F9] text-xs font-black text-[#53657E]">
+                  {index + 1}
                 </span>
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm font-black text-[#061B3A]">{row.label}</span>
+                    <span className={`px-2 py-0.5 text-[11px] font-black ${statusTone(lvl.text)}`}>{lvl.text}</span>
+                    {priority && <span className="bg-[#FFF1E8] px-2 py-0.5 text-[11px] font-black text-[#F06A1A]">우선 확인</span>}
+                  </div>
+                  <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-[#EDF2F8]">
+                    <div className="h-full rounded-full" style={{ width: `${Math.min(100, row.score ?? 0)}%`, background: lvl.color }} />
+                  </div>
+                  <p className="mt-2 text-xs font-semibold leading-5 text-[#6B7A90]">{row.body}</p>
+                </div>
+                <span className="text-2xl font-black tabular-nums" style={{ color: lvl.color }}>{row.score}</span>
               </div>
-              <p className="mt-3 text-sm font-semibold leading-6 text-[#53657E]">{signal.body}</p>
-            </div>
-          ))}
+            )
+          })}
         </div>
-      </article>
+      </section>
 
-      <article className="relative overflow-hidden border border-[#D7E1F0] bg-white p-6 shadow-[0_12px_30px_rgba(8,26,52,0.04)] md:p-8">
-        <div className="flex items-center gap-2 text-sm font-black text-[#0B66FF]">
-          <ClipboardCheck className="h-5 w-5" strokeWidth={1.8} />
-          <span>현장에서 먼저 볼 것</span>
-        </div>
+      {/* 생활권 해석 + 현장 체크리스트 */}
+      <div className="grid gap-5 lg:grid-cols-2">
+        <section className="border border-[#D7E1F0] bg-white p-7 shadow-[0_12px_30px_rgba(8,26,52,0.04)] md:p-8">
+          <span className="inline-flex items-center gap-2 text-base font-black text-[#061B3A]">
+            <BookOpen className="h-5 w-5 text-[#2F52D9]" strokeWidth={1.9} /> 쉽게 읽는 생활권 해석
+          </span>
+          <div className="mt-5 space-y-3">
+            {signals.map((signal) => (
+              <div key={signal.label} className="flex gap-3 border border-[#E3EAF4] bg-[#FBFDFF] p-4">
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#0B66FF]" strokeWidth={1.8} />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-sm font-black text-[#061B3A]">{signal.label}</p>
+                    <span className={`shrink-0 px-2 py-0.5 text-[11px] font-black ${statusTone(signal.status)}`}>{signal.status}</span>
+                  </div>
+                  <p className="mt-1.5 text-sm font-semibold leading-6 text-[#53657E]">{signal.body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
-        <div className="mt-6 space-y-3">
-          {fieldQuestions.map((question, index) => (
-            <div key={question} className="grid gap-3 border border-[#E3EAF4] bg-white p-3 md:grid-cols-[34px_minmax(0,1fr)] md:items-start">
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#0B66FF] text-xs font-black text-white">
-                {String(index + 1).padStart(2, '0')}
-              </span>
-              <p className="text-sm font-black leading-6 text-[#243653]">{question}</p>
-            </div>
-          ))}
-        </div>
-      </article>
-    </section>
+        <section className="border border-[#D7E1F0] bg-white p-7 shadow-[0_12px_30px_rgba(8,26,52,0.04)] md:p-8">
+          <span className="inline-flex items-center gap-2 text-base font-black text-[#061B3A]">
+            <ClipboardCheck className="h-5 w-5 text-[#0B66FF]" strokeWidth={1.9} /> 계약 전 현장 체크리스트
+          </span>
+          <div className="mt-5 space-y-2.5">
+            {fieldQuestions.map((question, index) => (
+              <div key={question} className="flex items-start gap-3 border border-[#E3EAF4] bg-white p-3.5">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0B66FF] text-xs font-black text-white">
+                  {index + 1}
+                </span>
+                <p className="text-sm font-bold leading-6 text-[#243653]">{question}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </div>
   )
 }
 

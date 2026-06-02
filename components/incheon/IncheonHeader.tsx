@@ -24,18 +24,12 @@ export default function IncheonHeader() {
           <a className="transition-colors hover:text-[#0B66FF]" href="/incheon#method">
             분석 방식
           </a>
-          <a className="transition-colors hover:text-[#0B66FF]" href="/incheon#data">
+          <Link className="transition-colors hover:text-[#0B66FF]" href="/incheon/data">
             데이터
-          </a>
-          <a className="transition-colors hover:text-[#0B66FF]" href="/incheon#contact">
-            문의
-          </a>
+          </Link>
         </nav>
 
         <div className="flex items-center gap-4">
-          <a className="hidden text-[15px] font-bold text-[#0D1D35] transition-colors hover:text-[#0B66FF] sm:block" href="/incheon#contact">
-            로그인
-          </a>
           <Link
             href="/incheon/result?lat=37.3897&lng=126.6454&category=cafe&query=%EC%9D%B8%EC%B2%9C%20%EC%97%B0%EC%88%98%EA%B5%AC%20%EC%86%A1%EB%8F%84%EB%8F%99"
             className="bg-[#0B66FF] px-5 py-3 text-sm font-black text-white shadow-[0_10px_22px_rgba(11,102,255,0.24)] transition-transform active:scale-[0.98]"
