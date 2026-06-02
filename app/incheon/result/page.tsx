@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   ChevronDown,
   ClipboardCheck,
+  Download,
   FileText,
   Route,
   ShieldCheck,
@@ -22,12 +23,13 @@ import DataSourcePanel from '@/components/incheon/DataSourcePanel'
 import RiskAnalysisMapCard from '@/components/incheon/RiskAnalysisMapCard'
 import type { IncheonAnalyzeResponse } from '@/lib/incheon/types'
 import { INCHEON_DEFAULT_CATEGORY } from '@/lib/incheon/constants'
+import { confidenceLabel, deriveMetricState, metricScoreText, metricStateTag } from '@/lib/incheon/display'
 
+// 종합 점수에 반영되는 4개 지표(survival은 별도 '복합 위험 신호'로 분리)
 const metricConfig = [
   { key: 'competition', label: '경쟁 과밀', body: '비슷한 매장이 몰려 있는 정도', icon: Users, color: '#FF8A1F' },
   { key: 'transit', label: '유입 부족', body: '고객이 찾아오기 불편한 정도', icon: Route, color: '#2D8CFF' },
   { key: 'cost', label: '비용 부담', body: '예상되는 임대료와 공실 부담', icon: Building2, color: '#20C7E8' },
-  { key: 'survival', label: '폐업 위험', body: '주변 매장들이 버티기 어려운 정도', icon: ShieldCheck, color: '#47C978' },
   { key: 'anchor', label: '앵커 부족', body: '사람을 모으는 주요 시설(역, 학교 등) 부족', icon: Store, color: '#8B5CF6' },
 ] as const
 
@@ -88,19 +90,6 @@ const interpretationConfig = [
     tone: 'border-[#C9F0F5] bg-[#F6FEFF]',
   },
   {
-    key: 'survival',
-    label: '폐업 위험',
-    body: (score: number | null) => {
-      const band = riskBand(score)
-      if (band === 'high') return '업종 특성과 주변 경쟁을 함께 보면 버티기 어려운 신호가 강합니다.'
-      if (band === 'medium') return '폐업 위험은 주의 단계라 초기 고정비와 회수 기간을 보수적으로 잡아야 합니다.'
-      return '폐업 위험은 낮은 편이지만 기존 업체의 단골 장벽은 현장에서 확인해야 합니다.'
-    },
-    icon: ShieldCheck,
-    color: '#25B866',
-    tone: 'border-[#D5F2DF] bg-[#F8FFF9]',
-  },
-  {
     key: 'anchor',
     label: '앵커 부족',
     body: (score: number | null) => {
@@ -150,11 +139,12 @@ function summarySentence(result: IncheonAnalyzeResponse, topRows: ReturnType<typ
   const first = topRows[0]?.label ?? '주요 위험 요인'
   const second = topRows[1]?.label
   const pair = second ? `${first}, ${second}` : first
+  const score = result.risk.score ?? 0
 
-  if (result.risk.score >= 67) {
+  if (score >= 67) {
     return `${pair} 위험이 큽니다. 계약 전 현장 확인이 꼭 필요한 위치입니다.`
   }
-  if (result.risk.score >= 45) {
+  if (score >= 45) {
     return `${pair}을(를) 중심으로 꼼꼼히 따져봐야 하는 주의 단계입니다.`
   }
   return `${pair}은 상대적으로 낮지만 실제 이동 경로와 임대 조건 확인은 필요합니다.`
@@ -238,24 +228,36 @@ function scoreLevel(score: number | null) {
 function RiskPanel({ result }: { result: IncheonAnalyzeResponse }) {
   const rows = metricConfig.map((item) => {
     const score = result.risk.scoreBreakdown[item.key]
-    return { ...item, score }
+    const excluded = result.risk.excludedMetrics.includes(item.key)
+    const degraded = result.risk.degradedMetrics.includes(item.key)
+    const state = deriveMetricState(score, { excluded, degraded, confidence: result.risk.confidence })
+    return { ...item, score, state }
   })
+  const survival = result.risk.survival
+  const gaugeScore = result.risk.score ?? 0
 
   return (
     <section className="h-full border border-[#3845A0] bg-[#06112A]/92 p-8 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
       <h2 className="text-center text-2xl font-black">예상 위험도</h2>
       <div className="mt-5 flex items-center justify-center gap-5">
         <span className="bg-[linear-gradient(180deg,#FFB14A,#FF651F)] bg-clip-text text-8xl font-black leading-none text-transparent">
-          {result.risk.score}
+          {result.risk.score ?? '—'}
         </span>
         <span className="border border-[#FF8A1F] bg-[#2B1B09] px-5 py-3 text-2xl font-black text-[#FFB14A]">
           {riskLevelText(result)}
         </span>
       </div>
 
-      <div className="mt-8">
+      <div className="mt-4 flex items-center justify-center gap-2 text-sm font-bold">
+        <span className="bg-white/10 px-3 py-1 text-white/78">신뢰도 {confidenceLabel(result.risk.confidence ?? 'medium')}</span>
+        {result.risk.degradedMetrics.length > 0 && (
+          <span className="bg-[#3a2a12] px-3 py-1 text-[#FFC780]">일부 데이터 제한</span>
+        )}
+      </div>
+
+      <div className="mt-7">
         <div className="relative h-2 bg-[linear-gradient(90deg,#47D78D_0%,#47D78D_24%,#2D8CFF_24%,#2D8CFF_50%,#FDBA3B_50%,#FDBA3B_74%,#FF4B4B_74%,#FF4B4B_100%)]">
-          <span className="absolute top-1/2 h-7 w-7 -translate-y-1/2 border-4 border-white bg-[#FF8A1F]" style={{ left: `${Math.min(92, result.risk.score)}%` }} />
+          <span className="absolute top-1/2 h-7 w-7 -translate-y-1/2 border-4 border-white bg-[#FF8A1F]" style={{ left: `${Math.min(92, gaugeScore)}%` }} />
         </div>
         <div className="mt-4 grid grid-cols-4 text-center text-base font-black text-white/82">
           <span>안전</span>
@@ -266,13 +268,15 @@ function RiskPanel({ result }: { result: IncheonAnalyzeResponse }) {
       </div>
 
       <p className="mt-7 border-b border-white/12 pb-7 text-center text-lg font-bold text-white/84">
-        5대 요인은 모두 높을수록 위험합니다.
+        4대 요인은 모두 높을수록 위험합니다. (복합 위험 신호는 참고용)
       </p>
 
       <div className="mt-7 space-y-5">
         {rows.map((row) => {
           const level = scoreLevel(row.score)
           const filledBars = row.score === null ? 0 : Math.max(0, Math.min(10, level.bars))
+          const tag = metricStateTag(row.state)
+          const available = row.state.status === 'available' || row.state.status === 'degraded'
           const Icon = row.icon
           return (
             <div key={row.key} className="grid gap-3 border-t border-white/10 pt-4 first:border-t-0 first:pt-0 sm:grid-cols-[42px_minmax(0,1fr)_44px] sm:items-center">
@@ -282,13 +286,21 @@ function RiskPanel({ result }: { result: IncheonAnalyzeResponse }) {
               <div className="min-w-0">
                 <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                   <span className="text-lg font-black">{row.label}</span>
-                  <span className="text-sm font-black" style={{ color: level.color }}>
-                    {level.text}
-                  </span>
-                  <span className="text-xs font-bold text-white/45">{level.caption}</span>
+                  {available ? (
+                    <span className="text-sm font-black" style={{ color: level.color }}>
+                      {level.text}
+                    </span>
+                  ) : (
+                    <span className="text-sm font-black text-white/50">{tag}</span>
+                  )}
+                  {available && tag ? (
+                    <span className="bg-[#3a2a12] px-2 py-0.5 text-xs font-bold text-[#FFC780]">{tag}</span>
+                  ) : (
+                    available && <span className="text-xs font-bold text-white/45">{level.caption}</span>
+                  )}
                 </div>
                 <p className="mt-1 text-sm font-semibold text-white/58">{row.body}</p>
-                <div className="mt-3 flex h-5 gap-1.5" aria-label={`${row.label} ${row.score ?? '정보 부족'}`}>
+                <div className="mt-3 flex h-5 gap-1.5" aria-label={`${row.label} ${metricScoreText(row.state)}`}>
                   {Array.from({ length: 10 }).map((_, index) => (
                     <span
                       key={index}
@@ -298,11 +310,75 @@ function RiskPanel({ result }: { result: IncheonAnalyzeResponse }) {
                   ))}
                 </div>
               </div>
-              <span className="text-right text-lg font-black">{row.score ?? '-'}</span>
+              <span className="text-right text-lg font-black">{metricScoreText(row.state)}</span>
             </div>
           )
         })}
       </div>
+
+      <div className="mt-7 grid gap-3 border-t border-white/10 pt-5 sm:grid-cols-[42px_minmax(0,1fr)_44px] sm:items-center">
+        <span className="flex h-9 w-9 items-center justify-center bg-white/8">
+          <ShieldCheck className="h-5 w-5 text-[#47C978]" />
+        </span>
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <span className="text-lg font-black">{survival.label}</span>
+            <span className="bg-white/10 px-2 py-0.5 text-xs font-bold text-white/60">종합 점수 미반영 · 참고</span>
+          </div>
+          <p className="mt-1 text-sm font-semibold text-white/58">
+            경쟁·비용·접근성을 조합한 참고 신호입니다. 실제 폐업률 데이터가 아닙니다.
+          </p>
+        </div>
+        <span className="text-right text-lg font-black text-white/80">{survival.score}</span>
+      </div>
+    </section>
+  )
+}
+
+function ConfidenceNotice({ result }: { result: IncheonAnalyzeResponse }) {
+  const reasons = result.risk.confidenceReasons ?? []
+  const generatedAt = result.auxiliary?.datasetGeneratedAt
+  const baseDate = generatedAt ? new Date(generatedAt).toLocaleDateString('ko-KR') : null
+
+  return (
+    <section className="border border-[#D7E1F0] bg-[#F8FBFF] p-6 md:p-7">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-2 text-sm font-black text-[#2F52D9]">
+          <ShieldCheck className="h-5 w-5" strokeWidth={1.8} />
+          <span>데이터 신뢰도</span>
+        </div>
+        <span className="bg-[#EEF5FF] px-3 py-1 text-xs font-black text-[#0B66FF]">
+          종합 신뢰도 {confidenceLabel(result.risk.confidence ?? 'medium')}
+        </span>
+        {baseDate && (
+          <span className="text-xs font-bold text-[#6B7A90]">데이터 기준일 {baseDate}</span>
+        )}
+      </div>
+      {reasons.length > 0 && (
+        <ul className="mt-4 space-y-2">
+          {reasons.map((reason) => (
+            <li key={reason} className="flex gap-2 text-sm font-semibold leading-6 text-[#53657E]">
+              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#9AA8BA]" />
+              <span>{reason}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  )
+}
+
+function InsufficientPanel({ result }: { result: IncheonAnalyzeResponse }) {
+  return (
+    <section className="flex h-full flex-col justify-center border border-[#3845A0] bg-[#06112A]/92 p-8 text-white">
+      <h2 className="text-2xl font-black">분석 제한 지역</h2>
+      <p className="mt-4 text-base font-semibold leading-7 text-white/72">
+        {result.risk.notice ??
+          '해당 위치 주변에는 점포·교통·생활권 데이터가 부족해 종합 점수를 제공하지 않습니다. 지도와 원자료만 참고해 주세요.'}
+      </p>
+      <p className="mt-6 text-sm font-bold text-white/55">
+        상권 데이터가 부족한 구역은 위험이 낮은 것이 아니라 판단을 보류한 상태입니다.
+      </p>
     </section>
   )
 }
@@ -419,6 +495,42 @@ function ResultDashboard({
   )
 }
 
+type ErrorView = { title: string; description: string; action: string }
+
+function getErrorView(
+  status: number,
+  data: { code?: string; error?: string; missingDatasets?: string[] }
+): ErrorView {
+  if (status === 503 && data.code === 'DATASET_NOT_READY') {
+    return {
+      title: '일부 데이터 준비 중',
+      description: data.missingDatasets?.length
+        ? `현재 ${data.missingDatasets.join(', ')} 데이터가 준비되지 않아 분석할 수 없습니다.`
+        : '인천 지역 데이터를 최신화하고 있습니다.',
+      action: '잠시 후 다시 시도해 주세요.',
+    }
+  }
+  if (status === 422) {
+    return {
+      title: '인천 분석 범위를 벗어난 위치입니다',
+      description: 'OpenRisk 인천은 현재 인천시 경계 안의 위치만 분석합니다.',
+      action: '인천 내 주소를 다시 검색해 주세요.',
+    }
+  }
+  if (status === 400) {
+    return {
+      title: '요청 값을 확인해 주세요',
+      description: '좌표 또는 업종 값이 올바르지 않습니다.',
+      action: '검색 화면에서 다시 선택해 주세요.',
+    }
+  }
+  return {
+    title: '분석 중 오류가 발생했습니다',
+    description: data.error || '일시적인 오류일 수 있습니다.',
+    action: '잠시 후 다시 시도해 주세요.',
+  }
+}
+
 function ResultContent() {
   const searchParams = useSearchParams()
   const lat = Number(searchParams.get('lat') || '37.3897')
@@ -428,13 +540,27 @@ function ResultContent() {
 
   const [result, setResult] = useState<IncheonAnalyzeResponse | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [errorView, setErrorView] = useState<ErrorView | null>(null)
+  const [pdfLoading, setPdfLoading] = useState(false)
+
+  async function handleDownloadPdf() {
+    if (!result || pdfLoading) return
+    setPdfLoading(true)
+    try {
+      const { generateIncheonPdfClient } = await import('@/lib/incheon/generate-pdf-client')
+      await generateIncheonPdfClient(result)
+    } catch {
+      window.alert('PDF 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.')
+    } finally {
+      setPdfLoading(false)
+    }
+  }
 
   useEffect(() => {
     const controller = new AbortController()
     async function run() {
       setLoading(true)
-      setError(null)
+      setErrorView(null)
       try {
         const response = await fetch('/api/incheon/analyze', {
           method: 'POST',
@@ -444,12 +570,15 @@ function ResultContent() {
         })
         const data = await response.json()
         if (!response.ok) {
-          throw new Error(data.error || '분석에 실패했습니다.')
+          setResult(null)
+          setErrorView(getErrorView(response.status, data))
+          return
         }
         setResult(data)
       } catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') return
-        setError(err instanceof Error ? err.message : '분석에 실패했습니다.')
+        setResult(null)
+        setErrorView(getErrorView(0, {}))
       } finally {
         setLoading(false)
       }
@@ -487,18 +616,32 @@ function ResultContent() {
             </div>
           )}
 
-          {error && (
+          {errorView && !loading && (
             <div className="mt-7 border border-[#FFB999] bg-white p-8">
-              <h1 className="text-2xl font-black">분석을 완료하지 못했습니다</h1>
-              <p className="mt-3 text-base font-semibold text-[#53657E]">{error}</p>
+              <h1 className="text-2xl font-black">{errorView.title}</h1>
+              <p className="mt-3 text-base font-semibold text-[#53657E]">{errorView.description}</p>
+              <p className="mt-2 text-sm font-bold text-[#0B66FF]">{errorView.action}</p>
             </div>
           )}
 
           {result && !loading && (
-            <div className="mt-6 grid flex-1 gap-6 lg:grid-cols-[minmax(0,1.45fr)_minmax(430px,0.72fr)] lg:items-stretch">
-              <RiskAnalysisMapCard center={mapCenter} radius={500} riskCells={result.riskMapCells} locationLabel={query} />
-              <RiskPanel result={result} />
-            </div>
+            <>
+              <div className="mt-5 flex items-center justify-end">
+                <button
+                  type="button"
+                  onClick={handleDownloadPdf}
+                  disabled={pdfLoading}
+                  className="inline-flex items-center gap-2 border border-[#2D7BFF] bg-[#0B66FF] px-4 py-2 text-sm font-black text-white transition-colors hover:bg-[#0A57DB] disabled:opacity-60"
+                >
+                  <Download className="h-4 w-4" strokeWidth={2.2} />
+                  {pdfLoading ? 'PDF 만드는 중…' : 'PDF 리포트 저장'}
+                </button>
+              </div>
+              <div className="mt-3 grid flex-1 gap-6 lg:grid-cols-[minmax(0,1.45fr)_minmax(430px,0.72fr)] lg:items-stretch">
+                <RiskAnalysisMapCard center={mapCenter} radius={500} riskCells={result.riskMapCells} locationLabel={query} />
+                {result.risk.insufficientData ? <InsufficientPanel result={result} /> : <RiskPanel result={result} />}
+              </div>
+            </>
           )}
         </div>
       </section>
@@ -506,7 +649,10 @@ function ResultContent() {
       {result && !loading && (
         <section className="bg-white px-5 py-8 lg:px-8">
           <div className="mx-auto max-w-7xl space-y-7">
-            <ResultDashboard result={result} rows={interpretationRows} signals={livingSignals} />
+            {!result.risk.insufficientData && (
+              <ResultDashboard result={result} rows={interpretationRows} signals={livingSignals} />
+            )}
+            <ConfidenceNotice result={result} />
             <DataSourcePanel sources={result.sources} />
           </div>
         </section>

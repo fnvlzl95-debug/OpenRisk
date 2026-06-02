@@ -125,6 +125,12 @@ export interface IncheonActualSignals {
   survivalRisk: number
   costScore: number | null
   costPeriod: string | null
+  costMethod: 'actual' | 'unmatched_region' | 'estimated'
+  costRegionName: string | null
+  costGranularity: 'regional_reference' | null
+  evidenceLevel: 'none' | 'low' | 'medium' | 'high'
+  degradedMetrics: string[]
+  confidenceReasons: string[]
   missingOptionalDatasets: string[]
   sourceIds: string[]
   generatedAt: string

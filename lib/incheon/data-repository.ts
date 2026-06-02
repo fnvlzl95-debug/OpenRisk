@@ -18,9 +18,10 @@ import type {
   TransitH3Dataset,
 } from './dataset-types'
 import type { RiskMapCell, RiskMapCenter } from './risk-map-types'
-import { normalizeWeights, riskLevelFromScore } from './scoring'
+import { normalizeWeights, riskLevelFromScore, weightedAverageAvailable } from './scoring'
+import { calculateMetricQuality, combineQualityConfidence, qualityToConfidence } from './confidence'
 import { getCategoryWeights } from '@/lib/categories'
-import type { IncheonRiskResult } from './types'
+import type { IncheonConfidence, IncheonRiskResult } from './types'
 
 const DATA_ROOT = path.join(process.cwd(), 'data', 'openrisk-incheon')
 const PROCESSED_ROOT = path.join(DATA_ROOT, 'processed')
@@ -32,7 +33,12 @@ const FILES = {
   radiusStats: path.join(PROCESSED_ROOT, 'radius-stats', 'radius-stats-500m.json'),
   costPressure: path.join(PROCESSED_ROOT, 'cost-pressure', 'cost-pressure.json'),
   mapMask: path.join(PROCESSED_ROOT, 'osm-mask', 'noncommercial-polygons.json'),
+  dataHealth: path.join(PROCESSED_ROOT, 'data-health', 'data-health.json'),
 } as const
+
+type DataHealthFile = {
+  flags?: { subwayDegraded?: boolean; studentDegraded?: boolean }
+}
 
 const EMPTY_EDUCATION_DATASET: EducationFamilyH3Dataset = {
   schemaVersion: 1,
@@ -54,7 +60,42 @@ type IncheonDatasetBundle = {
   mapMask: MapMaskDataset | null
 }
 
-let datasetCache: { signature: string; bundle: IncheonDatasetBundle } | null = null
+/**
+ * 데이터셋 전반의 건전성 요약. 전 셀 합계가 0인 핵심 신호를 감지해
+ * 신뢰도/degraded 표기에 사용한다. (Phase 2에서 data-health.json으로 대체/보강)
+ */
+type DatasetHealth = {
+  subwayDegraded: boolean
+  studentDegraded: boolean
+  hasEducationFamily: boolean
+}
+
+function computeDatasetHealth(bundle: IncheonDatasetBundle): DatasetHealth {
+  const hasEducationFamily = bundle.educationFamily.sourceIds.length > 0
+
+  // data-health.json이 있으면 빌드 시 계산된 플래그를 우선 사용한다.
+  const healthFile = readJsonFile<DataHealthFile>(FILES.dataHealth)
+  if (healthFile?.flags) {
+    return {
+      subwayDegraded: Boolean(healthFile.flags.subwayDegraded),
+      studentDegraded: Boolean(healthFile.flags.studentDegraded) && hasEducationFamily,
+      hasEducationFamily,
+    }
+  }
+
+  // 폴백: 로드된 데이터에서 직접 합계로 감지
+  let subwayTotal = 0
+  for (const cell of Object.values(bundle.transit.cells)) subwayTotal += cell.subwayRidership ?? 0
+  let studentTotal = 0
+  for (const cell of Object.values(bundle.educationFamily.cells)) studentTotal += cell.studentCount ?? 0
+  return {
+    subwayDegraded: subwayTotal <= 0,
+    studentDegraded: hasEducationFamily && studentTotal <= 0,
+    hasEducationFamily,
+  }
+}
+
+let datasetCache: { signature: string; bundle: IncheonDatasetBundle; health: DatasetHealth } | null = null
 const h3CenterCache = new Map<string, RiskMapCenter>()
 const maskIndexCache = new WeakMap<MapMaskDataset, Map<string, MaskPolygon[]>>()
 
@@ -223,16 +264,26 @@ const COST_REGION_ANCHORS: Array<{ name: string; lat: number; lng: number }> = [
   { name: '주안', lat: 37.465, lng: 126.680 },
 ]
 
-function selectCostRegion(center: RiskMapCenter, costPressure: CostPressureDataset | null) {
-  if (!costPressure) return null
-  const fallback = costPressure.regions.find((region) => region.regionName === '인천') ?? costPressure.regions[0] ?? null
+type CostSelection = {
+  region: CostPressureDataset['regions'][number] | null
+  method: 'actual' | 'unmatched_region'
+}
+
+/**
+ * 가장 가까운 비용 권역(4.5km 이내)을 고른다.
+ * 매칭되는 권역이 없으면 인천 시평균으로 폴백하지 않고 null + unmatched_region을 반환한다.
+ * (비용 없음을 임의값으로 메우지 않고 산식 제외 + 신뢰도 하향으로 처리하기 위함)
+ */
+function selectCostRegion(center: RiskMapCenter, costPressure: CostPressureDataset | null): CostSelection {
+  if (!costPressure) return { region: null, method: 'unmatched_region' }
   const nearestAnchor = COST_REGION_ANCHORS.map((anchor) => ({
     anchor,
     distance: distanceMeters(center, { lat: anchor.lat, lng: anchor.lng }),
   })).sort((a, b) => a.distance - b.distance)[0]
 
-  if (!nearestAnchor || nearestAnchor.distance > 4500) return fallback
-  return costPressure.regions.find((region) => region.regionName === nearestAnchor.anchor.name) ?? fallback
+  if (!nearestAnchor || nearestAnchor.distance > 4500) return { region: null, method: 'unmatched_region' }
+  const region = costPressure.regions.find((item) => item.regionName === nearestAnchor.anchor.name) ?? null
+  return region ? { region, method: 'actual' } : { region: null, method: 'unmatched_region' }
 }
 
 function isPointInPolygon(point: RiskMapCenter, polygon: Array<[number, number]>) {
@@ -332,8 +383,58 @@ export function requireIncheonDatasets() {
     mapMask: readJsonFile<MapMaskDataset>(FILES.mapMask),
   }
 
-  datasetCache = { signature, bundle }
+  datasetCache = { signature, bundle, health: computeDatasetHealth(bundle) }
   return bundle
+}
+
+function getDatasetHealth(): DatasetHealth {
+  return datasetCache?.health ?? { subwayDegraded: false, studentDegraded: false, hasEducationFamily: false }
+}
+
+/**
+ * 종합 점수 단일 산식. 헤드라인과 모든 지도 셀이 이 함수를 호출해 일관성을 보장한다.
+ * survival은 제외하고 경쟁/교통/앵커/비용만 업종 가중치로 가용 재정규화한다.
+ */
+function scoreFromMetrics(
+  metrics: { competition: number; transit: number; anchor: number; cost: number | null },
+  category: BusinessCategory
+): { score: number | null; weights: { competition: number; transit: number; anchor: number; cost: number | null } } {
+  const sw = getCategoryWeights(category)
+  const rawWeights = {
+    competition: sw.competition,
+    transit: sw.traffic,
+    anchor: sw.anchor,
+    cost: metrics.cost === null ? null : sw.cost,
+  }
+  const raw = weightedAverageAvailable(
+    { competition: metrics.competition, transit: metrics.transit, anchor: metrics.anchor, cost: metrics.cost },
+    rawWeights
+  )
+  return {
+    score: raw === null ? null : round(raw),
+    weights: normalizeWeights(rawWeights),
+  }
+}
+
+/** 상권 근거 수준. none/low이면 "데이터 없음"을 "위험 낮음"으로 오해석하지 않도록 점수를 만들지 않는다. */
+function commercialEvidenceLevel(
+  storeTotal: StoreH3Cell,
+  transitTotal: TransitH3Cell,
+  educationTotal: EducationFamilyH3Cell,
+  sameCategoryWeighted: number
+): 'none' | 'low' | 'medium' | 'high' {
+  const evidence =
+    storeTotal.totalStores +
+    sameCategoryWeighted * 2 +
+    transitTotal.busStopCount +
+    Math.log1p(Math.max(0, transitTotal.busRidership)) +
+    (transitTotal.subwayRidership > 0 ? Math.log1p(transitTotal.subwayRidership) : 0) +
+    educationTotal.schoolCount +
+    educationTotal.childcareCount
+  if (evidence <= 0) return 'none'
+  if (evidence < 5) return 'low'
+  if (evidence < 20) return 'medium'
+  return 'high'
 }
 
 export function calculateActualIncheonRisk(params: {
@@ -343,6 +444,7 @@ export function calculateActualIncheonRisk(params: {
 }): { risk: IncheonRiskResult; signals: IncheonActualSignals; riskMapCells: RiskMapCell[] } {
   const center = { lat: params.lat, lng: params.lng }
   const datasets = requireIncheonDatasets()
+  const health = getDatasetHealth()
   const { radiusCells, storeTotal, transitTotal, educationTotal } = aggregateRadius(center, datasets)
 
   const sameCategoryWeighted = storeTotal.categoryCounts[params.category] ?? 0
@@ -360,31 +462,62 @@ export function calculateActualIncheonRisk(params: {
     ? round(accessFromDistribution(anchorSignal, datasets.radiusStats.anchorStats))
     : transitAccessScore
   const anchorRisk = round(100 - anchorAccessScore)
-  const costRegion = selectCostRegion(center, datasets.costPressure)
-  const costScore = costRegion?.costScore ?? null
-  const costPeriod = costRegion?.rentPeriod ?? costRegion?.vacancyPeriod ?? null
-  const survivalRisk = round(
-    competitionRisk * 0.45 +
-      transitRisk * 0.25 +
-      (costScore ?? 50) * 0.2 +
-      anchorRisk * 0.1
+
+  const costSel = selectCostRegion(center, datasets.costPressure)
+  const costScore = costSel.region?.costScore ?? null
+  const costPeriod = costSel.region?.rentPeriod ?? costSel.region?.vacancyPeriod ?? null
+  const costMethod: IncheonActualSignals['costMethod'] =
+    costScore === null ? (datasets.costPressure ? 'unmatched_region' : 'estimated') : 'actual'
+  const costRegionName = costSel.region?.regionName ?? null
+  const costGranularity: IncheonActualSignals['costGranularity'] = costScore === null ? null : 'regional_reference'
+
+  // survival(복합 위험 신호): 가용 지표만 재정규화 — 비용 없을 때 50 임의 주입 제거. 종합 점수에는 미포함.
+  const survivalRaw = weightedAverageAvailable(
+    { competition: competitionRisk, transit: transitRisk, cost: costScore, anchor: anchorRisk },
+    { competition: 0.45, transit: 0.25, cost: 0.2, anchor: 0.1 }
+  )
+  const survivalRisk = survivalRaw === null ? 0 : round(survivalRaw)
+
+  // 종합 점수: 단일 산식(헤드라인 = 지도 셀 동일), survival 제외, 가용 재정규화.
+  const overall = scoreFromMetrics(
+    { competition: competitionRisk, transit: transitRisk, anchor: anchorRisk, cost: costScore },
+    params.category
   )
 
-  const sourceWeights = getCategoryWeights(params.category)
-  const weights = normalizeWeights({
-    competition: sourceWeights.competition,
-    transit: sourceWeights.traffic,
-    survival: sourceWeights.survival,
-    anchor: sourceWeights.anchor,
-    cost: costScore === null ? null : sourceWeights.cost,
-  })
-  const score = round(
-    competitionRisk * weights.competition +
-      transitRisk * weights.transit +
-      survivalRisk * weights.survival +
-      anchorRisk * weights.anchor +
-      (costScore ?? 0) * (weights.cost ?? 0)
-  )
+  // 상권 근거 게이트: 데이터가 거의 없는 곳은 종합 점수를 산출하지 않는다.
+  const evidenceLevel = commercialEvidenceLevel(storeTotal, transitTotal, educationTotal, sameCategoryWeighted)
+  const insufficientData = evidenceLevel === 'none' || evidenceLevel === 'low'
+  const score = insufficientData ? null : overall.score
+
+  // 신뢰도: 데이터 품질 기반 + min-cap (데이터셋 존재 여부가 아니라 품질로 산정)
+  // 핵심 원천이 통째로 빈(degraded) 지표는 품질을 medium 이하(<=0.45)로 캡해 평균에 묻히지 않게 한다.
+  const DEGRADED_CAP = 0.45
+  const costAvailable = costScore !== null
+  const competitionQuality = calculateMetricQuality({ available: true, nonZero: totalStores > 0, freshnessScore: 0.9, granularityScore: 1, sourceScore: 1 })
+  const transitQualityBase = calculateMetricQuality({ available: true, nonZero: transitTotal.accessScore > 0, freshnessScore: 0.9, granularityScore: 1, sourceScore: 1 })
+  const transitQuality = health.subwayDegraded ? Math.min(transitQualityBase, DEGRADED_CAP) : transitQualityBase
+  const anchorQualityBase = calculateMetricQuality({ available: hasEducationFamily, nonZero: anchorSignal > 0, freshnessScore: 0.9, granularityScore: 1, sourceScore: 1 })
+  const anchorQuality = health.studentDegraded ? Math.min(anchorQualityBase, DEGRADED_CAP) : anchorQualityBase
+  const educationQuality = health.studentDegraded ? DEGRADED_CAP : anchorQualityBase
+  const costQuality = calculateMetricQuality({ available: costAvailable, nonZero: costAvailable, freshnessScore: 0.8, granularityScore: 0.5, sourceScore: 1 })
+  const qualityInputs = [competitionQuality, transitQuality, anchorQuality]
+  if (costAvailable) qualityInputs.push(costQuality)
+  const confidence: IncheonConfidence = insufficientData ? 'low' : combineQualityConfidence(qualityInputs)
+
+  const degradedMetrics: string[] = []
+  const confidenceReasons: string[] = []
+  if (insufficientData) confidenceReasons.push('해당 반경 내 상권 데이터가 부족해 종합 위험 점수를 산출하지 않았습니다.')
+  if (health.subwayDegraded) {
+    degradedMetrics.push('transit')
+    confidenceReasons.push('지하철 승하차 데이터가 현재 점수에 반영되지 않아 교통 접근성은 버스 기준으로만 산출했습니다.')
+  }
+  if (health.studentDegraded) {
+    degradedMetrics.push('anchor')
+    confidenceReasons.push('학생수 데이터가 현재 점수에 반영되지 않았습니다.')
+  }
+  if (!costAvailable) confidenceReasons.push('이 위치에 대응되는 비용 권역이 없어 비용 지표는 산식에서 제외했습니다.')
+  else confidenceReasons.push('비용 데이터는 권역(구·역세권) 단위 기준입니다.')
+
   const sourceIds = Array.from(
     new Set([
       ...datasets.stores.sourceIds,
@@ -405,7 +538,6 @@ export function calculateActualIncheonRisk(params: {
     ...(datasets.costPressure ? [] : ['costPressure']),
     ...(datasets.mapMask ? [] : ['mapMask']),
   ]
-  const confidence = missingOptionalDatasets.includes('costPressure') ? 'medium' : 'high'
 
   const riskMapCells = radiusCells.map((h3Id) => {
     const point = cellCenter(h3Id)
@@ -446,7 +578,12 @@ export function calculateActualIncheonRisk(params: {
     )
     const cellTransitRisk = round(100 - accessFromDistribution(cellSignals.transitTotal.accessScore, datasets.radiusStats.transitAccessStats))
     const cellAnchorRisk = round(100 - accessFromDistribution(cellAnchorSignal, datasets.radiusStats.anchorStats))
-    const cellScore = round(cellCompetition * 0.52 + cellTransitRisk * 0.28 + cellAnchorRisk * 0.2)
+    // 헤드라인과 동일한 단일 산식 사용(비용은 권역 공유). 셀별 점수와 종합 점수가 일관.
+    const cellScore =
+      scoreFromMetrics(
+        { competition: cellCompetition, transit: cellTransitRisk, anchor: cellAnchorRisk, cost: costScore },
+        params.category
+      ).score ?? round(cellCompetition * 0.6 + cellTransitRisk * 0.25 + cellAnchorRisk * 0.15)
     return {
       h3Id,
       score: cellScore,
@@ -460,16 +597,28 @@ export function calculateActualIncheonRisk(params: {
   return {
     risk: {
       score,
-      level: riskLevelFromScore(score),
+      level: score === null ? 'LOW' : riskLevelFromScore(score),
       scoreBreakdown: {
         competition: competitionRisk,
-        transit: transitRisk,
         survival: survivalRisk,
+        transit: transitRisk,
         anchor: anchorRisk,
         cost: costScore === null ? null : round(costScore),
-        weights,
+        weights: overall.weights,
+      },
+      survival: {
+        score: survivalRisk,
+        label: '복합 위험 신호',
+        method: 'heuristic',
+        includedInOverallScore: false,
       },
       excludedMetrics: costScore === null ? ['cost'] : [],
+      degradedMetrics,
+      confidenceReasons,
+      insufficientData,
+      notice: insufficientData
+        ? '해당 위치 주변에는 점포·교통·생활권 데이터가 부족해 종합 점수를 제공하지 않습니다. 지도와 원자료만 참고해 주세요.'
+        : undefined,
       sourceIds,
       confidence,
       method: 'estimated',
@@ -486,6 +635,12 @@ export function calculateActualIncheonRisk(params: {
       survivalRisk,
       costScore,
       costPeriod,
+      costMethod,
+      costRegionName,
+      costGranularity,
+      evidenceLevel,
+      degradedMetrics,
+      confidenceReasons,
       missingOptionalDatasets,
       sourceIds,
       generatedAt,
@@ -494,14 +649,14 @@ export function calculateActualIncheonRisk(params: {
       evidence: {
         competition: {
           score: competitionRisk,
-          confidence: 'high',
+          confidence: qualityToConfidence(competitionQuality),
           method: 'actual',
           sourceIds: datasets.stores.sourceIds,
           evidence: [`반경 500m 비슷한 매장 약 ${sameCategoryCount}곳`, `반경 500m 전체 점포 약 ${totalStores}곳`],
         },
         transit: {
           score: transitRisk,
-          confidence: 'high',
+          confidence: qualityToConfidence(transitQuality),
           method: 'actual',
           sourceIds: datasets.transit.sourceIds,
           evidence: [
@@ -511,14 +666,16 @@ export function calculateActualIncheonRisk(params: {
         },
         educationFamily: {
           score: educationFamilyScore,
-          confidence: hasEducationFamily ? 'high' : 'low',
+          confidence: qualityToConfidence(educationQuality),
           method: 'actual',
           sourceIds: datasets.educationFamily.sourceIds,
           evidence: hasEducationFamily
             ? [
                 `학교 ${educationTotal.schoolCount}곳`,
                 `어린이집 ${educationTotal.childcareCount}곳`,
-                `학생수 ${Math.round(educationTotal.studentCount).toLocaleString('ko-KR')}명`,
+                ...(health.studentDegraded
+                  ? ['학생수 데이터는 현재 미반영']
+                  : [`학생수 ${Math.round(educationTotal.studentCount).toLocaleString('ko-KR')}명`]),
               ]
             : ['학교 위치/어린이집 위치 데이터가 아직 부족합니다.'],
           facts: hasEducationFamily
@@ -552,7 +709,7 @@ export function calculateActualIncheonRisk(params: {
         },
         anchor: {
           score: anchorRisk,
-          confidence: hasEducationFamily ? 'medium' : 'low',
+          confidence: qualityToConfidence(anchorQuality),
           method: 'actual',
           sourceIds: [...datasets.educationFamily.sourceIds, ...datasets.transit.sourceIds],
           evidence: hasEducationFamily
@@ -562,22 +719,24 @@ export function calculateActualIncheonRisk(params: {
         survival: {
           score: survivalRisk,
           confidence: 'medium',
-          method: 'estimated',
+          method: 'heuristic',
           sourceIds,
-          evidence: ['주변 경쟁, 고객 접근성, 비용 부담, 주요 시설 접근성을 종합해 예측'],
+          evidence: ['경쟁·고객 접근성·비용·주요 시설 접근성을 조합한 복합 신호(종합 점수 미포함)'],
         },
         cost: {
           score: costScore,
-          confidence: costRegion?.confidence ?? 'low',
+          confidence: costAvailable ? qualityToConfidence(costQuality) : 'low',
           method: costScore === null ? 'estimated' : 'actual',
           sourceIds: datasets.costPressure?.sourceIds ?? [],
           evidence: costScore === null
-            ? ['임대료·공실률 원천 데이터 없음']
+            ? costMethod === 'unmatched_region'
+              ? ['이 위치에 대응되는 비용 권역이 없어 산식에서 제외']
+              : ['임대료·공실률 원천 데이터 없음']
             : [
-                `${costRegion?.regionName ?? '인천'} 권역 비용 참고`,
+                `${costSel.region?.regionName ?? '인천'} 권역 비용 참고`,
                 ...[
-                  formatOptionalNumber(costRegion?.rentPerSquareMeter, '천원/㎡ 임대료'),
-                  formatOptionalNumber(costRegion?.vacancyRate, '% 공실률'),
+                  formatOptionalNumber(costSel.region?.rentPerSquareMeter, '천원/㎡ 임대료'),
+                  formatOptionalNumber(costSel.region?.vacancyRate, '% 공실률'),
                 ].filter((value): value is string => Boolean(value)),
               ],
         },

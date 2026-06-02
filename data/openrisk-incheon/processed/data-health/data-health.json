@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-06-02T14:52:48.750Z",
+  "datasets": {
+    "stores": {
+      "cells": 9844,
+      "totalStores": 67200,
+      "dataPeriod": "2025-12",
+      "status": "ok",
+      "issues": []
+    },
+    "transit": {
+      "cells": 5098,
+      "busStopCount": 7068,
+      "busRidershipTotal": 47160498,
+      "subwayRidershipTotal": 19002468,
+      "dataPeriod": "2024-월평균(역별 수송인원)",
+      "status": "ok",
+      "issues": []
+    },
+    "education": {
+      "cells": 2625,
+      "schoolCount": 545,
+      "studentCountTotal": 301061,
+      "childcareCount": 2985,
+      "dataPeriod": "2025-04-01",
+      "status": "ok",
+      "issues": []
+    },
+    "cost": {
+      "regions": 10,
+      "status": "ok",
+      "issues": []
+    },
+    "radiusStats": {
+      "centerCellCount": 14013,
+      "status": "ok",
+      "issues": []
+    }
+  },
+  "flags": {
+    "subwayDegraded": false,
+    "studentDegraded": false
+  }
+}

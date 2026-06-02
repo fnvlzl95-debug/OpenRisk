@@ -168,13 +168,18 @@ async function main() {
     ])
   )
 
+  // 파일명(..._인천_YYYYMM.csv)에서 기준연월을 추출해 dataPeriod로 사용한다.
+  const periodMatch = candidates.map((file) => path.basename(file).match(/(\d{4})(\d{2})\.csv$/i)).find(Boolean)
+  const dataPeriod = periodMatch ? `${periodMatch[1]}-${periodMatch[2]}` : 'unknown-file-date'
+
   ensureDir(path.dirname(outputFile))
   writeJson(outputFile, {
     schemaVersion: 1,
     generatedAt: new Date().toISOString(),
     h3Resolution: INCHEON_H3_RESOLUTION,
     sourceIds: ['store-small-business'],
-    dataPeriod: 'official-file',
+    dataPeriod,
+    sourceFiles: candidates.map((file) => path.basename(file)),
     cells: mergedCells,
     categoryStats,
     totalStats: distributionStats(Object.values(mergedCells).map((cell) => cell.totalStores)),

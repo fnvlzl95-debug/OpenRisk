@@ -1,11 +1,14 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-04-27T04:24:51.398Z",
+  "generatedAt": "2026-06-02T14:48:56.344Z",
   "h3Resolution": 10,
   "sourceIds": [
     "store-small-business"
   ],
-  "dataPeriod": "official-file",
+  "dataPeriod": "2025-12",
+  "sourceFiles": [
+    "소상공인시장진흥공단_상가(상권)정보_인천_202512.csv"
+  ],
   "cells": {
     "8a30e0aada1ffff": {
       "totalStores": 21,
@@ -82856,7 +82859,7 @@
       "p50": 1,
       "p75": 3,
       "p90": 6,
-      "p95": 10,
+      "p95": 9.199999999999818,
       "max": 62
     }
   },

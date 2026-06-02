@@ -1,0 +1,1550 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-06-02T14:41:14.933Z",
+  "source": "osm",
+  "dataPeriod": "overpass-now",
+  "stations": [
+    {
+      "normalizedName": "가산디지털단지",
+      "name": "가산디지털단지",
+      "lat": 37.4815947,
+      "lng": 126.8826166
+    },
+    {
+      "normalizedName": "가양",
+      "name": "가양",
+      "lat": 37.5611423,
+      "lng": 126.8550997
+    },
+    {
+      "normalizedName": "가재울",
+      "name": "가재울",
+      "lat": 37.4839499,
+      "lng": 126.6839791
+    },
+    {
+      "normalizedName": "가정",
+      "name": "가정",
+      "lat": 37.5247194,
+      "lng": 126.6753212
+    },
+    {
+      "normalizedName": "가정중앙시장",
+      "name": "가정중앙시장",
+      "lat": 37.5174983,
+      "lng": 126.6767904
+    },
+    {
+      "normalizedName": "가좌",
+      "name": "가좌",
+      "lat": 37.5686792,
+      "lng": 126.915063
+    },
+    {
+      "normalizedName": "간석",
+      "name": "간석",
+      "lat": 37.4647335,
+      "lng": 126.6935306
+    },
+    {
+      "normalizedName": "간석오거리",
+      "name": "간석오거리",
+      "lat": 37.4671553,
+      "lng": 126.7079494
+    },
+    {
+      "normalizedName": "갈산",
+      "name": "갈산",
+      "lat": 37.5168126,
+      "lng": 126.7215178
+    },
+    {
+      "normalizedName": "강매",
+      "name": "강매",
+      "lat": 37.6122869,
+      "lng": 126.8445278
+    },
+    {
+      "normalizedName": "개봉",
+      "name": "개봉",
+      "lat": 37.4945934,
+      "lng": 126.8587536
+    },
+    {
+      "normalizedName": "개화",
+      "name": "개화",
+      "lat": 37.5785381,
+      "lng": 126.7976654
+    },
+    {
+      "normalizedName": "개화산",
+      "name": "개화산",
+      "lat": 37.5728758,
+      "lng": 126.8082601
+    },
+    {
+      "normalizedName": "걸포북변",
+      "name": "걸포북변",
+      "lat": 37.6317148,
+      "lng": 126.7056466
+    },
+    {
+      "normalizedName": "검단사거리",
+      "name": "검단사거리",
+      "lat": 37.6018213,
+      "lng": 126.6567336
+    },
+    {
+      "normalizedName": "검단오류",
+      "name": "검단오류",
+      "lat": 37.5949865,
+      "lng": 126.6279299
+    },
+    {
+      "normalizedName": "검단호수공원",
+      "name": "검단호수공원",
+      "lat": 37.6024395,
+      "lng": 126.6885664
+    },
+    {
+      "normalizedName": "검바위",
+      "name": "검바위",
+      "lat": 37.5612482,
+      "lng": 126.6775102
+    },
+    {
+      "normalizedName": "검암",
+      "name": "검암",
+      "lat": 37.5691799,
+      "lng": 126.6737138
+    },
+    {
+      "normalizedName": "경인교대입구",
+      "name": "경인교대입구",
+      "lat": 37.5384076,
+      "lng": 126.7226027
+    },
+    {
+      "normalizedName": "계산",
+      "name": "계산",
+      "lat": 37.543336,
+      "lng": 126.7278571
+    },
+    {
+      "normalizedName": "계양",
+      "name": "계양",
+      "lat": 37.5715012,
+      "lng": 126.7358582
+    },
+    {
+      "normalizedName": "고잔",
+      "name": "고잔",
+      "lat": 37.3168514,
+      "lng": 126.8231007
+    },
+    {
+      "normalizedName": "고촌",
+      "name": "고촌",
+      "lat": 37.6012627,
+      "lng": 126.7702118
+    },
+    {
+      "normalizedName": "곡산",
+      "name": "곡산",
+      "lat": 37.645746,
+      "lng": 126.8018102
+    },
+    {
+      "normalizedName": "공항시장",
+      "name": "공항시장",
+      "lat": 37.5636577,
+      "lng": 126.8106016
+    },
+    {
+      "normalizedName": "공항화물청사",
+      "name": "공항화물청사",
+      "lat": 37.4590304,
+      "lng": 126.4774954
+    },
+    {
+      "normalizedName": "관악",
+      "name": "관악",
+      "lat": 37.4187236,
+      "lng": 126.9091539
+    },
+    {
+      "normalizedName": "관악산",
+      "name": "관악산",
+      "lat": 37.4687357,
+      "lng": 126.945328
+    },
+    {
+      "normalizedName": "광명",
+      "name": "광명",
+      "lat": 37.41638,
+      "lng": 126.8846978
+    },
+    {
+      "normalizedName": "광명사거리",
+      "name": "광명사거리",
+      "lat": 37.4794207,
+      "lng": 126.8544598
+    },
+    {
+      "normalizedName": "광흥창",
+      "name": "광흥창",
+      "lat": 37.5474717,
+      "lng": 126.9319609
+    },
+    {
+      "normalizedName": "구래",
+      "name": "구래",
+      "lat": 37.6453484,
+      "lng": 126.6287215
+    },
+    {
+      "normalizedName": "구로",
+      "name": "구로",
+      "lat": 37.5034468,
+      "lng": 126.8825086
+    },
+    {
+      "normalizedName": "구로디지털단지",
+      "name": "구로디지털단지",
+      "lat": 37.4852761,
+      "lng": 126.9015916
+    },
+    {
+      "normalizedName": "구산",
+      "name": "구산",
+      "lat": 37.6112496,
+      "lng": 126.9172191
+    },
+    {
+      "normalizedName": "구일",
+      "name": "구일",
+      "lat": 37.4962071,
+      "lng": 126.8697062
+    },
+    {
+      "normalizedName": "구파발",
+      "name": "구파발",
+      "lat": 37.6368919,
+      "lng": 126.9188046
+    },
+    {
+      "normalizedName": "국제업무지구",
+      "name": "국제업무지구",
+      "lat": 37.3997869,
+      "lng": 126.6304116
+    },
+    {
+      "normalizedName": "국회의사당",
+      "name": "국회의사당",
+      "lat": 37.5280157,
+      "lng": 126.9179639
+    },
+    {
+      "normalizedName": "군포",
+      "name": "군포",
+      "lat": 37.3535747,
+      "lng": 126.9484606
+    },
+    {
+      "normalizedName": "굴포천",
+      "name": "굴포천",
+      "lat": 37.5070226,
+      "lng": 126.731337
+    },
+    {
+      "normalizedName": "귤현",
+      "name": "귤현",
+      "lat": 37.5663544,
+      "lng": 126.7426554
+    },
+    {
+      "normalizedName": "금정",
+      "name": "금정",
+      "lat": 37.3723075,
+      "lng": 126.943397
+    },
+    {
+      "normalizedName": "금천구청",
+      "name": "금천구청",
+      "lat": 37.4558132,
+      "lng": 126.8939002
+    },
+    {
+      "normalizedName": "김포공항",
+      "name": "김포공항",
+      "lat": 37.5619247,
+      "lng": 126.8013934
+    },
+    {
+      "normalizedName": "까치산",
+      "name": "까치산",
+      "lat": 37.5321119,
+      "lng": 126.8465265
+    },
+    {
+      "normalizedName": "까치울",
+      "name": "까치울",
+      "lat": 37.5062407,
+      "lng": 126.8113842
+    },
+    {
+      "normalizedName": "남구로",
+      "name": "남구로",
+      "lat": 37.4853612,
+      "lng": 126.8866651
+    },
+    {
+      "normalizedName": "남동구청",
+      "name": "남동구청",
+      "lat": 37.4481646,
+      "lng": 126.7368118
+    },
+    {
+      "normalizedName": "남동인더스파크",
+      "name": "남동인더스파크",
+      "lat": 37.4077519,
+      "lng": 126.6952345
+    },
+    {
+      "normalizedName": "노량진",
+      "name": "노량진",
+      "lat": 37.5142381,
+      "lng": 126.94204
+    },
+    {
+      "normalizedName": "녹번",
+      "name": "녹번",
+      "lat": 37.6009733,
+      "lng": 126.9357307
+    },
+    {
+      "normalizedName": "능곡",
+      "name": "능곡",
+      "lat": 37.6189396,
+      "lng": 126.8205157
+    },
+    {
+      "normalizedName": "달미",
+      "name": "달미",
+      "lat": 37.3491043,
+      "lng": 126.8090701
+    },
+    {
+      "normalizedName": "달월",
+      "name": "달월",
+      "lat": 37.3799789,
+      "lng": 126.7453575
+    },
+    {
+      "normalizedName": "당곡",
+      "name": "당곡",
+      "lat": 37.4896958,
+      "lng": 126.9278008
+    },
+    {
+      "normalizedName": "당산",
+      "name": "당산",
+      "lat": 37.5345964,
+      "lng": 126.902478
+    },
+    {
+      "normalizedName": "당정",
+      "name": "당정",
+      "lat": 37.3434316,
+      "lng": 126.9483607
+    },
+    {
+      "normalizedName": "대곡",
+      "name": "대곡",
+      "lat": 37.6317813,
+      "lng": 126.8102838
+    },
+    {
+      "normalizedName": "대림",
+      "name": "대림",
+      "lat": 37.4934375,
+      "lng": 126.8949325
+    },
+    {
+      "normalizedName": "대방",
+      "name": "대방",
+      "lat": 37.5133577,
+      "lng": 126.9264784
+    },
+    {
+      "normalizedName": "대야미",
+      "name": "대야미",
+      "lat": 37.3279256,
+      "lng": 126.9168618
+    },
+    {
+      "normalizedName": "대흥",
+      "name": "대흥",
+      "lat": 37.5476992,
+      "lng": 126.9423451
+    },
+    {
+      "normalizedName": "도림천",
+      "name": "도림천",
+      "lat": 37.5144539,
+      "lng": 126.882684
+    },
+    {
+      "normalizedName": "도원",
+      "name": "도원",
+      "lat": 37.4688261,
+      "lng": 126.6424009
+    },
+    {
+      "normalizedName": "도화",
+      "name": "도화",
+      "lat": 37.4661244,
+      "lng": 126.6682641
+    },
+    {
+      "normalizedName": "독바위",
+      "name": "독바위",
+      "lat": 37.6183371,
+      "lng": 126.9330214
+    },
+    {
+      "normalizedName": "독산",
+      "name": "독산",
+      "lat": 37.4660736,
+      "lng": 126.8894844
+    },
+    {
+      "normalizedName": "독정",
+      "name": "독정",
+      "lat": 37.5848634,
+      "lng": 126.6759581
+    },
+    {
+      "normalizedName": "동막",
+      "name": "동막",
+      "lat": 37.3986231,
+      "lng": 126.6735412
+    },
+    {
+      "normalizedName": "동수",
+      "name": "동수",
+      "lat": 37.4854218,
+      "lng": 126.7185419
+    },
+    {
+      "normalizedName": "동암",
+      "name": "동암",
+      "lat": 37.4710457,
+      "lng": 126.7028769
+    },
+    {
+      "normalizedName": "동인천",
+      "name": "동인천",
+      "lat": 37.4751286,
+      "lng": 126.6330567
+    },
+    {
+      "normalizedName": "동춘",
+      "name": "동춘",
+      "lat": 37.4048204,
+      "lng": 126.6802706
+    },
+    {
+      "normalizedName": "등촌",
+      "name": "등촌",
+      "lat": 37.5511518,
+      "lng": 126.864574
+    },
+    {
+      "normalizedName": "디지털미디어시티",
+      "name": "디지털미디어시티",
+      "lat": 37.5776729,
+      "lng": 126.9000771
+    },
+    {
+      "normalizedName": "마곡",
+      "name": "마곡",
+      "lat": 37.5602492,
+      "lng": 126.8247463
+    },
+    {
+      "normalizedName": "마곡나루",
+      "name": "마곡나루",
+      "lat": 37.5662179,
+      "lng": 126.827917
+    },
+    {
+      "normalizedName": "마산",
+      "name": "마산",
+      "lat": 37.6405997,
+      "lng": 126.6442376
+    },
+    {
+      "normalizedName": "마전",
+      "name": "마전",
+      "lat": 37.5975663,
+      "lng": 126.6672467
+    },
+    {
+      "normalizedName": "마포",
+      "name": "마포",
+      "lat": 37.5396369,
+      "lng": 126.9459929
+    },
+    {
+      "normalizedName": "마포구청",
+      "name": "마포구청",
+      "lat": 37.5635586,
+      "lng": 126.9033645
+    },
+    {
+      "normalizedName": "만수",
+      "name": "만수",
+      "lat": 37.4549681,
+      "lng": 126.7318593
+    },
+    {
+      "normalizedName": "망원",
+      "name": "망원",
+      "lat": 37.5560254,
+      "lng": 126.9101277
+    },
+    {
+      "normalizedName": "명학",
+      "name": "명학",
+      "lat": 37.3843939,
+      "lng": 126.9356089
+    },
+    {
+      "normalizedName": "모래내시장",
+      "name": "모래내시장",
+      "lat": 37.455858,
+      "lng": 126.7194799
+    },
+    {
+      "normalizedName": "목동",
+      "name": "목동",
+      "lat": 37.5261241,
+      "lng": 126.8645174
+    },
+    {
+      "normalizedName": "문래",
+      "name": "문래",
+      "lat": 37.5183839,
+      "lng": 126.8948726
+    },
+    {
+      "normalizedName": "문학경기장",
+      "name": "문학경기장",
+      "lat": 37.4351045,
+      "lng": 126.6977955
+    },
+    {
+      "normalizedName": "박물관",
+      "name": "박물관",
+      "lat": 37.4703629,
+      "lng": 126.5974595
+    },
+    {
+      "normalizedName": "박촌",
+      "name": "박촌",
+      "lat": 37.5536572,
+      "lng": 126.7448919
+    },
+    {
+      "normalizedName": "반월",
+      "name": "반월",
+      "lat": 37.3124221,
+      "lng": 126.9038361
+    },
+    {
+      "normalizedName": "발산",
+      "name": "발산",
+      "lat": 37.5584951,
+      "lng": 126.8374653
+    },
+    {
+      "normalizedName": "방화",
+      "name": "방화",
+      "lat": 37.5774043,
+      "lng": 126.812732
+    },
+    {
+      "normalizedName": "백석",
+      "name": "백석",
+      "lat": 37.6430359,
+      "lng": 126.7880378
+    },
+    {
+      "normalizedName": "백운",
+      "name": "백운",
+      "lat": 37.4831229,
+      "lng": 126.7071115
+    },
+    {
+      "normalizedName": "보라매",
+      "name": "보라매",
+      "lat": 37.4999284,
+      "lng": 126.9203764
+    },
+    {
+      "normalizedName": "보라매공원",
+      "name": "보라매공원",
+      "lat": 37.4952932,
+      "lng": 126.9181903
+    },
+    {
+      "normalizedName": "보라매병원",
+      "name": "보라매병원",
+      "lat": 37.4929641,
+      "lng": 126.9242732
+    },
+    {
+      "normalizedName": "봉천",
+      "name": "봉천",
+      "lat": 37.4823889,
+      "lng": 126.9419387
+    },
+    {
+      "normalizedName": "부개",
+      "name": "부개",
+      "lat": 37.4884914,
+      "lng": 126.7406058
+    },
+    {
+      "normalizedName": "부천",
+      "name": "부천",
+      "lat": 37.4841098,
+      "lng": 126.7827347
+    },
+    {
+      "normalizedName": "부천시청",
+      "name": "부천시청",
+      "lat": 37.5046451,
+      "lng": 126.7635965
+    },
+    {
+      "normalizedName": "부천종합운동장",
+      "name": "부천종합운동장",
+      "lat": 37.5054566,
+      "lng": 126.7972885
+    },
+    {
+      "normalizedName": "부평",
+      "name": "부평",
+      "lat": 37.489454,
+      "lng": 126.7245591
+    },
+    {
+      "normalizedName": "부평구청",
+      "name": "부평구청",
+      "lat": 37.5074652,
+      "lng": 126.721104
+    },
+    {
+      "normalizedName": "부평삼거리",
+      "name": "부평삼거리",
+      "lat": 37.4779093,
+      "lng": 126.7103571
+    },
+    {
+      "normalizedName": "부평시장",
+      "name": "부평시장",
+      "lat": 37.4983678,
+      "lng": 126.722289
+    },
+    {
+      "normalizedName": "불광",
+      "name": "불광",
+      "lat": 37.6108807,
+      "lng": 126.9296307
+    },
+    {
+      "normalizedName": "사우",
+      "name": "사우",
+      "lat": 37.6202004,
+      "lng": 126.719765
+    },
+    {
+      "normalizedName": "산곡",
+      "name": "산곡",
+      "lat": 37.5086974,
+      "lng": 126.7036926
+    },
+    {
+      "normalizedName": "산본",
+      "name": "산본",
+      "lat": 37.3580735,
+      "lng": 126.9330964
+    },
+    {
+      "normalizedName": "삼산체육관",
+      "name": "삼산체육관",
+      "lat": 37.506496,
+      "lng": 126.7423475
+    },
+    {
+      "normalizedName": "상도",
+      "name": "상도",
+      "lat": 37.503216,
+      "lng": 126.9476726
+    },
+    {
+      "normalizedName": "상동",
+      "name": "상동",
+      "lat": 37.5058355,
+      "lng": 126.7531743
+    },
+    {
+      "normalizedName": "상록수",
+      "name": "상록수",
+      "lat": 37.3028126,
+      "lng": 126.8667779
+    },
+    {
+      "normalizedName": "상수",
+      "name": "상수",
+      "lat": 37.5477577,
+      "lng": 126.9228923
+    },
+    {
+      "normalizedName": "새절",
+      "name": "새절",
+      "lat": 37.5916491,
+      "lng": 126.9137922
+    },
+    {
+      "normalizedName": "샛강",
+      "name": "샛강",
+      "lat": 37.517362,
+      "lng": 126.928282
+    },
+    {
+      "normalizedName": "서강대",
+      "name": "서강대",
+      "lat": 37.552353,
+      "lng": 126.9351841
+    },
+    {
+      "normalizedName": "서구청",
+      "name": "서구청",
+      "lat": 37.5439777,
+      "lng": 126.6768161
+    },
+    {
+      "normalizedName": "서부여성회관",
+      "name": "서부여성회관",
+      "lat": 37.4999808,
+      "lng": 126.6758231
+    },
+    {
+      "normalizedName": "서울대벤처타운",
+      "name": "서울대벤처타운",
+      "lat": 37.4720025,
+      "lng": 126.9337059
+    },
+    {
+      "normalizedName": "서울지방병무청",
+      "name": "서울지방병무청",
+      "lat": 37.5059628,
+      "lng": 126.9227236
+    },
+    {
+      "normalizedName": "서원",
+      "name": "서원",
+      "lat": 37.4782105,
+      "lng": 126.9330119
+    },
+    {
+      "normalizedName": "석남",
+      "name": "석남",
+      "lat": 37.5072835,
+      "lng": 126.6762126
+    },
+    {
+      "normalizedName": "석바위시장",
+      "name": "석바위시장",
+      "lat": 37.4576813,
+      "lng": 126.6922113
+    },
+    {
+      "normalizedName": "석수",
+      "name": "석수",
+      "lat": 37.4351332,
+      "lng": 126.9023059
+    },
+    {
+      "normalizedName": "석천사거리",
+      "name": "석천사거리",
+      "lat": 37.4567338,
+      "lng": 126.7107789
+    },
+    {
+      "normalizedName": "선부",
+      "name": "선부",
+      "lat": 37.3344566,
+      "lng": 126.8098989
+    },
+    {
+      "normalizedName": "선유도",
+      "name": "선유도",
+      "lat": 37.5378593,
+      "lng": 126.8939823
+    },
+    {
+      "normalizedName": "선학",
+      "name": "선학",
+      "lat": 37.4272405,
+      "lng": 126.6989894
+    },
+    {
+      "normalizedName": "센트럴파크",
+      "name": "센트럴파크",
+      "lat": 37.3935066,
+      "lng": 126.6345613
+    },
+    {
+      "normalizedName": "소래포구",
+      "name": "소래포구",
+      "lat": 37.400917,
+      "lng": 126.733525
+    },
+    {
+      "normalizedName": "소사",
+      "name": "소사",
+      "lat": 37.4827657,
+      "lng": 126.7955903
+    },
+    {
+      "normalizedName": "소새울",
+      "name": "소새울",
+      "lat": 37.4688742,
+      "lng": 126.7970994
+    },
+    {
+      "normalizedName": "송내",
+      "name": "송내",
+      "lat": 37.4877038,
+      "lng": 126.7528847
+    },
+    {
+      "normalizedName": "송도",
+      "name": "송도",
+      "lat": 37.4299382,
+      "lng": 126.6547155
+    },
+    {
+      "normalizedName": "송도달빛축제공원",
+      "name": "송도달빛축제공원",
+      "lat": 37.4068054,
+      "lng": 126.6261064
+    },
+    {
+      "normalizedName": "송정",
+      "name": "송정",
+      "lat": 37.5612772,
+      "lng": 126.8119428
+    },
+    {
+      "normalizedName": "수리산",
+      "name": "수리산",
+      "lat": 37.3504199,
+      "lng": 126.9255584
+    },
+    {
+      "normalizedName": "수색",
+      "name": "수색",
+      "lat": 37.5807582,
+      "lng": 126.8955531
+    },
+    {
+      "normalizedName": "숭의",
+      "name": "숭의",
+      "lat": 37.4607927,
+      "lng": 126.6382349
+    },
+    {
+      "normalizedName": "시민공원",
+      "name": "시민공원",
+      "lat": 37.4584104,
+      "lng": 126.6808299
+    },
+    {
+      "normalizedName": "시우",
+      "name": "시우",
+      "lat": 37.3131143,
+      "lng": 126.7956376
+    },
+    {
+      "normalizedName": "시흥능곡",
+      "name": "시흥능곡",
+      "lat": 37.3700847,
+      "lng": 126.8087509
+    },
+    {
+      "normalizedName": "시흥대야",
+      "name": "시흥대야",
+      "lat": 37.4503447,
+      "lng": 126.7931217
+    },
+    {
+      "normalizedName": "시흥시청",
+      "name": "시흥시청",
+      "lat": 37.382025,
+      "lng": 126.8058162
+    },
+    {
+      "normalizedName": "신검단중앙",
+      "name": "신검단중앙",
+      "lat": 37.6026764,
+      "lng": 126.6985265
+    },
+    {
+      "normalizedName": "신길",
+      "name": "신길",
+      "lat": 37.5166485,
+      "lng": 126.9187443
+    },
+    {
+      "normalizedName": "신길온천",
+      "name": "신길온천",
+      "lat": 37.3375382,
+      "lng": 126.7673001
+    },
+    {
+      "normalizedName": "신대방",
+      "name": "신대방",
+      "lat": 37.4875949,
+      "lng": 126.9133919
+    },
+    {
+      "normalizedName": "신대방삼거리",
+      "name": "신대방삼거리",
+      "lat": 37.499706,
+      "lng": 126.9282246
+    },
+    {
+      "normalizedName": "신도림",
+      "name": "신도림",
+      "lat": 37.5089397,
+      "lng": 126.8912262
+    },
+    {
+      "normalizedName": "신림",
+      "name": "신림",
+      "lat": 37.4842316,
+      "lng": 126.9296803
+    },
+    {
+      "normalizedName": "신목동",
+      "name": "신목동",
+      "lat": 37.544211,
+      "lng": 126.8831758
+    },
+    {
+      "normalizedName": "신방화",
+      "name": "신방화",
+      "lat": 37.5674973,
+      "lng": 126.8165921
+    },
+    {
+      "normalizedName": "신연수",
+      "name": "신연수",
+      "lat": 37.4180647,
+      "lng": 126.6939309
+    },
+    {
+      "normalizedName": "신정",
+      "name": "신정",
+      "lat": 37.5250413,
+      "lng": 126.8559699
+    },
+    {
+      "normalizedName": "신정네거리",
+      "name": "신정네거리",
+      "lat": 37.5199831,
+      "lng": 126.8530463
+    },
+    {
+      "normalizedName": "신중동",
+      "name": "신중동",
+      "lat": 37.5030388,
+      "lng": 126.7762325
+    },
+    {
+      "normalizedName": "신천",
+      "name": "신천",
+      "lat": 37.4393096,
+      "lng": 126.7867997
+    },
+    {
+      "normalizedName": "신촌",
+      "name": "신촌",
+      "lat": 37.5597815,
+      "lng": 126.9423581
+    },
+    {
+      "normalizedName": "신포",
+      "name": "신포",
+      "lat": 37.4682643,
+      "lng": 126.6248171
+    },
+    {
+      "normalizedName": "신풍",
+      "name": "신풍",
+      "lat": 37.5001667,
+      "lng": 126.9088751
+    },
+    {
+      "normalizedName": "신현",
+      "name": "신현",
+      "lat": 37.4095842,
+      "lng": 126.7878699
+    },
+    {
+      "normalizedName": "아라",
+      "name": "아라",
+      "lat": 37.5922592,
+      "lng": 126.7133006
+    },
+    {
+      "normalizedName": "아시아드경기장",
+      "name": "아시아드경기장",
+      "lat": 37.5515881,
+      "lng": 126.6771005
+    },
+    {
+      "normalizedName": "안산",
+      "name": "안산",
+      "lat": 37.3270474,
+      "lng": 126.7887966
+    },
+    {
+      "normalizedName": "안양",
+      "name": "안양",
+      "lat": 37.4016302,
+      "lng": 126.9228826
+    },
+    {
+      "normalizedName": "양천구청",
+      "name": "양천구청",
+      "lat": 37.512295,
+      "lng": 126.865945
+    },
+    {
+      "normalizedName": "양천향교",
+      "name": "양천향교",
+      "lat": 37.5684524,
+      "lng": 126.8412958
+    },
+    {
+      "normalizedName": "양촌",
+      "name": "양촌",
+      "lat": 37.6416413,
+      "lng": 126.6147983
+    },
+    {
+      "normalizedName": "양평",
+      "name": "양평",
+      "lat": 37.5256329,
+      "lng": 126.8861176
+    },
+    {
+      "normalizedName": "여의나루",
+      "name": "여의나루",
+      "lat": 37.5268526,
+      "lng": 126.9325288
+    },
+    {
+      "normalizedName": "여의도",
+      "name": "여의도",
+      "lat": 37.5216685,
+      "lng": 126.9243018
+    },
+    {
+      "normalizedName": "역곡",
+      "name": "역곡",
+      "lat": 37.4852186,
+      "lng": 126.8118113
+    },
+    {
+      "normalizedName": "역촌",
+      "name": "역촌",
+      "lat": 37.6060733,
+      "lng": 126.9227556
+    },
+    {
+      "normalizedName": "연수",
+      "name": "연수",
+      "lat": 37.4177947,
+      "lng": 126.6789669
+    },
+    {
+      "normalizedName": "연신내",
+      "name": "연신내",
+      "lat": 37.6189247,
+      "lng": 126.9211838
+    },
+    {
+      "normalizedName": "염창",
+      "name": "염창",
+      "lat": 37.5470335,
+      "lng": 126.8753972
+    },
+    {
+      "normalizedName": "영등포",
+      "name": "영등포",
+      "lat": 37.515363,
+      "lng": 126.9069345
+    },
+    {
+      "normalizedName": "영등포구청",
+      "name": "영등포구청",
+      "lat": 37.5240181,
+      "lng": 126.8963369
+    },
+    {
+      "normalizedName": "영등포시장",
+      "name": "영등포시장",
+      "lat": 37.5226934,
+      "lng": 126.9051415
+    },
+    {
+      "normalizedName": "영종",
+      "name": "영종",
+      "lat": 37.5118887,
+      "lng": 126.524599
+    },
+    {
+      "normalizedName": "예술회관",
+      "name": "예술회관",
+      "lat": 37.449506,
+      "lng": 126.7009761
+    },
+    {
+      "normalizedName": "오류동",
+      "name": "오류동",
+      "lat": 37.4943466,
+      "lng": 126.8445367
+    },
+    {
+      "normalizedName": "오목교",
+      "name": "오목교",
+      "lat": 37.5245648,
+      "lng": 126.8751222
+    },
+    {
+      "normalizedName": "오이도",
+      "name": "오이도",
+      "lat": 37.3619245,
+      "lng": 126.7384943
+    },
+    {
+      "normalizedName": "온수",
+      "name": "온수",
+      "lat": 37.4922986,
+      "lng": 126.823534
+    },
+    {
+      "normalizedName": "완정",
+      "name": "완정",
+      "lat": 37.5928725,
+      "lng": 126.6728745
+    },
+    {
+      "normalizedName": "왕길",
+      "name": "왕길",
+      "lat": 37.5951775,
+      "lng": 126.6423769
+    },
+    {
+      "normalizedName": "용유",
+      "name": "용유",
+      "lat": 37.4248235,
+      "lng": 126.4236166
+    },
+    {
+      "normalizedName": "우장산",
+      "name": "우장산",
+      "lat": 37.5488943,
+      "lng": 126.8363227
+    },
+    {
+      "normalizedName": "운서",
+      "name": "운서",
+      "lat": 37.4928006,
+      "lng": 126.4937678
+    },
+    {
+      "normalizedName": "운연",
+      "name": "운연",
+      "lat": 37.4396565,
+      "lng": 126.7596323
+    },
+    {
+      "normalizedName": "워터파크",
+      "name": "워터파크",
+      "lat": 37.4292963,
+      "lng": 126.4342026
+    },
+    {
+      "normalizedName": "원시",
+      "name": "원시",
+      "lat": 37.3025572,
+      "lng": 126.7867849
+    },
+    {
+      "normalizedName": "원인재",
+      "name": "원인재",
+      "lat": 37.4126256,
+      "lng": 126.6881558
+    },
+    {
+      "normalizedName": "원종",
+      "name": "원종",
+      "lat": 37.5238457,
+      "lng": 126.8048614
+    },
+    {
+      "normalizedName": "월곶",
+      "name": "월곶",
+      "lat": 37.3917938,
+      "lng": 126.7427001
+    },
+    {
+      "normalizedName": "월드컵경기장",
+      "name": "월드컵경기장",
+      "lat": 37.5701918,
+      "lng": 126.8993179
+    },
+    {
+      "normalizedName": "월미공원",
+      "name": "월미공원",
+      "lat": 37.4763533,
+      "lng": 126.6061084
+    },
+    {
+      "normalizedName": "월미문화의거리",
+      "name": "월미문화의거리",
+      "lat": 37.4773468,
+      "lng": 126.599203
+    },
+    {
+      "normalizedName": "월미바다",
+      "name": "월미바다",
+      "lat": 37.4754349,
+      "lng": 126.616568
+    },
+    {
+      "normalizedName": "응암",
+      "name": "응암",
+      "lat": 37.5984296,
+      "lng": 126.9155283
+    },
+    {
+      "normalizedName": "의왕",
+      "name": "의왕",
+      "lat": 37.3209981,
+      "lng": 126.9480341
+    },
+    {
+      "normalizedName": "이대",
+      "name": "이대",
+      "lat": 37.5567733,
+      "lng": 126.9458346
+    },
+    {
+      "normalizedName": "인천",
+      "name": "인천",
+      "lat": 37.4766821,
+      "lng": 126.6168874
+    },
+    {
+      "normalizedName": "인천가좌",
+      "name": "인천가좌",
+      "lat": 37.4904588,
+      "lng": 126.6752387
+    },
+    {
+      "normalizedName": "인천공항1터미널",
+      "name": "인천공항1터미널",
+      "lat": 37.447159,
+      "lng": 126.4527808
+    },
+    {
+      "normalizedName": "인천공항2터미널",
+      "name": "인천공항2터미널",
+      "lat": 37.4689424,
+      "lng": 126.4334747
+    },
+    {
+      "normalizedName": "인천논현",
+      "name": "인천논현",
+      "lat": 37.4006866,
+      "lng": 126.7225648
+    },
+    {
+      "normalizedName": "인천대공원",
+      "name": "인천대공원",
+      "lat": 37.4485494,
+      "lng": 126.7528149
+    },
+    {
+      "normalizedName": "인천대입구",
+      "name": "인천대입구",
+      "lat": 37.386116,
+      "lng": 126.6394474
+    },
+    {
+      "normalizedName": "인천시청",
+      "name": "인천시청",
+      "lat": 37.4572915,
+      "lng": 126.7020849
+    },
+    {
+      "normalizedName": "인천터미널",
+      "name": "인천터미널",
+      "lat": 37.4419457,
+      "lng": 126.6997157
+    },
+    {
+      "normalizedName": "인하대",
+      "name": "인하대",
+      "lat": 37.4482473,
+      "lng": 126.6497844
+    },
+    {
+      "normalizedName": "임학",
+      "name": "임학",
+      "lat": 37.5451276,
+      "lng": 126.7387707
+    },
+    {
+      "normalizedName": "작전",
+      "name": "작전",
+      "lat": 37.5303129,
+      "lng": 126.7225307
+    },
+    {
+      "normalizedName": "장기",
+      "name": "장기",
+      "lat": 37.6440265,
+      "lng": 126.6690138
+    },
+    {
+      "normalizedName": "장기주차장",
+      "name": "장기주차장",
+      "lat": 37.4439313,
+      "lng": 126.4555716
+    },
+    {
+      "normalizedName": "장승배기",
+      "name": "장승배기",
+      "lat": 37.5050172,
+      "lng": 126.9392793
+    },
+    {
+      "normalizedName": "정왕",
+      "name": "정왕",
+      "lat": 37.3518096,
+      "lng": 126.7429544
+    },
+    {
+      "normalizedName": "제1터미널",
+      "name": "제1터미널",
+      "lat": 37.449692,
+      "lng": 126.4504519
+    },
+    {
+      "normalizedName": "제2터미널",
+      "name": "제2터미널",
+      "lat": 37.4661319,
+      "lng": 126.4358904
+    },
+    {
+      "normalizedName": "제물포",
+      "name": "제물포",
+      "lat": 37.4668149,
+      "lng": 126.6569848
+    },
+    {
+      "normalizedName": "주안",
+      "name": "주안",
+      "lat": 37.4650814,
+      "lng": 126.6806313
+    },
+    {
+      "normalizedName": "주안국가산단",
+      "name": "주안국가산단",
+      "lat": 37.4739903,
+      "lng": 126.6811593
+    },
+    {
+      "normalizedName": "중동",
+      "name": "중동",
+      "lat": 37.4867775,
+      "lng": 126.7639671
+    },
+    {
+      "normalizedName": "중앙",
+      "name": "중앙",
+      "lat": 37.3160302,
+      "lng": 126.8385294
+    },
+    {
+      "normalizedName": "증미",
+      "name": "증미",
+      "lat": 37.5575102,
+      "lng": 126.8618185
+    },
+    {
+      "normalizedName": "증산",
+      "name": "증산",
+      "lat": 37.5841441,
+      "lng": 126.9099118
+    },
+    {
+      "normalizedName": "지식정보단지",
+      "name": "지식정보단지",
+      "lat": 37.3774709,
+      "lng": 126.645923
+    },
+    {
+      "normalizedName": "지축",
+      "name": "지축",
+      "lat": 37.6481183,
+      "lng": 126.9139297
+    },
+    {
+      "normalizedName": "천왕",
+      "name": "천왕",
+      "lat": 37.4863668,
+      "lng": 126.8389218
+    },
+    {
+      "normalizedName": "철산",
+      "name": "철산",
+      "lat": 37.4760012,
+      "lng": 126.8675973
+    },
+    {
+      "normalizedName": "청라국제도시",
+      "name": "청라국제도시",
+      "lat": 37.5564451,
+      "lng": 126.6246922
+    },
+    {
+      "normalizedName": "초지",
+      "name": "초지",
+      "lat": 37.3198402,
+      "lng": 126.8078802
+    },
+    {
+      "normalizedName": "춘의",
+      "name": "춘의",
+      "lat": 37.5037314,
+      "lng": 126.7872014
+    },
+    {
+      "normalizedName": "캠퍼스타운",
+      "name": "캠퍼스타운",
+      "lat": 37.3881737,
+      "lng": 126.6618928
+    },
+    {
+      "normalizedName": "탑승동",
+      "name": "탑승동",
+      "lat": 37.4558762,
+      "lng": 126.4449946
+    },
+    {
+      "normalizedName": "테크노파크",
+      "name": "테크노파크",
+      "lat": 37.3823022,
+      "lng": 126.6562543
+    },
+    {
+      "normalizedName": "파라다이스시티",
+      "name": "파라다이스시티",
+      "lat": 37.4370969,
+      "lng": 126.4599193
+    },
+    {
+      "normalizedName": "풍무",
+      "name": "풍무",
+      "lat": 37.612374,
+      "lng": 126.7324628
+    },
+    {
+      "normalizedName": "하중",
+      "name": "하중",
+      "lat": 37.3964251,
+      "lng": 126.7962528
+    },
+    {
+      "normalizedName": "한국항공대",
+      "name": "한국항공대",
+      "lat": 37.6027807,
+      "lng": 126.8683965
+    },
+    {
+      "normalizedName": "한대앞",
+      "name": "한대앞",
+      "lat": 37.3097347,
+      "lng": 126.8536143
+    },
+    {
+      "normalizedName": "합동청사",
+      "name": "합동청사",
+      "lat": 37.4405118,
+      "lng": 126.4586023
+    },
+    {
+      "normalizedName": "합정",
+      "name": "합정",
+      "lat": 37.5493558,
+      "lng": 126.9136561
+    },
+    {
+      "normalizedName": "행신",
+      "name": "행신",
+      "lat": 37.612035,
+      "lng": 126.834058
+    },
+    {
+      "normalizedName": "호구포",
+      "name": "호구포",
+      "lat": 37.4016902,
+      "lng": 126.7086388
+    },
+    {
+      "normalizedName": "홍대입구",
+      "name": "홍대입구",
+      "lat": 37.5573487,
+      "lng": 126.926908
+    },
+    {
+      "normalizedName": "홍제",
+      "name": "홍제",
+      "lat": 37.5886894,
+      "lng": 126.9442528
+    },
+    {
+      "normalizedName": "화곡",
+      "name": "화곡",
+      "lat": 37.5416728,
+      "lng": 126.840397
+    },
+    {
+      "normalizedName": "화정",
+      "name": "화정",
+      "lat": 37.6346457,
+      "lng": 126.832577
+    }
+  ]
+}
