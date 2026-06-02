@@ -2,17 +2,23 @@
 
 import { Suspense, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import {
-  BookOpen,
+  AlertTriangle,
+  BarChart3,
   Building2,
-  CheckCircle2,
+  Calendar,
+  ChevronDown,
   ClipboardCheck,
+  Database,
   Download,
   FileText,
   Route,
+  Share2,
+  Shield,
   ShieldCheck,
-  Sparkles,
   Store,
+  TrendingUp,
   Users,
 } from 'lucide-react'
 import IncheonHeader from '@/components/incheon/IncheonHeader'
@@ -111,26 +117,11 @@ function riskLevelText(result: IncheonAnalyzeResponse | null) {
   return '보통'
 }
 
-function qualitativeSignal(level: 'high' | 'medium' | 'low' | 'unknown') {
-  if (level === 'high') return '높음'
-  if (level === 'medium') return '보통'
-  if (level === 'low') return '낮음'
-  return '직접 확인'
-}
-
 function riskSignal(score: number | null) {
   const band = riskBand(score)
   if (band === 'high') return '높음'
   if (band === 'medium') return '보통'
   if (band === 'low') return '낮음'
-  return '정보 부족'
-}
-
-function positiveSignalFromRisk(score: number | null) {
-  const band = riskBand(score)
-  if (band === 'high') return '낮음'
-  if (band === 'medium') return '보통'
-  if (band === 'low') return '높음'
   return '정보 부족'
 }
 
@@ -162,47 +153,6 @@ function buildInterpretationRows(result: IncheonAnalyzeResponse) {
   })
 }
 
-function buildLivingSignals(result: IncheonAnalyzeResponse, rows: ReturnType<typeof buildInterpretationRows>) {
-  const byKey = Object.fromEntries(rows.map((row) => [row.key, row]))
-  const education = result.lifeDNA.educationFamily
-
-  return [
-    {
-      label: '교육·가족 중심의 동네',
-      status: qualitativeSignal(education.level),
-      body: '학교와 어린이집이 가깝지만, 학생과 학부모가 실제로 우리 매장 앞을 지나가는지는 직접 확인해 보세요.',
-    },
-    {
-      label: '고객이 찾아오기 쉬운 정도',
-      status: positiveSignalFromRisk(byKey.transit?.score ?? null),
-      body: byKey.transit?.body ?? '교통과 보행 접근성을 확인해야 합니다.',
-    },
-    {
-      label: '주변 매장들과의 경쟁',
-      status: byKey.competition?.status ?? '정보 부족',
-      body: byKey.competition?.body ?? '비슷한 매장 밀집 구조를 확인해야 합니다.',
-    },
-    {
-      label: '비용 부담',
-      status: byKey.cost?.status ?? '정보 부족',
-      body: byKey.cost?.body ?? '임대료·공실률 기반 비용 부담을 확인해야 합니다.',
-    },
-  ]
-}
-
-function statusTone(status: string) {
-  if (status === '높음' || status === '위험') {
-    return 'bg-[#FFF1E8] text-[#F06A1A]'
-  }
-  if (status === '주의' || status === '보통') {
-    return 'bg-[#EEF5FF] text-[#0B66FF]'
-  }
-  if (status === '낮음') {
-    return 'bg-[#ECFDF3] text-[#1C9B5F]'
-  }
-  return 'bg-[#F2F5F9] text-[#6B7A90]'
-}
-
 function scoreLevel(score: number | null) {
   if (score === null) return { text: '정보 부족', color: '#6B7A90', bars: 2, caption: '직접 확인' }
   const bars = Math.round(score / 10)
@@ -212,20 +162,12 @@ function scoreLevel(score: number | null) {
 }
 
 function RiskPanel({ result }: { result: IncheonAnalyzeResponse }) {
-  const rows = metricConfig.map((item) => {
-    const score = result.risk.scoreBreakdown[item.key]
-    const excluded = result.risk.excludedMetrics.includes(item.key)
-    const degraded = result.risk.degradedMetrics.includes(item.key)
-    const state = deriveMetricState(score, { excluded, degraded, confidence: result.risk.confidence })
-    return { ...item, score, state }
-  })
-  const survival = result.risk.survival
   const gaugeScore = result.risk.score ?? 0
 
   return (
-    <section className="h-full border border-[#3845A0] bg-[#06112A]/92 p-8 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+    <section className="flex h-full flex-col justify-center border border-[#3845A0] bg-[#06112A]/92 p-8 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
       <h2 className="text-center text-2xl font-black">예상 위험도</h2>
-      <div className="mt-5 flex items-center justify-center gap-5">
+      <div className="mt-6 flex items-center justify-center gap-5">
         <span className="bg-[linear-gradient(180deg,#FFB14A,#FF651F)] bg-clip-text text-8xl font-black leading-none text-transparent">
           {result.risk.score ?? '—'}
         </span>
@@ -234,14 +176,14 @@ function RiskPanel({ result }: { result: IncheonAnalyzeResponse }) {
         </span>
       </div>
 
-      <div className="mt-4 flex items-center justify-center gap-2 text-sm font-bold">
+      <div className="mt-5 flex items-center justify-center gap-2 text-sm font-bold">
         <span className="bg-white/10 px-3 py-1 text-white/78">신뢰도 {confidenceLabel(result.risk.confidence ?? 'medium')}</span>
         {result.risk.degradedMetrics.length > 0 && (
           <span className="bg-[#3a2a12] px-3 py-1 text-[#FFC780]">일부 데이터 제한</span>
         )}
       </div>
 
-      <div className="mt-7">
+      <div className="mt-8">
         <div className="relative h-2 bg-[linear-gradient(90deg,#47D78D_0%,#47D78D_24%,#2D8CFF_24%,#2D8CFF_50%,#FDBA3B_50%,#FDBA3B_74%,#FF4B4B_74%,#FF4B4B_100%)]">
           <span className="absolute top-1/2 h-7 w-7 -translate-y-1/2 border-4 border-white bg-[#FF8A1F]" style={{ left: `${Math.min(92, gaugeScore)}%` }} />
         </div>
@@ -253,70 +195,9 @@ function RiskPanel({ result }: { result: IncheonAnalyzeResponse }) {
         </div>
       </div>
 
-      <p className="mt-7 border-b border-white/12 pb-7 text-center text-lg font-bold text-white/84">
-        4대 요인은 모두 높을수록 위험합니다. (복합 위험 신호는 참고용)
+      <p className="mt-8 border-t border-white/12 pt-6 text-center text-sm font-semibold leading-6 text-white/64">
+        0~100 종합 위험 점수입니다. 높을수록 위험하며,<br className="hidden sm:block" /> 세부 지표는 아래 진단 결과에서 확인하세요.
       </p>
-
-      <div className="mt-7 space-y-5">
-        {rows.map((row) => {
-          const level = scoreLevel(row.score)
-          const filledBars = row.score === null ? 0 : Math.max(0, Math.min(10, level.bars))
-          const tag = metricStateTag(row.state)
-          const available = row.state.status === 'available' || row.state.status === 'degraded'
-          const Icon = row.icon
-          return (
-            <div key={row.key} className="grid gap-3 border-t border-white/10 pt-4 first:border-t-0 first:pt-0 sm:grid-cols-[42px_minmax(0,1fr)_44px] sm:items-center">
-              <span className="flex h-9 w-9 items-center justify-center bg-white/8">
-                <Icon className="h-5 w-5" style={{ color: row.color }} />
-              </span>
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  <span className="text-lg font-black">{row.label}</span>
-                  {available ? (
-                    <span className="text-sm font-black" style={{ color: level.color }}>
-                      {level.text}
-                    </span>
-                  ) : (
-                    <span className="text-sm font-black text-white/50">{tag}</span>
-                  )}
-                  {available && tag ? (
-                    <span className="bg-[#3a2a12] px-2 py-0.5 text-xs font-bold text-[#FFC780]">{tag}</span>
-                  ) : (
-                    available && <span className="text-xs font-bold text-white/45">{level.caption}</span>
-                  )}
-                </div>
-                <p className="mt-1 text-sm font-semibold text-white/58">{row.body}</p>
-                <div className="mt-3 flex h-5 gap-1.5" aria-label={`${row.label} ${metricScoreText(row.state)}`}>
-                  {Array.from({ length: 10 }).map((_, index) => (
-                    <span
-                      key={index}
-                      className="min-w-0 flex-1"
-                      style={{ backgroundColor: index < filledBars ? row.color : 'rgba(255,255,255,0.12)' }}
-                    />
-                  ))}
-                </div>
-              </div>
-              <span className="text-right text-lg font-black">{metricScoreText(row.state)}</span>
-            </div>
-          )
-        })}
-      </div>
-
-      <div className="mt-7 grid gap-3 border-t border-white/10 pt-5 sm:grid-cols-[42px_minmax(0,1fr)_44px] sm:items-center">
-        <span className="flex h-9 w-9 items-center justify-center bg-white/8">
-          <ShieldCheck className="h-5 w-5 text-[#47C978]" />
-        </span>
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <span className="text-lg font-black">{survival.label}</span>
-            <span className="bg-white/10 px-2 py-0.5 text-xs font-bold text-white/60">종합 점수 미반영 · 참고</span>
-          </div>
-          <p className="mt-1 text-sm font-semibold text-white/58">
-            경쟁·비용·접근성을 조합한 참고 신호입니다. 실제 폐업률 데이터가 아닙니다.
-          </p>
-        </div>
-        <span className="text-right text-lg font-black text-white/80">{survival.score}</span>
-      </div>
     </section>
   )
 }
@@ -376,135 +257,290 @@ function verdictTone(level: IncheonAnalyzeResponse['risk']['level']) {
   return '#1C9B5F'
 }
 
+function severityChip(score: number | null): { text: string; cls: string } {
+  if (score === null) return { text: '정보 부족', cls: 'bg-[#F1F4F8] text-[#6B7A90]' }
+  if (score >= 67) return { text: '높음', cls: 'bg-[#FFF1E8] text-[#EF6A12]' }
+  if (score >= 45) return { text: '보통', cls: 'bg-[#EAF2FF] text-[#0B66FF]' }
+  return { text: '낮음', cls: 'bg-[#EAFBF1] text-[#1C9B5F]' }
+}
+
+function actionChip(score: number | null): { text: string; cls: string } {
+  if (score === null) return { text: '데이터 확인', cls: 'bg-[#F1F4F8] text-[#6B7A90]' }
+  if (score >= 67) return { text: '우선 확인', cls: 'bg-[#FFF1E8] text-[#EF6A12]' }
+  if (score >= 45) return { text: '확인 권장', cls: 'bg-[#EAF2FF] text-[#0B66FF]' }
+  return { text: '양호', cls: 'bg-[#EAFBF1] text-[#1C9B5F]' }
+}
+
+function lifeChip(level: IncheonAnalyzeResponse['lifeDNA']['educationFamily']['level']): { text: string; cls: string } {
+  if (level === 'high') return { text: '양호', cls: 'bg-[#EAFBF1] text-[#1C9B5F]' }
+  if (level === 'medium') return { text: '보통', cls: 'bg-[#EAF2FF] text-[#0B66FF]' }
+  if (level === 'low') return { text: '낮음', cls: 'bg-[#F1F4F8] text-[#6B7A90]' }
+  return { text: '정보 부족', cls: 'bg-[#F1F4F8] text-[#6B7A90]' }
+}
+
+const confChip: Record<string, string> = {
+  높음: 'bg-[#EAFBF1] text-[#1C9B5F]',
+  중간: 'bg-[#EAF2FF] text-[#0B66FF]',
+  낮음: 'bg-[#FFF1E8] text-[#EF6A12]',
+}
+
 function ResultDashboard({
   result,
   rows,
-  signals,
 }: {
   result: IncheonAnalyzeResponse
   rows: ReturnType<typeof buildInterpretationRows>
-  signals: ReturnType<typeof buildLivingSignals>
 }) {
-  const rankedRows = [...rows]
-    .filter((row) => row.score !== null)
-    .sort((a, b) => (b.score ?? -1) - (a.score ?? -1))
-  const topRows = rankedRows.slice(0, 2)
-  const fieldQuestions = [
-    ...result.cards.fieldChecks,
-    '점포 전면 가시성, 간판 노출, 주차·배달 여건을 체크하세요.',
-  ].slice(0, 5)
+  const [showAllSources, setShowAllSources] = useState(false)
   const tone = verdictTone(result.risk.level)
+  const conf = confidenceLabel(result.risk.confidence ?? 'medium')
+
+  // 지표 카드(글랜스용) — 점수에 반영되는 4개
+  const metricCards = metricConfig.map((item) => {
+    const score = result.risk.scoreBreakdown[item.key]
+    const excluded = result.risk.excludedMetrics.includes(item.key)
+    const degraded = result.risk.degradedMetrics.includes(item.key)
+    const state = deriveMetricState(score, { excluded, degraded, confidence: result.risk.confidence })
+    return { ...item, score, state }
+  })
+  // 핵심 위험 요인(왜+조치) — 상위 3개로 우선순위화
+  const rankedRows = [...rows].filter((row) => row.score !== null).sort((a, b) => (b.score ?? -1) - (a.score ?? -1))
+  const topRows = rankedRows.slice(0, 3)
+  const fieldQuestions = [...result.cards.fieldChecks, '점포 전면 가시성, 간판 노출, 주차·배달 여건을 체크하세요.'].slice(0, 5)
+  const baseDate = result.auxiliary?.datasetGeneratedAt
+    ? new Date(result.auxiliary.datasetGeneratedAt).toLocaleDateString('ko-KR')
+    : '—'
+
+  const survival = result.risk.survival
+  const costAvailable = result.risk.scoreBreakdown.cost !== null
+  const related = [
+    { icon: ShieldCheck, title: '생활권 특성', chip: lifeChip(result.lifeDNA.educationFamily.level), body: result.lifeDNA.educationFamily.summary },
+    { icon: Share2, title: '복합 위험 신호', chip: severityChip(survival.score), body: '경쟁·비용·접근성을 조합한 참고 신호입니다. 종합 점수에는 반영하지 않습니다.' },
+    { icon: TrendingUp, title: '비용 데이터', chip: costAvailable ? { text: '확보', cls: 'bg-[#EAFBF1] text-[#1C9B5F]' } : { text: '정보 수집 중', cls: 'bg-[#F1F4F8] text-[#6B7A90]' }, body: result.lifeDNA.costPressure.summary },
+    { icon: Database, title: '데이터 신뢰도', chip: { text: conf, cls: confChip[conf] ?? confChip['중간'] }, body: `공공데이터 ${result.sources.length}종을 기준으로 신뢰도를 산정했습니다.` },
+  ]
+
+  const stats = [
+    { icon: ShieldCheck, label: '데이터 신뢰도', value: conf },
+    { icon: FileText, label: '참고자료 수', value: `${result.sources.length}건` },
+    { icon: BarChart3, label: '수집 지표 수', value: `${metricCards.length + 1}개` },
+    { icon: ClipboardCheck, label: '적용 진단 기준', value: `${metricCards.filter((m) => m.score !== null).length}개` },
+  ]
+
+  const visibleSources = showAllSources ? result.sources : result.sources.slice(0, 6)
 
   return (
-    <div className="space-y-5">
-      {/* 분석 요약 배너 */}
-      <section className="overflow-hidden border border-[#D7E1F0] bg-white shadow-[0_12px_30px_rgba(8,26,52,0.05)]">
-        <div className="grid md:grid-cols-[1.25fr_1fr]">
-          <div className="p-7 md:p-9">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#EEF5FF] px-3 py-1 text-xs font-black text-[#2F52D9]">
-              <Sparkles className="h-4 w-4" strokeWidth={2} /> 분석 요약
-            </span>
-            <h2 className="mt-5 text-[34px] font-black leading-[1.12] tracking-[-0.03em] text-[#061B3A] md:text-[40px]">
-              종합 위험 <span style={{ color: tone }}>{riskLevelText(result)}</span> 단계
-            </h2>
-            <p className="mt-4 max-w-[48ch] text-base font-semibold leading-7 text-[#53657E]">
-              {summarySentence(result, topRows)}
-            </p>
+    <div className="border border-[#E3EAF4] bg-[#FBFCFE] p-5 shadow-[0_18px_50px_rgba(8,26,52,0.06)] md:p-7">
+      {/* 헤더 바 */}
+      <div className="flex items-center justify-between gap-4 pb-5">
+        <div className="flex items-center gap-2.5">
+          <Shield className="h-6 w-6 text-[#0B66FF]" strokeWidth={2} fill="#0B66FF" fillOpacity={0.12} />
+          <h2 className="text-xl font-black tracking-[-0.02em] text-[#0E1F38] md:text-2xl">종합 위험 진단 결과</h2>
+        </div>
+        <span className="inline-flex items-center gap-1.5 text-sm font-bold text-[#6B7A90]">
+          <Calendar className="h-4 w-4" /> 기준일 {baseDate}
+        </span>
+      </div>
+
+      <div className="space-y-4">
+        {/* Hero: 종합 단계 + 지표 카드 */}
+        <section className="grid gap-4 lg:grid-cols-[1.05fr_1.35fr]">
+          <div className="relative flex items-center gap-6 overflow-hidden rounded-2xl border border-[#FCE3CF] bg-[linear-gradient(135deg,#FFF6EE,#FFFBF7)] p-7">
+            <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-full bg-[#FFE7D3]">
+              <AlertTriangle className="h-12 w-12" style={{ color: tone }} strokeWidth={2} />
+            </div>
+            <div>
+              <p className="text-base font-black text-[#3A4A63]">종합 위험</p>
+              <p className="mt-1 text-[40px] font-black leading-none tracking-[-0.03em]" style={{ color: tone }}>
+                {riskLevelText(result)} 단계
+              </p>
+              <p className="mt-3 max-w-[34ch] text-sm font-semibold leading-6 text-[#5A6B83]">
+                {summarySentence(result, topRows)}
+              </p>
+            </div>
           </div>
-          <div className="border-t border-[#E6EDF6] bg-[#F7FAFF] p-7 md:border-l md:border-t-0">
-            <p className="text-xs font-black uppercase tracking-wide text-[#6B7A90]">가장 큰 위험 요인</p>
-            <div className="mt-4 space-y-4">
+
+          <div className="grid grid-cols-2 gap-4">
+            {metricCards.map((m) => {
+              const lvl = scoreLevel(m.score)
+              const tag = metricStateTag(m.state)
+              const Icon = m.icon
+              return (
+                <div key={m.key} className="rounded-2xl border border-[#E3EAF4] bg-white p-5 shadow-[0_8px_22px_rgba(8,26,52,0.04)]">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-md" style={{ backgroundColor: `${m.color}1A` }}>
+                      <Icon className="h-4 w-4" style={{ color: m.color }} strokeWidth={2} />
+                    </span>
+                    <span className="text-sm font-black text-[#0E1F38]">{m.label}</span>
+                  </div>
+                  <p className="mt-3 text-[32px] font-black leading-none tabular-nums" style={{ color: lvl.color }}>
+                    {metricScoreText(m.state)}
+                    {tag && <span className="ml-2 align-middle text-xs font-bold text-[#9AA8BA]">{tag}</span>}
+                  </p>
+                  <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#EDF2F8]">
+                    <div className="h-full rounded-full" style={{ width: `${Math.min(100, m.score ?? 0)}%`, background: lvl.color }} />
+                  </div>
+                  <div className="mt-1.5 flex justify-between text-[10px] font-bold text-[#AEB9C8]">
+                    <span>0</span>
+                    <span>100</span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </section>
+
+        {/* 핵심 위험 요인 + 현장 체크리스트 */}
+        <section className="grid gap-4 lg:grid-cols-2">
+          <div className="rounded-2xl border border-[#E3EAF4] bg-white p-6 shadow-[0_8px_22px_rgba(8,26,52,0.04)]">
+            <span className="inline-flex items-center gap-2 text-base font-black text-[#0E1F38]">
+              <BarChart3 className="h-5 w-5 text-[#F06A1A]" strokeWidth={2} /> 핵심 위험 요인
+            </span>
+            <div className="mt-5 space-y-3">
               {topRows.map((row, index) => {
-                const lvl = scoreLevel(row.score)
+                const sev = severityChip(row.score)
+                const act = actionChip(row.score)
+                const Icon = metricConfig.find((m) => m.key === row.key)?.icon ?? Store
                 return (
-                  <div key={row.key}>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-black text-[#061B3A]">{index + 1}. {row.label}</span>
-                      <span className="text-sm font-black" style={{ color: lvl.color }}>{row.score}</span>
+                  <div key={row.key} className="flex gap-3 rounded-xl border border-[#EDF2F8] p-4">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#FF6B1D] text-xs font-black text-white">
+                      {index + 1}
+                    </span>
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[#F4F7FB]">
+                      <Icon className="h-4 w-4 text-[#53657E]" strokeWidth={2} />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-sm font-black text-[#0E1F38]">{row.label}</span>
+                        <span className={`px-2 py-0.5 text-[11px] font-black ${act.cls}`}>{act.text}</span>
+                      </div>
+                      <p className="mt-1 text-xs font-semibold leading-5 text-[#6B7A90]">{row.body}</p>
                     </div>
-                    <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-[#E6EDF6]">
-                      <div className="h-full rounded-full" style={{ width: `${Math.min(100, row.score ?? 0)}%`, background: lvl.color }} />
+                    <div className="shrink-0 text-right">
+                      <p className="text-lg font-black tabular-nums" style={{ color: severityChip(row.score).text === '높음' ? '#EF6A12' : '#0E1F38' }}>{row.score}<span className="text-xs">점</span></p>
+                      <span className={`mt-1 inline-block px-2 py-0.5 text-[11px] font-black ${sev.cls}`}>{sev.text}</span>
                     </div>
                   </div>
                 )
               })}
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* 핵심 위험 요인 */}
-      <section className="border border-[#D7E1F0] bg-white p-7 shadow-[0_12px_30px_rgba(8,26,52,0.04)] md:p-9">
-        <div className="flex items-center justify-between gap-4">
-          <span className="inline-flex items-center gap-2 text-base font-black text-[#061B3A]">
-            <FileText className="h-5 w-5 text-[#F06A1A]" strokeWidth={1.9} /> 핵심 위험 요인
-          </span>
-          <span className="text-xs font-bold text-[#9AA8BA]">막대가 길수록 위험</span>
-        </div>
-        <div className="mt-6 space-y-5">
-          {rankedRows.map((row, index) => {
-            const lvl = scoreLevel(row.score)
-            const priority = topRows.some((topRow) => topRow.key === row.key)
-            return (
-              <div key={row.key} className="grid grid-cols-[28px_minmax(0,1fr)_auto] items-start gap-4">
-                <span className="mt-0.5 flex h-7 w-7 items-center justify-center rounded-full bg-[#F2F5F9] text-xs font-black text-[#53657E]">
-                  {index + 1}
-                </span>
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-sm font-black text-[#061B3A]">{row.label}</span>
-                    <span className={`px-2 py-0.5 text-[11px] font-black ${statusTone(lvl.text)}`}>{lvl.text}</span>
-                    {priority && <span className="bg-[#FFF1E8] px-2 py-0.5 text-[11px] font-black text-[#F06A1A]">우선 확인</span>}
-                  </div>
-                  <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-[#EDF2F8]">
-                    <div className="h-full rounded-full" style={{ width: `${Math.min(100, row.score ?? 0)}%`, background: lvl.color }} />
-                  </div>
-                  <p className="mt-2 text-xs font-semibold leading-5 text-[#6B7A90]">{row.body}</p>
+          <div className="rounded-2xl border border-[#E3EAF4] bg-white p-6 shadow-[0_8px_22px_rgba(8,26,52,0.04)]">
+            <span className="inline-flex items-center gap-2 text-base font-black text-[#0E1F38]">
+              <ClipboardCheck className="h-5 w-5 text-[#0B66FF]" strokeWidth={2} /> 계약 전 현장 체크리스트
+            </span>
+            <div className="mt-5 space-y-2.5">
+              {fieldQuestions.map((question, index) => (
+                <div key={question} className="flex items-start gap-3 rounded-xl border border-[#EDF2F8] p-3.5">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-[#EAF2FF] text-xs font-black text-[#0B66FF]">
+                    {index + 1}
+                  </span>
+                  <p className="text-sm font-semibold leading-6 text-[#33445E]">{question}</p>
                 </div>
-                <span className="text-2xl font-black tabular-nums" style={{ color: lvl.color }}>{row.score}</span>
-              </div>
-            )
-          })}
-        </div>
-      </section>
-
-      {/* 생활권 해석 + 현장 체크리스트 */}
-      <div className="grid gap-5 lg:grid-cols-2">
-        <section className="border border-[#D7E1F0] bg-white p-7 shadow-[0_12px_30px_rgba(8,26,52,0.04)] md:p-8">
-          <span className="inline-flex items-center gap-2 text-base font-black text-[#061B3A]">
-            <BookOpen className="h-5 w-5 text-[#2F52D9]" strokeWidth={1.9} /> 쉽게 읽는 생활권 해석
-          </span>
-          <div className="mt-5 space-y-3">
-            {signals.map((signal) => (
-              <div key={signal.label} className="flex gap-3 border border-[#E3EAF4] bg-[#FBFDFF] p-4">
-                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#0B66FF]" strokeWidth={1.8} />
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="text-sm font-black text-[#061B3A]">{signal.label}</p>
-                    <span className={`shrink-0 px-2 py-0.5 text-[11px] font-black ${statusTone(signal.status)}`}>{signal.status}</span>
-                  </div>
-                  <p className="mt-1.5 text-sm font-semibold leading-6 text-[#53657E]">{signal.body}</p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </section>
 
-        <section className="border border-[#D7E1F0] bg-white p-7 shadow-[0_12px_30px_rgba(8,26,52,0.04)] md:p-8">
-          <span className="inline-flex items-center gap-2 text-base font-black text-[#061B3A]">
-            <ClipboardCheck className="h-5 w-5 text-[#0B66FF]" strokeWidth={1.9} /> 계약 전 현장 체크리스트
-          </span>
-          <div className="mt-5 space-y-2.5">
-            {fieldQuestions.map((question, index) => (
-              <div key={question} className="flex items-start gap-3 border border-[#E3EAF4] bg-white p-3.5">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0B66FF] text-xs font-black text-white">
-                  {index + 1}
-                </span>
-                <p className="text-sm font-bold leading-6 text-[#243653]">{question}</p>
-              </div>
-            ))}
+        {/* 관련 분석 + 진단 지표 통계 */}
+        <section className="grid gap-4 lg:grid-cols-2">
+          <div className="rounded-2xl border border-[#E3EAF4] bg-white p-6 shadow-[0_8px_22px_rgba(8,26,52,0.04)]">
+            <span className="inline-flex items-center gap-2 text-base font-black text-[#0E1F38]">
+              <Share2 className="h-5 w-5 text-[#0B66FF]" strokeWidth={2} /> 관련 분석
+            </span>
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              {related.map((item) => {
+                const Icon = item.icon
+                return (
+                  <div key={item.title}>
+                    <div className="flex items-center gap-2">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-md bg-[#EFF5FC]">
+                        <Icon className="h-4 w-4 text-[#0B66FF]" strokeWidth={2} />
+                      </span>
+                      <span className="text-sm font-black text-[#0E1F38]">{item.title}</span>
+                    </div>
+                    <span className={`mt-2 inline-block px-2 py-0.5 text-[11px] font-black ${item.chip.cls}`}>{item.chip.text}</span>
+                    <p className="mt-2 text-xs font-semibold leading-5 text-[#6B7A90]">{item.body}</p>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-[#E3EAF4] bg-white p-6 shadow-[0_8px_22px_rgba(8,26,52,0.04)]">
+            <span className="inline-flex items-center gap-2 text-base font-black text-[#0E1F38]">
+              <ShieldCheck className="h-5 w-5 text-[#0B66FF]" strokeWidth={2} /> 진단 지표 요약
+            </span>
+            <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
+              {stats.map((s) => {
+                const Icon = s.icon
+                return (
+                  <div key={s.label} className="text-center">
+                    <Icon className="mx-auto h-7 w-7 text-[#0B66FF]" strokeWidth={1.8} />
+                    <p className="mt-2 text-xs font-bold text-[#6B7A90]">{s.label}</p>
+                    <p className="mt-1 text-lg font-black text-[#0E1F38]">{s.value}</p>
+                  </div>
+                )
+              })}
+            </div>
+            {(result.risk.confidenceReasons ?? []).length > 0 && (
+              <ul className="mt-5 space-y-1.5 border-t border-[#EDF2F8] pt-4">
+                {(result.risk.confidenceReasons ?? []).map((reason) => (
+                  <li key={reason} className="flex gap-2 text-xs font-semibold leading-5 text-[#6B7A90]">
+                    <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[#AEB9C8]" />{reason}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </section>
+
+        {/* 데이터 · 기준 · 참고자료 */}
+        <section className="rounded-2xl border border-[#E3EAF4] bg-white p-6 shadow-[0_8px_22px_rgba(8,26,52,0.04)]">
+          <div className="grid gap-6 md:grid-cols-[230px_minmax(0,1fr)]">
+            <div>
+              <span className="inline-flex items-center gap-2 text-base font-black text-[#0E1F38]">
+                <Database className="h-5 w-5 text-[#0B66FF]" strokeWidth={2} /> 데이터 · 기준 · 참고자료
+              </span>
+              <p className="mt-3 text-sm font-semibold leading-6 text-[#6B7A90]">
+                본 진단은 아래 공공데이터를 기준으로 분석되었습니다.{' '}
+                <Link href="/incheon/data" className="font-black text-[#0B66FF] hover:underline">전체 데이터 보기 →</Link>
+              </p>
+            </div>
+            <div>
+              <div className="flex items-center justify-between border-b border-[#E3EAF4] pb-2 text-xs font-black text-[#8A98AC]">
+                <span>참고자료 목록</span>
+                <span>출처 유형</span>
+              </div>
+              <div className="divide-y divide-[#EDF2F8]">
+                {visibleSources.map((source) => (
+                  <a key={source.sourceId} href={source.url} target="_blank" rel="noreferrer" className="flex items-center justify-between gap-3 py-2.5 transition-colors hover:bg-[#FBFDFF]">
+                    <span className="flex min-w-0 items-center gap-2">
+                      <FileText className="h-4 w-4 shrink-0 text-[#9AA8BA]" strokeWidth={1.8} />
+                      <span className="truncate text-sm font-semibold text-[#33445E]">{source.name}</span>
+                    </span>
+                    <span className="shrink-0 text-xs font-bold text-[#8A98AC]">{source.scoringUse ? '공공 데이터 · 점수 반영' : '공공 데이터 · 참고'}</span>
+                  </a>
+                ))}
+              </div>
+              {result.sources.length > 6 && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllSources((prev) => !prev)}
+                  className="mt-3 flex w-full items-center justify-center gap-1 text-sm font-bold text-[#0B66FF]"
+                >
+                  {showAllSources ? '접기' : '더 보기'}
+                  <ChevronDown className={`h-4 w-4 transition-transform ${showAllSources ? 'rotate-180' : ''}`} strokeWidth={2.4} />
+                </button>
+              )}
+            </div>
+          </div>
+        </section>
+
+        <p className="pt-1 text-center text-xs font-semibold text-[#9AA8BA]">
+          상기 분석과 진단은 {baseDate} 기준 공공데이터로 수행되었습니다. 본 결과는 참고 자료이며 창업·투자 결정의 최종 근거로 사용할 수 없습니다.
+        </p>
       </div>
     </div>
   )
@@ -610,10 +646,6 @@ function ResultContent() {
   }, [result])
 
   const interpretationRows = useMemo(() => (result ? buildInterpretationRows(result) : []), [result])
-  const livingSignals = useMemo(
-    () => (result ? buildLivingSignals(result, interpretationRows) : []),
-    [result, interpretationRows]
-  )
   const mapCenter = useMemo(() => ({ lat, lng }), [lat, lng])
 
   return (
@@ -664,11 +696,14 @@ function ResultContent() {
       {result && !loading && (
         <section className="bg-white px-5 py-8 lg:px-8">
           <div className="mx-auto max-w-7xl space-y-7">
-            {!result.risk.insufficientData && (
-              <ResultDashboard result={result} rows={interpretationRows} signals={livingSignals} />
+            {result.risk.insufficientData ? (
+              <>
+                <ConfidenceNotice result={result} />
+                <DataSourcePanel sources={result.sources} />
+              </>
+            ) : (
+              <ResultDashboard result={result} rows={interpretationRows} />
             )}
-            <ConfidenceNotice result={result} />
-            <DataSourcePanel sources={result.sources} />
           </div>
         </section>
       )}
