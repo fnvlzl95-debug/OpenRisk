@@ -12,6 +12,7 @@ import {
   ClipboardCheck,
   Download,
   FileText,
+  Info,
   MapPin,
   Route,
   Shield,
@@ -151,14 +152,6 @@ function buildInterpretationRows(result: IncheonAnalyzeResponse) {
   })
 }
 
-function scoreLevel(score: number | null) {
-  if (score === null) return { text: '정보 부족', color: '#6B7A90', bars: 2, caption: '직접 확인' }
-  const bars = Math.round(score / 10)
-  if (score >= 67) return { text: '높음', color: '#FF6B1D', bars, caption: '우선 확인' }
-  if (score >= 45) return { text: '보통', color: '#0B66FF', bars, caption: '조건 점검' }
-  return { text: '낮음', color: '#25B866', bars, caption: '상대적으로 낮음' }
-}
-
 function RiskPanel({ result }: { result: IncheonAnalyzeResponse }) {
   const rows = metricConfig.map((item) => {
     const score = result.risk.scoreBreakdown[item.key]
@@ -167,103 +160,77 @@ function RiskPanel({ result }: { result: IncheonAnalyzeResponse }) {
     const state = deriveMetricState(score, { excluded, degraded, confidence: result.risk.confidence })
     return { ...item, score, state }
   })
-  const survival = result.risk.survival
   const gaugeScore = result.risk.score ?? 0
+  const conf = confidenceLabel(result.risk.confidence ?? 'medium')
+  const limited = result.risk.degradedMetrics.length > 0
 
   return (
-    <section className="h-full border border-[#3845A0] bg-[#06112A]/92 p-8 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-      <h2 className="text-center text-2xl font-black">예상 위험도</h2>
-      <div className="mt-5 flex items-center justify-center gap-5">
-        <span className="bg-[linear-gradient(180deg,#FFB14A,#FF651F)] bg-clip-text text-8xl font-black leading-none text-transparent">
-          {result.risk.score ?? '—'}
-        </span>
-        <span className="border border-[#FF8A1F] bg-[#2B1B09] px-5 py-3 text-2xl font-black text-[#FFB14A]">
-          {riskLevelText(result)}
-        </span>
-      </div>
-
-      <div className="mt-4 flex items-center justify-center gap-2 text-sm font-bold">
-        <span className="bg-white/10 px-3 py-1 text-white/78">신뢰도 {confidenceLabel(result.risk.confidence ?? 'medium')}</span>
-        {result.risk.degradedMetrics.length > 0 && (
-          <span className="bg-[#3a2a12] px-3 py-1 text-[#FFC780]">일부 데이터 제한</span>
-        )}
-      </div>
-
-      <div className="mt-7">
-        <div className="relative h-2 bg-[linear-gradient(90deg,#47D78D_0%,#47D78D_24%,#2D8CFF_24%,#2D8CFF_50%,#FDBA3B_50%,#FDBA3B_74%,#FF4B4B_74%,#FF4B4B_100%)]">
-          <span className="absolute top-1/2 h-7 w-7 -translate-y-1/2 border-4 border-white bg-[#FF8A1F]" style={{ left: `${Math.min(92, gaugeScore)}%` }} />
+    <section className="flex h-full min-h-[420px] flex-col overflow-hidden border border-[#3845A0] bg-[#06112A]/92 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+      <div className="flex-1 overflow-y-auto p-6 lg:p-7">
+        <div className="flex items-center justify-center gap-1.5">
+          <h2 className="text-xl font-black">예상 위험도</h2>
+          <Info className="h-4 w-4 text-white/35" />
         </div>
-        <div className="mt-4 grid grid-cols-4 text-center text-base font-black text-white/82">
-          <span>안전</span>
-          <span>보통</span>
-          <span className="text-[#FFB14A]">주의</span>
-          <span>위험</span>
+
+        <div className="mt-3 flex items-center justify-center gap-4">
+          <span className="bg-[linear-gradient(180deg,#FFB14A,#FF651F)] bg-clip-text text-[68px] font-black leading-none text-transparent">
+            {result.risk.score ?? '—'}
+          </span>
+          <span className="border border-[#FF8A1F] bg-[#2B1B09] px-4 py-2 text-xl font-black text-[#FFB14A]">
+            {riskLevelText(result)}
+          </span>
         </div>
-      </div>
 
-      <p className="mt-7 border-b border-white/12 pb-7 text-center text-lg font-bold text-white/84">
-        4대 요인은 모두 높을수록 위험합니다. (복합 위험 신호는 참고용)
-      </p>
-
-      <div className="mt-7 space-y-5">
-        {rows.map((row) => {
-          const level = scoreLevel(row.score)
-          const filledBars = row.score === null ? 0 : Math.max(0, Math.min(10, level.bars))
-          const tag = metricStateTag(row.state)
-          const available = row.state.status === 'available' || row.state.status === 'degraded'
-          const Icon = row.icon
-          return (
-            <div key={row.key} className="grid gap-3 border-t border-white/10 pt-4 first:border-t-0 first:pt-0 sm:grid-cols-[42px_minmax(0,1fr)_44px] sm:items-center">
-              <span className="flex h-9 w-9 items-center justify-center bg-white/8">
-                <Icon className="h-5 w-5" style={{ color: row.color }} />
-              </span>
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  <span className="text-lg font-black">{row.label}</span>
-                  {available ? (
-                    <span className="text-sm font-black" style={{ color: level.color }}>
-                      {level.text}
-                    </span>
-                  ) : (
-                    <span className="text-sm font-black text-white/50">{tag}</span>
-                  )}
-                  {available && tag ? (
-                    <span className="bg-[#3a2a12] px-2 py-0.5 text-xs font-bold text-[#FFC780]">{tag}</span>
-                  ) : (
-                    available && <span className="text-xs font-bold text-white/45">{level.caption}</span>
-                  )}
-                </div>
-                <p className="mt-1 text-sm font-semibold text-white/58">{row.body}</p>
-                <div className="mt-3 flex h-5 gap-1.5" aria-label={`${row.label} ${metricScoreText(row.state)}`}>
-                  {Array.from({ length: 10 }).map((_, index) => (
-                    <span
-                      key={index}
-                      className="min-w-0 flex-1"
-                      style={{ backgroundColor: index < filledBars ? row.color : 'rgba(255,255,255,0.12)' }}
-                    />
-                  ))}
-                </div>
-              </div>
-              <span className="text-right text-lg font-black">{metricScoreText(row.state)}</span>
-            </div>
-          )
-        })}
-      </div>
-
-      <div className="mt-7 grid gap-3 border-t border-white/10 pt-5 sm:grid-cols-[42px_minmax(0,1fr)_44px] sm:items-center">
-        <span className="flex h-9 w-9 items-center justify-center bg-white/8">
-          <ShieldCheck className="h-5 w-5 text-[#47C978]" />
-        </span>
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <span className="text-lg font-black">{survival.label}</span>
-            <span className="bg-white/10 px-2 py-0.5 text-xs font-bold text-white/60">종합 점수 미반영 · 참고</span>
+        <div className="mt-5">
+          <div className="relative h-1.5 bg-[linear-gradient(90deg,#47D78D_0%,#47D78D_24%,#2D8CFF_24%,#2D8CFF_50%,#FDBA3B_50%,#FDBA3B_74%,#FF4B4B_74%,#FF4B4B_100%)]">
+            <span className="absolute top-1/2 h-5 w-5 -translate-y-1/2 border-[3px] border-white bg-[#FF8A1F]" style={{ left: `${Math.min(94, gaugeScore)}%` }} />
           </div>
-          <p className="mt-1 text-sm font-semibold text-white/58">
-            경쟁·비용·접근성을 조합한 참고 신호입니다. 실제 폐업률 데이터가 아닙니다.
-          </p>
+          <div className="mt-3 grid grid-cols-4 text-center text-sm font-black text-white/78">
+            <span>안전</span>
+            <span>보통</span>
+            <span className="text-[#FFB14A]">주의</span>
+            <span>위험</span>
+          </div>
         </div>
-        <span className="text-right text-lg font-black text-white/80">{survival.score}</span>
+
+        <div className="mt-6 flex items-center justify-between border-t border-white/10 pt-5">
+          <h3 className="text-sm font-black text-white/72">핵심 요인 분석</h3>
+          <span className="text-[11px] font-bold text-white/40">신뢰도 {conf}{limited ? ' · 일부 제한' : ''}</span>
+        </div>
+
+        <div className="mt-4 space-y-4">
+          {rows.map((row) => {
+            const available = row.state.status === 'available' || row.state.status === 'degraded'
+            const filled = row.score === null ? 0 : Math.max(0, Math.min(5, Math.round(row.score / 20)))
+            const tag = metricStateTag(row.state)
+            const Icon = row.icon
+            return (
+              <div key={row.key} className="grid grid-cols-[40px_minmax(0,1fr)_auto] items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center bg-white/8">
+                  <Icon className="h-5 w-5" style={{ color: row.color }} />
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-[15px] font-black leading-tight">
+                    {row.label}
+                    <span className="ml-1.5 text-[11px] font-semibold text-white/40">{available ? row.body : tag}</span>
+                  </p>
+                  <div className="mt-2 flex gap-1" aria-label={`${row.label} ${metricScoreText(row.state)}`}>
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      <span
+                        key={index}
+                        className="h-2 flex-1"
+                        style={{ backgroundColor: index < filled ? row.color : 'rgba(255,255,255,0.1)' }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <span className="text-right text-xl font-black" style={{ color: available ? row.color : '#7E8BA0' }}>
+                  {metricScoreText(row.state)}
+                </span>
+              </div>
+            )
+          })}
+        </div>
       </div>
     </section>
   )
@@ -648,45 +615,45 @@ function ResultContent() {
     <main className="min-h-screen bg-white text-[#081A34]">
       <IncheonHeader />
 
-      <section className="min-h-[calc(100dvh-78px)] bg-[#031B37] px-4 pb-6 pt-4 lg:px-6">
-        <div className="flex min-h-[calc(100dvh-108px)] w-full flex-col">
-          <SearchPanel compact initialQuery={query} initialCategory={category} />
-
-          {loading && (
-            <div className="mt-6 grid flex-1 gap-6 lg:grid-cols-[minmax(0,1.45fr)_minmax(430px,0.72fr)]">
-              <div className="min-h-[620px] animate-pulse border border-[#155396] bg-[#072A54]" />
-              <div className="min-h-[620px] animate-pulse border border-[#155396] bg-[#06112A]" />
-            </div>
-          )}
-
-          {errorView && !loading && (
-            <div className="mt-7 border border-[#FFB999] bg-white p-8">
-              <h1 className="text-2xl font-black">{errorView.title}</h1>
-              <p className="mt-3 text-base font-semibold text-[#53657E]">{errorView.description}</p>
-              <p className="mt-2 text-sm font-bold text-[#0B66FF]">{errorView.action}</p>
-            </div>
-          )}
-
+      <section className="flex flex-col gap-3 bg-[#031B37] px-4 py-3 lg:h-[calc(100dvh-76px)] lg:px-6">
+        <div className="flex flex-col items-stretch gap-3 sm:flex-row">
+          <div className="min-w-0 flex-1">
+            <SearchPanel compact initialQuery={query} initialCategory={category} />
+          </div>
           {result && !loading && (
-            <>
-              <div className="mt-5 flex items-center justify-end">
-                <button
-                  type="button"
-                  onClick={handleDownloadPdf}
-                  disabled={pdfLoading}
-                  className="inline-flex items-center gap-2 border border-[#2D7BFF] bg-[#0B66FF] px-4 py-2 text-sm font-black text-white transition-colors hover:bg-[#0A57DB] disabled:opacity-60"
-                >
-                  <Download className="h-4 w-4" strokeWidth={2.2} />
-                  {pdfLoading ? 'PDF 만드는 중…' : 'PDF 리포트 저장'}
-                </button>
-              </div>
-              <div className="mt-3 grid flex-1 gap-6 lg:grid-cols-[minmax(0,1.45fr)_minmax(430px,0.72fr)] lg:items-stretch">
-                <RiskAnalysisMapCard center={mapCenter} radius={500} riskCells={result.riskMapCells} locationLabel={query} />
-                {result.risk.insufficientData ? <InsufficientPanel result={result} /> : <RiskPanel result={result} />}
-              </div>
-            </>
+            <button
+              type="button"
+              onClick={handleDownloadPdf}
+              disabled={pdfLoading}
+              className="inline-flex shrink-0 items-center justify-center gap-2 border border-[#2D7BFF] bg-[#0B66FF] px-6 py-3 text-sm font-black text-white transition-colors hover:bg-[#0A57DB] disabled:opacity-60"
+            >
+              <Download className="h-4 w-4" strokeWidth={2.2} />
+              {pdfLoading ? 'PDF 만드는 중…' : '리포트 저장'}
+            </button>
           )}
         </div>
+
+        {loading && (
+          <div className="grid gap-3 lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(360px,0.64fr)]">
+            <div className="min-h-[400px] animate-pulse border border-[#155396] bg-[#072A54] lg:min-h-0" />
+            <div className="min-h-[400px] animate-pulse border border-[#155396] bg-[#06112A] lg:min-h-0" />
+          </div>
+        )}
+
+        {errorView && !loading && (
+          <div className="border border-[#FFB999] bg-white p-8">
+            <h1 className="text-2xl font-black">{errorView.title}</h1>
+            <p className="mt-3 text-base font-semibold text-[#53657E]">{errorView.description}</p>
+            <p className="mt-2 text-sm font-bold text-[#0B66FF]">{errorView.action}</p>
+          </div>
+        )}
+
+        {result && !loading && (
+          <div className="grid gap-3 lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(360px,0.64fr)] lg:items-stretch">
+            <RiskAnalysisMapCard center={mapCenter} radius={500} riskCells={result.riskMapCells} locationLabel={query} />
+            {result.risk.insufficientData ? <InsufficientPanel result={result} /> : <RiskPanel result={result} />}
+          </div>
+        )}
       </section>
 
       {result && !loading && (
