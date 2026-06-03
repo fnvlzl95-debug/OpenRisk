@@ -166,7 +166,8 @@ function RiskPanel({ result }: { result: IncheonAnalyzeResponse }) {
 
   return (
     <section className="flex h-full min-h-[420px] flex-col overflow-hidden border border-[#3845A0] bg-[#06112A]/92 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
-      <div className="flex-1 overflow-y-auto p-6 lg:p-7">
+      <div className="flex flex-1 flex-col overflow-y-auto p-6 lg:p-8">
+        <div className="my-auto w-full">
         <div className="flex items-center justify-center gap-1.5">
           <h2 className="text-xl font-black">예상 위험도</h2>
           <Info className="h-4 w-4 text-white/35" />
@@ -230,6 +231,7 @@ function RiskPanel({ result }: { result: IncheonAnalyzeResponse }) {
               </div>
             )
           })}
+        </div>
         </div>
       </div>
     </section>
@@ -616,22 +618,24 @@ function ResultContent() {
       <IncheonHeader />
 
       <section className="flex flex-col gap-3 bg-[#031B37] px-4 py-3 lg:h-[calc(100dvh-76px)] lg:px-6">
-        <div className="flex flex-col items-stretch gap-3 sm:flex-row">
-          <div className="min-w-0 flex-1">
-            <SearchPanel compact initialQuery={query} initialCategory={category} />
-          </div>
-          {result && !loading && (
-            <button
-              type="button"
-              onClick={handleDownloadPdf}
-              disabled={pdfLoading}
-              className="inline-flex shrink-0 items-center justify-center gap-2 border border-[#2D7BFF] bg-[#0B66FF] px-6 py-3 text-sm font-black text-white transition-colors hover:bg-[#0A57DB] disabled:opacity-60"
-            >
-              <Download className="h-4 w-4" strokeWidth={2.2} />
-              {pdfLoading ? 'PDF 만드는 중…' : '리포트 저장'}
-            </button>
-          )}
-        </div>
+        <SearchPanel
+          compact
+          initialQuery={query}
+          initialCategory={category}
+          rightAction={
+            result && !loading ? (
+              <button
+                type="button"
+                onClick={handleDownloadPdf}
+                disabled={pdfLoading}
+                className="inline-flex items-center gap-2 border border-[#2D7BFF] bg-[#0B66FF] px-4 py-2.5 text-sm font-black text-white transition-colors hover:bg-[#0A57DB] disabled:opacity-60"
+              >
+                <Download className="h-4 w-4" strokeWidth={2.2} />
+                {pdfLoading ? '저장 중…' : '리포트 저장'}
+              </button>
+            ) : null
+          }
+        />
 
         {loading && (
           <div className="grid gap-3 lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(360px,0.64fr)]">

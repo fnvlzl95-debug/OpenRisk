@@ -24,7 +24,6 @@ type RiskAnalysisMapCardProps = {
   className?: string
 }
 
-const LEGEND_COLORS = ['#2D8CFF', '#20C7E8', '#47D78D', '#F6D84A', '#FDBA3B', '#FF9E2C', '#FF6B1D', '#FF4B4B']
 const DEFAULT_INCHEON_CENTER: RiskMapCenter = { lat: 37.3897, lng: 126.6454 }
 const RADIUS_BOUNDS_SCALE = 1.16
 const MAP_FIT_PADDING: [number, number] = [28, 28]
@@ -220,7 +219,7 @@ export default function RiskAnalysisMapCard({
       }) as DivIcon
 
       const marker = L.marker([center.lat, center.lng], { icon: pinIcon, zIndexOffset: 1000 })
-        .bindTooltip('분석 기준점<br/>이곳을 중심으로 반경 500m를 분석해요', {
+        .bindTooltip(`${locationLabel}<br/>이곳을 중심으로 반경 500m를 분석해요`, {
           direction: 'top',
           offset: [0, -78],
           className: styles.leafletTooltip,
@@ -263,6 +262,8 @@ export default function RiskAnalysisMapCard({
       radiusBadgeRef.current = null
       overlayGroupRef.current = null
     }
+    // locationLabel은 마운트 시 1회만 툴팁에 반영하면 충분(셀/중심/반경 변경 시에만 재초기화)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cellPolygons, center, radius])
 
   useEffect(() => {
@@ -321,20 +322,12 @@ export default function RiskAnalysisMapCard({
     <section className={`${styles.card} ${className ?? ''}`} aria-label="상권 위험도 분석 지도">
       <div ref={mapContainerRef} className={styles.mapCanvas} />
       <div className={styles.glassOverlay} />
-      <div className={styles.locationBadge} aria-label="분석 위치">
-        <span className={styles.locationLabel}>분석 위치</span>
-        <span className={styles.locationName}>{locationLabel}</span>
-      </div>
       <aside className={styles.legend} aria-label="위험도 수준 범례">
         <h3 className={styles.legendTitle}>위험도 수준</h3>
-        <div className={styles.legendScale}>
-          {LEGEND_COLORS.map((color) => (
-            <span key={color} className={styles.legendColor} style={{ backgroundColor: color }} />
-          ))}
-        </div>
+        <div className={styles.legendScale} />
         <div className={styles.legendLabels}>
-          <span>위험 낮음</span>
-          <span>위험 높음</span>
+          <span>낮음</span>
+          <span>높음</span>
         </div>
       </aside>
     </section>

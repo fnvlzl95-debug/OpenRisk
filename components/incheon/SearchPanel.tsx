@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, KeyboardEvent, useEffect, useMemo, useState } from 'react'
+import { FormEvent, KeyboardEvent, ReactNode, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Building2, ChevronDown, Coffee, LocateFixed, MapPin, RefreshCw, Search, Target } from 'lucide-react'
 import { CATEGORY_LIST, type BusinessCategory } from '@/lib/categories'
@@ -22,6 +22,7 @@ type SearchPanelProps = {
   compact?: boolean
   initialQuery?: string
   initialCategory?: string
+  rightAction?: ReactNode
 }
 
 type RemoteSearchSuggestion = Omit<SearchSuggestion, 'source'> & {
@@ -135,6 +136,7 @@ export default function SearchPanel({
   compact = false,
   initialQuery = '인천 연수구 송도동',
   initialCategory = INCHEON_DEFAULT_CATEGORY,
+  rightAction,
 }: SearchPanelProps) {
   const router = useRouter()
   const [query, setQuery] = useState(initialQuery)
@@ -345,12 +347,12 @@ export default function SearchPanel({
     return (
       <form
         onSubmit={onSubmit}
-        className="grid gap-4 border border-[#155396] bg-[#061B3A]/92 p-5 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] md:grid-cols-[1.1fr_0.72fr_0.52fr_auto]"
+        className="flex flex-wrap items-center gap-x-5 gap-y-3 border border-[#155396] bg-[#061B3A]/92 px-5 py-3.5 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
       >
-        <div className="relative flex min-w-0 items-center gap-4 border-[#244B78] md:border-r md:pr-7">
-          <MapPin className="h-9 w-9 shrink-0 text-[#20D6F4]" />
-          <div className="min-w-0 flex-1">
-            <label htmlFor={inputId} className="block text-sm font-bold text-white/62">
+        <div className="relative flex items-center gap-2.5">
+          <MapPin className="h-6 w-6 shrink-0 text-[#20D6F4]" />
+          <div className="min-w-0">
+            <label htmlFor={inputId} className="block text-[11px] font-bold text-white/55">
               검색 위치
             </label>
             <input
@@ -364,22 +366,24 @@ export default function SearchPanel({
               aria-autocomplete="list"
               aria-controls={listboxId}
               aria-expanded={showSuggestions}
-              className="mt-1 w-full min-w-0 bg-transparent text-lg font-black text-white outline-none"
+              className="mt-0.5 w-[180px] max-w-[46vw] bg-transparent text-base font-black text-white outline-none lg:w-[230px]"
               aria-label="검색 위치"
             />
-            {validationError && <p className="mt-2 text-xs font-bold text-[#FFB999]">{validationError}</p>}
+            {validationError && <p className="absolute left-0 top-full mt-1 text-xs font-bold text-[#FFB999]">{validationError}</p>}
           </div>
           {renderSuggestionList(true)}
         </div>
 
-        <label className="flex min-w-0 items-center gap-4 border-[#244B78] md:border-r md:pr-7">
-          <Coffee className="h-9 w-9 shrink-0 text-[#20D6F4]" />
+        <span className="hidden h-9 w-px bg-[#244B78] sm:block" />
+
+        <label className="flex items-center gap-2.5">
+          <Coffee className="h-6 w-6 shrink-0 text-[#20D6F4]" />
           <span className="min-w-0">
-            <span className="block text-sm font-bold text-white/62">업종</span>
+            <span className="block text-[11px] font-bold text-white/55">업종</span>
             <select
               value={category}
               onChange={(event) => setCategory(event.target.value as BusinessCategory)}
-              className="mt-1 w-full min-w-0 bg-[#061B3A] text-lg font-black text-white outline-none"
+              className="mt-0.5 max-w-[40vw] bg-[#061B3A] text-base font-black text-white outline-none"
               aria-label="업종"
             >
               {CATEGORY_LIST.map((item) => (
@@ -391,18 +395,23 @@ export default function SearchPanel({
           </span>
         </label>
 
-        <div className="flex items-center gap-4">
-          <Target className="h-9 w-9 shrink-0 text-[#20D6F4]" />
+        <span className="hidden h-9 w-px bg-[#244B78] sm:block" />
+
+        <div className="flex items-center gap-2.5">
+          <Target className="h-6 w-6 shrink-0 text-[#20D6F4]" />
           <span>
-            <span className="block text-sm font-bold text-white/62">반경</span>
-            <span className="mt-1 block text-lg font-black">500m 고정</span>
+            <span className="block text-[11px] font-bold text-white/55">반경</span>
+            <span className="mt-0.5 block text-base font-black">500m 고정</span>
           </span>
         </div>
 
-        <button className="inline-flex min-h-12 items-center justify-center gap-3 border border-white/20 px-6 text-base font-black text-white transition-colors hover:bg-white/8 active:scale-[0.98]">
-          <RefreshCw className="h-5 w-5" />
-          다시 검색
-        </button>
+        <div className="ml-auto flex items-center gap-2">
+          <button className="inline-flex items-center gap-2 border border-white/20 px-4 py-2.5 text-sm font-black text-white transition-colors hover:bg-white/8 active:scale-[0.98]">
+            <RefreshCw className="h-4 w-4" />
+            다시 검색
+          </button>
+          {rightAction}
+        </div>
       </form>
     )
   }
