@@ -28,8 +28,9 @@
   font-family: inherit;
 }
 
+/* 베이스맵이 이미 다크(CARTO Dark Matter)라 invert 없이 미세 보정만 — 브랜드 네이비로 살짝 눌러줌 */
 .mapCanvas :global(.leaflet-tile-pane) {
-  filter: invert(0.9) hue-rotate(178deg) saturate(0.66) contrast(1.12) brightness(0.66);
+  filter: saturate(0.92) brightness(0.9) contrast(1.06);
 }
 
 .mapCanvas :global(.leaflet-tile) {
@@ -308,19 +309,11 @@
   font-weight: 900;
 }
 
+/* background는 컴포넌트에서 riskRampGradient()로 주입(셀 색과 단일 소스) */
 .legendScale {
   height: 9px;
   margin-top: 12px;
   border-radius: 8px;
-  background: linear-gradient(
-    90deg,
-    #2d8cff 0%,
-    #20c7e8 20%,
-    #47d78d 38%,
-    #f6d84a 56%,
-    #ff9e2c 78%,
-    #ff4b4b 100%
-  );
 }
 
 .legendLabels {

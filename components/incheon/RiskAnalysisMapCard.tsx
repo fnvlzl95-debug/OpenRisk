@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { cellToBoundary, cellToLatLng } from 'h3-js'
 import styles from './RiskAnalysisMapCard.module.css'
+import { MAP_TILES, RING_COLOR, riskColor, riskRampGradient } from '@/lib/incheon/map-theme'
 import type { RiskMapCell, RiskMapCenter } from '@/lib/incheon/risk-map-types'
 import type {
   Circle,
@@ -26,16 +27,8 @@ type RiskAnalysisMapCardProps = {
 const DEFAULT_INCHEON_CENTER: RiskMapCenter = { lat: 37.3897, lng: 126.6454 }
 const MAP_FIT_PADDING: [number, number] = [28, 28]
 const MAX_RADIUS_FOCUS_ZOOM = 16
-const CARTO_VOYAGER_TILE_URL = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
-
 function getRiskColor(score: number) {
-  if (score >= 86) return '#FF3F3F'
-  if (score >= 74) return '#FF5B1D'
-  if (score >= 62) return '#FF8A1F'
-  if (score >= 52) return '#F6D84A'
-  if (score >= 40) return '#6FCA72'
-  if (score >= 28) return '#20C7E8'
-  return '#2D8CFF'
+  return riskColor(score)
 }
 
 function destinationPoint(center: RiskMapCenter, distanceMeters: number, bearingDegrees: number): [number, number] {
@@ -191,10 +184,17 @@ export default function RiskAnalysisMapCard({
 
       mapRef.current = map
 
-      L.tileLayer(CARTO_VOYAGER_TILE_URL, {
-        maxZoom: 20,
-        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-        subdomains: 'abcd',
+      L.tileLayer(MAP_TILES.base.url, {
+        maxZoom: MAP_TILES.base.maxZoom,
+        subdomains: MAP_TILES.base.subdomains,
+        attribution: MAP_TILES.base.attribution,
+      }).addTo(map)
+
+      // 방향감용 옅은 라벨(구·동/주요 도로). 히트맵 아래에 깔려 부드럽게 비친다.
+      L.tileLayer(MAP_TILES.labels.url, {
+        maxZoom: MAP_TILES.labels.maxZoom,
+        subdomains: MAP_TILES.labels.subdomains,
+        opacity: MAP_TILES.labels.opacity,
       }).addTo(map)
 
       L.control.zoom({ position: 'topright' }).addTo(map)
@@ -206,7 +206,7 @@ export default function RiskAnalysisMapCard({
 
       const radiusLayer = L.circle([center.lat, center.lng], {
         radius,
-        color: '#35D7FF',
+        color: RING_COLOR,
         weight: 2.1,
         opacity: 0.96,
         fillColor: '#0E95FF',
@@ -352,7 +352,7 @@ export default function RiskAnalysisMapCard({
       <div className={styles.glassOverlay} />
       <aside className={styles.legend} aria-label="위험도 수준 범례">
         <h3 className={styles.legendTitle}>위험도 수준</h3>
-        <div className={styles.legendScale} />
+        <div className={styles.legendScale} style={{ background: riskRampGradient() }} />
         <div className={styles.legendLabels}>
           <span>낮음</span>
           <span>높음</span>
