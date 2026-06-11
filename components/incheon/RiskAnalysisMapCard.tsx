@@ -1,14 +1,14 @@
 'use client'
 
 import { useEffect, useMemo, useRef } from 'react'
-import { cellToBoundary } from 'h3-js'
+import { cellToBoundary, cellToLatLng } from 'h3-js'
 import styles from './RiskAnalysisMapCard.module.css'
+import { MAP_TILES, RING_COLOR, riskColor, riskRampGradient } from '@/lib/incheon/map-theme'
 import type { RiskMapCell, RiskMapCenter } from '@/lib/incheon/risk-map-types'
 import type {
   Circle,
   DivIcon,
   FeatureGroup,
-  LatLngBoundsExpression,
   LatLngExpression,
   LayerGroup,
   Map as LeafletMap,
@@ -24,19 +24,11 @@ type RiskAnalysisMapCardProps = {
   className?: string
 }
 
-const LEGEND_COLORS = ['#2D8CFF', '#20C7E8', '#47D78D', '#F6D84A', '#FDBA3B', '#FF9E2C', '#FF6B1D', '#FF4B4B']
 const DEFAULT_INCHEON_CENTER: RiskMapCenter = { lat: 37.3897, lng: 126.6454 }
-const RADIUS_BOUNDS_SCALE = 1.16
 const MAP_FIT_PADDING: [number, number] = [28, 28]
-
+const MAX_RADIUS_FOCUS_ZOOM = 16
 function getRiskColor(score: number) {
-  if (score >= 86) return '#FF4B4B'
-  if (score >= 74) return '#FF6B1D'
-  if (score >= 62) return '#FF9E2C'
-  if (score >= 50) return '#F6D84A'
-  if (score >= 38) return '#47D78D'
-  if (score >= 26) return '#20C7E8'
-  return '#2D8CFF'
+  return riskColor(score)
 }
 
 function destinationPoint(center: RiskMapCenter, distanceMeters: number, bearingDegrees: number): [number, number] {
@@ -60,35 +52,58 @@ function destinationPoint(center: RiskMapCenter, distanceMeters: number, bearing
   return [(lat2 * 180) / Math.PI, (lng2 * 180) / Math.PI]
 }
 
-function getRadiusBounds(center: RiskMapCenter, radius: number): LatLngBoundsExpression {
-  return [
-    destinationPoint(center, radius * RADIUS_BOUNDS_SCALE, 225),
-    destinationPoint(center, radius * RADIUS_BOUNDS_SCALE, 45),
-  ]
+function distanceMeters(a: RiskMapCenter, b: RiskMapCenter) {
+  const earthRadius = 6371000
+  const lat1 = (a.lat * Math.PI) / 180
+  const lat2 = (b.lat * Math.PI) / 180
+  const deltaLat = ((b.lat - a.lat) * Math.PI) / 180
+  const deltaLng = ((b.lng - a.lng) * Math.PI) / 180
+  const haversine =
+    Math.sin(deltaLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(deltaLng / 2) ** 2
+  return earthRadius * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine))
 }
 
-function getCellStyle(cell: RiskMapCell) {
+function getCellCenter(h3Id: string): RiskMapCenter {
+  const [lat, lng] = cellToLatLng(h3Id)
+  return { lat, lng }
+}
+
+function fitMapToRadius(map: LeafletMap, radiusLayer: Circle) {
+  map.fitBounds(radiusLayer.getBounds().pad(0.18), {
+    padding: MAP_FIT_PADDING,
+    animate: false,
+  })
+  map.setZoom(Math.min(MAX_RADIUS_FOCUS_ZOOM, map.getZoom() + 1), { animate: false })
+}
+
+function getCellStyle(cell: RiskMapCell, distanceFromCenter: number, radius: number) {
   if (cell.status === 'masked') {
     return {
-      color: '#8CA3B7',
-      fillColor: '#D8E5EE',
-      fillOpacity: 0.18,
-      opacity: 0.2,
+      color: '#496173',
+      fillColor: '#102C42',
+      fillOpacity: 0.26,
+      opacity: 0.34,
+      weight: 0.8,
     }
   }
   if (cell.status === 'no_data' || cell.score === null) {
     return {
-      color: '#7A93A8',
-      fillColor: '#BFD0DD',
-      fillOpacity: 0.1,
-      opacity: 0.15,
+      color: '#335066',
+      fillColor: '#0A2035',
+      fillOpacity: 0.2,
+      opacity: 0.24,
+      weight: 0.75,
     }
   }
+  const proximity = Math.max(0, 1 - distanceFromCenter / (radius * 1.2))
+  const heat = cell.score / 100
+  const edgeColor = cell.score >= 62 ? '#FFC25B' : cell.score >= 38 ? '#73D8C8' : '#4DB9FF'
   return {
-    color: '#87E8FF',
+    color: edgeColor,
     fillColor: getRiskColor(cell.score),
-    fillOpacity: Math.min(0.6, 0.14 + (cell.score / 100) * 0.46),
-    opacity: 0.28,
+    fillOpacity: Math.min(0.58, 0.16 + heat * 0.28 + proximity ** 1.35 * 0.12),
+    opacity: Math.min(0.68, 0.3 + heat * 0.2 + proximity * 0.14),
+    weight: 0.82,
   }
 }
 
@@ -104,17 +119,17 @@ function createPinElement() {
   element.innerHTML = `
     <span class="${styles.pinHalo}"></span>
     <span class="${styles.pinBody}">
-      <svg viewBox="0 0 78 96" aria-hidden="true">
+      <svg viewBox="0 0 64 82" aria-hidden="true">
         <defs>
-          <linearGradient id="pinGradient" x1="0%" x2="0%" y1="0%" y2="100%">
-            <stop offset="0%" stop-color="#FFF7E3" />
-            <stop offset="42%" stop-color="#FFB14A" />
-            <stop offset="100%" stop-color="#FF5B1D" />
+          <linearGradient id="incheonRiskPinGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+            <stop offset="0%" stop-color="#FFB35B" />
+            <stop offset="46%" stop-color="#FF7A2A" />
+            <stop offset="100%" stop-color="#F0521A" />
           </linearGradient>
         </defs>
-        <path d="M39 1C18.1 1 1.2 18 1.2 38.9C1.2 68.3 39 94.8 39 94.8C39 94.8 76.8 68.3 76.8 38.9C76.8 18 59.9 1 39 1Z" fill="url(#pinGradient)" />
-        <circle cx="39" cy="38.5" r="15.5" fill="#FFF9EE" />
-        <circle cx="39" cy="38.5" r="7" fill="#E9551B" />
+        <path d="M32 1.5C15.2 1.5 1.6 15.1 1.6 31.9C1.6 55.4 32 79.8 32 79.8C32 79.8 62.4 55.4 62.4 31.9C62.4 15.1 48.8 1.5 32 1.5Z" fill="url(#incheonRiskPinGradient)" stroke="#FFF8EC" stroke-width="3" />
+        <circle cx="32" cy="31.6" r="12.4" fill="#FFF9EF" />
+        <circle cx="32" cy="31.6" r="5.2" fill="#FF6D24" />
       </svg>
     </span>
     <span class="${styles.pinPulse}"></span>
@@ -139,12 +154,15 @@ export default function RiskAnalysisMapCard({
 
   const cellPolygons = useMemo(
     () =>
-      riskCells.map((cell) => ({
-        ...cell,
-        positions: cellToBoundary(cell.h3Id).map(([lat, lng]) => [lat, lng] as LatLngExpression),
-        style: getCellStyle(cell),
-      })),
-    [riskCells]
+      riskCells.map((cell) => {
+        const cellCenter = getCellCenter(cell.h3Id)
+        return {
+          ...cell,
+          positions: cellToBoundary(cell.h3Id).map(([lat, lng]) => [lat, lng] as LatLngExpression),
+          style: getCellStyle(cell, distanceMeters(center, cellCenter), radius),
+        }
+      }),
+    [center, radius, riskCells]
   )
 
   useEffect(() => {
@@ -166,13 +184,21 @@ export default function RiskAnalysisMapCard({
 
       mapRef.current = map
 
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        maxZoom: 20,
-        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-        subdomains: 'abcd',
+      L.tileLayer(MAP_TILES.base.url, {
+        maxZoom: MAP_TILES.base.maxZoom,
+        subdomains: MAP_TILES.base.subdomains,
+        attribution: MAP_TILES.base.attribution,
+      }).addTo(map)
+
+      // 방향감용 옅은 라벨(구·동/주요 도로). 히트맵 아래에 깔려 부드럽게 비친다.
+      L.tileLayer(MAP_TILES.labels.url, {
+        maxZoom: MAP_TILES.labels.maxZoom,
+        subdomains: MAP_TILES.labels.subdomains,
+        opacity: MAP_TILES.labels.opacity,
       }).addTo(map)
 
       L.control.zoom({ position: 'topright' }).addTo(map)
+      L.control.scale({ position: 'bottomleft', metric: true, imperial: false, maxWidth: 120 }).addTo(map)
       L.control.attribution({ position: 'bottomleft', prefix: false }).addTo(map)
 
       const overlayGroup = L.featureGroup().addTo(map)
@@ -180,11 +206,11 @@ export default function RiskAnalysisMapCard({
 
       const radiusLayer = L.circle([center.lat, center.lng], {
         radius,
-        color: '#7AE4FF',
-        weight: 2.4,
+        color: RING_COLOR,
+        weight: 2.1,
         opacity: 0.96,
-        fillColor: '#0B66FF',
-        fillOpacity: 0.08,
+        fillColor: '#0E95FF',
+        fillOpacity: 0.055,
         interactive: false,
         className: styles.radiusCircle,
       }).addTo(overlayGroup)
@@ -196,7 +222,7 @@ export default function RiskAnalysisMapCard({
       cellPolygons.forEach((cell) => {
         const polygon = L.polygon(cell.positions, {
           color: cell.style.color,
-          weight: 0.8,
+          weight: cell.style.weight,
           opacity: cell.style.opacity,
           fillColor: cell.style.fillColor,
           fillOpacity: cell.style.fillOpacity,
@@ -215,14 +241,14 @@ export default function RiskAnalysisMapCard({
       const pinIcon = L.divIcon({
         html: createPinElement(),
         className: styles.pinIcon,
-        iconSize: [78, 96],
-        iconAnchor: [39, 76],
+        iconSize: [70, 88],
+        iconAnchor: [35, 71],
       }) as DivIcon
 
       const marker = L.marker([center.lat, center.lng], { icon: pinIcon, zIndexOffset: 1000 })
-        .bindTooltip('분석 기준점<br/>이곳을 중심으로 반경 500m를 분석해요', {
+        .bindTooltip(`${locationLabel}<br/>이곳을 중심으로 반경 500m를 분석해요`, {
           direction: 'top',
-          offset: [0, -78],
+          offset: [0, -72],
           className: styles.leafletTooltip,
         })
         .addTo(map)
@@ -243,7 +269,7 @@ export default function RiskAnalysisMapCard({
       }).addTo(map)
       radiusBadgeRef.current = radiusBadge
 
-      map.fitBounds(getRadiusBounds(center, radius), { padding: MAP_FIT_PADDING, animate: false })
+      fitMapToRadius(map, radiusLayer)
       requestAnimationFrame(() => {
         if (!cancelled && mapRef.current === map) {
           map.invalidateSize()
@@ -263,6 +289,8 @@ export default function RiskAnalysisMapCard({
       radiusBadgeRef.current = null
       overlayGroupRef.current = null
     }
+    // locationLabel은 마운트 시 1회만 툴팁에 반영하면 충분(셀/중심/반경 변경 시에만 재초기화)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cellPolygons, center, radius])
 
   useEffect(() => {
@@ -287,7 +315,7 @@ export default function RiskAnalysisMapCard({
       cellPolygons.forEach((cell) => {
         const polygon = L.polygon(cell.positions, {
           color: cell.style.color,
-          weight: 0.8,
+          weight: cell.style.weight,
           opacity: cell.style.opacity,
           fillColor: cell.style.fillColor,
           fillOpacity: cell.style.fillOpacity,
@@ -301,7 +329,7 @@ export default function RiskAnalysisMapCard({
         polygon.addTo(cellLayer)
       })
       radiusLayer.bringToFront()
-      map.fitBounds(getRadiusBounds(center, radius), { padding: MAP_FIT_PADDING, animate: false })
+      fitMapToRadius(map, radiusLayer)
       resizeFrame = requestAnimationFrame(() => {
         if (!cancelled && mapRef.current === map) {
           map.invalidateSize()
@@ -320,21 +348,14 @@ export default function RiskAnalysisMapCard({
   return (
     <section className={`${styles.card} ${className ?? ''}`} aria-label="상권 위험도 분석 지도">
       <div ref={mapContainerRef} className={styles.mapCanvas} />
+      <div className={styles.terrainOverlay} />
       <div className={styles.glassOverlay} />
-      <div className={styles.locationBadge} aria-label="분석 위치">
-        <span className={styles.locationLabel}>분석 위치</span>
-        <span className={styles.locationName}>{locationLabel}</span>
-      </div>
       <aside className={styles.legend} aria-label="위험도 수준 범례">
         <h3 className={styles.legendTitle}>위험도 수준</h3>
-        <div className={styles.legendScale}>
-          {LEGEND_COLORS.map((color) => (
-            <span key={color} className={styles.legendColor} style={{ backgroundColor: color }} />
-          ))}
-        </div>
+        <div className={styles.legendScale} style={{ background: riskRampGradient() }} />
         <div className={styles.legendLabels}>
-          <span>위험 낮음</span>
-          <span>위험 높음</span>
+          <span>낮음</span>
+          <span>높음</span>
         </div>
       </aside>
     </section>

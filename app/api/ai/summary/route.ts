@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import OpenAI from 'openai'
-import { AIAnalysisResponse, AnalyzeV2Response } from '@/lib/v2/types'
+import type { AIAnalysisResponse } from '@/lib/ai-analysis/types'
+import type { AnalyzeV2Response } from '@/lib/v2/types'
 import { getClientIp } from '@/lib/server/client-ip'
 import { checkServerRateLimit, getRetryAfterSeconds } from '@/lib/server/rate-limit'
 import { isAnalysisIntegrityEnabled, verifyAnalysisIntegrity } from '@/lib/v2/integrity'

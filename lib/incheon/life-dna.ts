@@ -86,7 +86,7 @@ export function buildIncheonLifeDNA(params: {
     }),
     costPressure: {
       label: '비용 부담',
-      value: params.costScore === null ? '데이터 부족' : `${levelLabel(levelFromScore(costScore))} (${Math.round(costScore)})`,
+      value: params.costScore === null ? '정보 부족' : `${levelLabel(levelFromScore(costScore))} (${Math.round(costScore)})`,
       level: params.costScore === null ? 'unknown' : levelFromScore(costScore),
       granularity: ['regional_reference'],
       period: params.costScore === null ? 'N/A' : params.actualSignals?.costPeriod ?? 'official-file',

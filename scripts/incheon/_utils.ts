@@ -81,6 +81,31 @@ export function normalizeHeader(value: string) {
   return value.replace(/\s+/g, '').replace(/[()]/g, '').toLowerCase()
 }
 
+/** 지하철 역명 정규화: 공백·괄호·말미 '역' 제거. (CSV 역명 ↔ 좌표 마스터 조인용) */
+export function normalizeStationName(value: string) {
+  return value
+    .trim()
+    .replace(/\(.*?\)/g, '')
+    .replace(/\s+/g, '')
+    .replace(/역$/, '')
+    .toLowerCase()
+}
+
+/** 학교명 정규화: 학교급 접미사를 축약해 위치 데이터 ↔ 학교현황 조인 정확도를 높인다. */
+export function normalizeSchoolName(value: string) {
+  return value
+    .trim()
+    .replace(/\(.*?\)/g, '')
+    .replace(/\s+/g, '')
+    .replace(/여자고등학교$/, '여고')
+    .replace(/남자고등학교$/, '남고')
+    .replace(/여자중학교$/, '여중')
+    .replace(/초등학교$/, '초')
+    .replace(/중학교$/, '중')
+    .replace(/고등학교$/, '고')
+    .toLowerCase()
+}
+
 export function pickField(record: Record<string, unknown>, candidates: string[]) {
   const entries = Object.entries(record)
   for (const candidate of candidates) {
@@ -100,17 +125,60 @@ export function pickField(record: Record<string, unknown>, candidates: string[])
   return ''
 }
 
+// 인천 행정구역 전체 envelope(강화·옹진 섬 포함, 분석 bbox보다 넓다).
+// 타 시도(예: 충남/경북의 '인천리')나 부천·서울 fringe를 import 단계에서 걸러낸다.
+export const INCHEON_ADMIN_ENVELOPE = { latMin: 36.8, latMax: 38.05, lngMin: 124.5, lngMax: 127.05 }
+
+export function inIncheonEnvelope(lat: number, lng: number): boolean {
+  return (
+    lat >= INCHEON_ADMIN_ENVELOPE.latMin &&
+    lat <= INCHEON_ADMIN_ENVELOPE.latMax &&
+    lng >= INCHEON_ADMIN_ENVELOPE.lngMin &&
+    lng <= INCHEON_ADMIN_ENVELOPE.lngMax
+  )
+}
+
+/**
+ * 한국 좌표 정규화: 위경도 뒤바뀜(예: lat=126, lng=37) 보정 + 한반도 상·하한 범위 검증.
+ * 범위를 벗어나면 null. (swap 로직은 정상 동작이며 verify-data.ts가 단위 테스트로 보호한다)
+ */
+export function normalizeKoreaCoordinate(lat: number, lng: number): { lat: number; lng: number } | null {
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null
+  let nlat = lat
+  let nlng = lng
+  if (nlat > 90 && nlng < 90) {
+    const t = nlat
+    nlat = nlng
+    nlng = t
+  }
+  if (nlat < 30 || nlat > 40 || nlng < 120 || nlng > 132) return null
+  return { lat: nlat, lng: nlng }
+}
+
+/** 좌표 정규화 후 인천 행정 envelope 안에 있는 점만 반환한다(타 시도/뒤바뀜/쓰레기값 제거). */
+export function readIncheonPoint(lat: number, lng: number): { lat: number; lng: number } | null {
+  const point = normalizeKoreaCoordinate(lat, lng)
+  if (!point || !inIncheonEnvelope(point.lat, point.lng)) return null
+  return point
+}
+
 export function toNumber(value: unknown) {
   if (value === undefined || value === null) return 0
   const parsed = Number(String(value).replace(/[,명건원㎡%]/g, '').trim())
   return Number.isFinite(parsed) ? parsed : 0
 }
 
+// 선형 보간 분위수(R-7). ceil 방식의 상향 편향을 제거한다.
 export function percentile(values: number[], ratio: number) {
   if (values.length === 0) return 0
+  if (values.length === 1) return values[0]
   const sorted = [...values].sort((a, b) => a - b)
-  const index = Math.min(sorted.length - 1, Math.max(0, Math.ceil(sorted.length * ratio) - 1))
-  return sorted[index]
+  const pos = (sorted.length - 1) * ratio
+  const base = Math.floor(pos)
+  const rest = pos - base
+  const lower = sorted[base]
+  const upper = sorted[base + 1] ?? lower
+  return lower + rest * (upper - lower)
 }
 
 export function distributionStats(values: number[]) {

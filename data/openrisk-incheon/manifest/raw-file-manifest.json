@@ -1,0 +1,343 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-06-02T14:53:42.952Z",
+  "fileCount": 56,
+  "files": [
+    {
+      "path": "boundaries/20260427_국가데이터처_SGIS_행정구역_통계_및_경계.zip",
+      "bytes": 251294559,
+      "sha256": "3f517984bfdf4bbe43ee2a8849cff010d70ac5a826f880e6976b9a1f2b30611b",
+      "officialBaseDate": "2026-04-27"
+    },
+    {
+      "path": "boundaries/extracted_20260427/1. 통계/1.2024년 행정구역 통계(인구)/2025년기준_2024년_성연령별인구.csv",
+      "bytes": 7933649,
+      "sha256": "21da3b152661448a70b75aeb77e476b41824628c98c6715002bd182245425220",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/1. 통계/1.2024년 행정구역 통계(인구)/2025년기준_2024년_인구총괄(노년부양비).csv",
+      "bytes": 121171,
+      "sha256": "6444f45136dac2c26b6f918143857c0a406493eb40ff21b98f2fb8847689e22d",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/1. 통계/1.2024년 행정구역 통계(인구)/2025년기준_2024년_인구총괄(노령화지수).csv",
+      "bytes": 125190,
+      "sha256": "8886f68a7bd47297b3ea9af06f3aeb65bba8bf89f11238d512c866aec9875b61",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/1. 통계/1.2024년 행정구역 통계(인구)/2025년기준_2024년_인구총괄(유년부양비).csv",
+      "bytes": 119315,
+      "sha256": "53ac418db627336af98db7d80ae07978de95a757d03af0854df04fa436db6b63",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/1. 통계/1.2024년 행정구역 통계(인구)/2025년기준_2024년_인구총괄(인구밀도).csv",
+      "bytes": 126804,
+      "sha256": "a5da67658df112dc3090d835691df04694e962c8f9e0d0f93cbf64bf53614819",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/1. 통계/1.2024년 행정구역 통계(인구)/2025년기준_2024년_인구총괄(총인구).csv",
+      "bytes": 369179,
+      "sha256": "09b8b234fd9c2a3e8a8a8f89684b7827be930e083232dfee61b69a1ee5d1c9d2",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/1. 통계/1.2024년 행정구역 통계(인구)/2025년기준_2024년_인구총괄(평균나이).csv",
+      "bytes": 120895,
+      "sha256": "fa56f890b1a009e6b3f8acaf47b32af343cadf4fa10d4548b0394ab95c91db9c",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/1. 통계/2.2024년 행정구역 통계(가구)/2025년기준_2024년_가구총괄.csv",
+      "bytes": 239159,
+      "sha256": "9546905e72675e658e7513c7f4b78669ac22b14311f7cd0aa34f21e9712efcd7",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/1. 통계/2.2024년 행정구역 통계(가구)/2025년기준_2024년_세대구성별가구.csv",
+      "bytes": 699754,
+      "sha256": "558e1c596fffc971a9c7c0c35eccb89cb229feef22c4a8a4ac94f155bdcb6a0d",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/1. 통계/3.2024년 행정구역 통계(주택)/2025년기준_2024년_건축년도별주택.csv",
+      "bytes": 2269355,
+      "sha256": "001e6e7a1b6747f9d951dab70e23acc7106bbfab6bc441c063e0870d64e5823f",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/1. 통계/3.2024년 행정구역 통계(주택)/2025년기준_2024년_연건평별주택.csv",
+      "bytes": 1101130,
+      "sha256": "915526cc22d9feb48ed3b29aeca7d0597d9ecf742baf2231d107ef717ddb6704",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/1. 통계/3.2024년 행정구역 통계(주택)/2025년기준_2024년_주택유형별주택.csv",
+      "bytes": 655675,
+      "sha256": "826a2d4b21189bf0363b03f673c774816638eefbf44bb56d8272202b5864c25f",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/1. 통계/3.2024년 행정구역 통계(주택)/2025년기준_2024년_주택총괄_총주택(거처)수.csv",
+      "bytes": 121971,
+      "sha256": "e1dddb8b57535a5f59ba0a839c7728fad61d2b6683bc02d45b1b4eaf5863053b",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/1. 통계/4.2023년 행정구역 통계(사업체,종사자)/2025년기준_2023년_산업분류별(10차_대분류)_사업체수.csv",
+      "bytes": 2192720,
+      "sha256": "b1212ff3bea3c7286090a147c802c8d4acca0959952b18129e9f710448243bf9",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/1. 통계/4.2023년 행정구역 통계(사업체,종사자)/2025년기준_2023년_산업분류별(10차_대분류)_종사자수.csv",
+      "bytes": 2212703,
+      "sha256": "0c042570f926bbf7d0865038f2550992e8c08e5c0a22450edd45f55fdf49e978",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/1. 통계/4.2023년 행정구역 통계(사업체,종사자)/2025년기준_2023년_산업분류별(10차_대분류)_총괄사업체수.csv",
+      "bytes": 120269,
+      "sha256": "6bef2d34d0cd923b6b3ae3046fd18788afbb116894d8f46ee74cdede8579bb07",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/1. 통계/4.2023년 행정구역 통계(사업체,종사자)/2025년기준_2023년_산업분류별(10차_대분류)_총괄종사자수.csv",
+      "bytes": 122106,
+      "sha256": "1ce92c933644e9494e802cffa1eaec2a6848269919cb72abb1f394d8a702f386",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/1. 통계/4.2023년 행정구역 통계(사업체,종사자)/2025년기준_2023년_산업분류별(10차_중분류)_사업체수.csv",
+      "bytes": 6070054,
+      "sha256": "7e0d94b4f82e5475f030291ad41383ced9554e4126a313152282bbcce6395150",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/1. 통계/4.2023년 행정구역 통계(사업체,종사자)/2025년기준_2023년_산업분류별(10차_중분류)_종사자수.csv",
+      "bytes": 6087709,
+      "sha256": "9b092ed3484fa586af5f643af10ab2b164feec131cc01e8cf6efd429a6d44f81",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/2. 경계/1. 2025년 2분기 기준 시도 경계/bnd_sido_00_2025_2Q.cpg",
+      "bytes": 5,
+      "sha256": "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/2. 경계/1. 2025년 2분기 기준 시도 경계/bnd_sido_00_2025_2Q.dbf",
+      "bytes": 742,
+      "sha256": "37584ab7f943cffb14f81f7ddde5284529d7e82644b667e88d70f5b3d116819a",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/2. 경계/1. 2025년 2분기 기준 시도 경계/bnd_sido_00_2025_2Q.prj",
+      "bytes": 435,
+      "sha256": "e21b26451491c617318aab7d28abf4d07f5facc2aed1564e082ec8d4268cfa3b",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/2. 경계/1. 2025년 2분기 기준 시도 경계/bnd_sido_00_2025_2Q.shp",
+      "bytes": 86988364,
+      "sha256": "8edb33f1f633002a41f9bc407943cbebf0c2d8d5b3c18bd3fa5eb41aabe7e77e",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/2. 경계/1. 2025년 2분기 기준 시도 경계/bnd_sido_00_2025_2Q.shx",
+      "bytes": 236,
+      "sha256": "e70c77ef6c164fe1d3596326b05e700055c7f5267feeaad9defa6936c7f436ea",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/2. 경계/2. 2025년 2분기 기준 시군구 경계/bnd_sigungu_00_2025_2Q.cpg",
+      "bytes": 5,
+      "sha256": "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/2. 경계/2. 2025년 2분기 기준 시군구 경계/bnd_sigungu_00_2025_2Q.dbf",
+      "bytes": 9958,
+      "sha256": "18f7d3a5f0fd8cf12e4a5deca3faf52133db4f7221dfbeccedf94ec06b58ece6",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/2. 경계/2. 2025년 2분기 기준 시군구 경계/bnd_sigungu_00_2025_2Q.prj",
+      "bytes": 435,
+      "sha256": "e21b26451491c617318aab7d28abf4d07f5facc2aed1564e082ec8d4268cfa3b",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/2. 경계/2. 2025년 2분기 기준 시군구 경계/bnd_sigungu_00_2025_2Q.shp",
+      "bytes": 97462924,
+      "sha256": "85523b10411652aa6b5c286a82eff7e77c7e563d5f644eb62a221a121f7e3968",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/2. 경계/2. 2025년 2분기 기준 시군구 경계/bnd_sigungu_00_2025_2Q.shx",
+      "bytes": 2116,
+      "sha256": "9fbaeb394ffde8be2fce4e47f2420ac63942fbbdf6c15cf2c71ac69136b9428c",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/2. 경계/3. 2025년 2분기 기준 행정동 경계/bnd_dong_00_2025_2Q.cpg",
+      "bytes": 5,
+      "sha256": "3ad3031f5503a4404af825262ee8232cc04d4ea6683d42c5dd0a2f2a27ac9824",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/2. 경계/3. 2025년 2분기 기준 행정동 경계/bnd_dong_00_2025_2Q.dbf",
+      "bytes": 149608,
+      "sha256": "55ef3b6114e10424bc2e0e35e99b4ae0cf0d2c55ab9a8afe9a063337c894f266",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/2. 경계/3. 2025년 2분기 기준 행정동 경계/bnd_dong_00_2025_2Q.prj",
+      "bytes": 435,
+      "sha256": "e21b26451491c617318aab7d28abf4d07f5facc2aed1564e082ec8d4268cfa3b",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/2. 경계/3. 2025년 2분기 기준 행정동 경계/bnd_dong_00_2025_2Q.shp",
+      "bytes": 135002820,
+      "sha256": "8f5dec93ce06be03402d24c69b7f4643386945ba291cbc9e0b59b4fee992371d",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/2. 경계/3. 2025년 2분기 기준 행정동 경계/bnd_dong_00_2025_2Q.shx",
+      "bytes": 28572,
+      "sha256": "b04b98b8807bff242506fb1cad2b9cc38c23e4e855f5fc4a47850a27145e4d6b",
+      "officialBaseDate": "2025"
+    },
+    {
+      "path": "boundaries/extracted_20260427/3. 코드집/1. 행정구역 코드(adm_code).xlsx",
+      "bytes": 3232036,
+      "sha256": "8bcce47cf2dddd8ce2a2b52b094a2c2653e21d72511bb68b158f098030279abf",
+      "officialBaseDate": null
+    },
+    {
+      "path": "boundaries/extracted_20260427/3. 코드집/2. 제공용 코드(statistics_code).xlsx",
+      "bytes": 69030,
+      "sha256": "978b4893cc7987dbd27f39f609600f3c324fec5f073a9ad3fbd91e4b56e8ddb4",
+      "officialBaseDate": null
+    },
+    {
+      "path": "boundaries/extracted_20260427/3. 코드집/3. 공간정보 설계서(db_schema).hwpx",
+      "bytes": 49098,
+      "sha256": "ec5fbd711c66aa47bf67fd71a2b98d57c4c3ae28bf8de25f7e2a50a3d77524a1",
+      "officialBaseDate": null
+    },
+    {
+      "path": "boundaries/extracted_20260427/4. (참고1) SGIS 소지역 통계 이용매뉴얼/SGIS 소지역 통계 이용매뉴얼(영문).hwpx",
+      "bytes": 30651950,
+      "sha256": "1dee4d14ae574b8fb13904d72a617496dd0954eeaacb70bebf5527a991b4c7e1",
+      "officialBaseDate": null
+    },
+    {
+      "path": "boundaries/extracted_20260427/4. (참고1) SGIS 소지역 통계 이용매뉴얼/SGIS 소지역 통계 이용매뉴얼(한글).hwpx",
+      "bytes": 12392011,
+      "sha256": "a8f450139f3bf597371ad8499155d46de91ddf90b61d815ff99c15dbea40c048",
+      "officialBaseDate": null
+    },
+    {
+      "path": "boundaries/extracted_20260427/5. (참고2) SGIS 소지역 통계 분석사례집.hwpx",
+      "bytes": 32980306,
+      "sha256": "4f6ff91a13b8c8a097db5d617e34a942224b2b2228468294da31501c1d136745",
+      "officialBaseDate": null
+    },
+    {
+      "path": "childcare/어린이집기본정보조회(정기)-기준일(20260331).xls",
+      "bytes": 1776640,
+      "sha256": "e89137faadd631b5c11024229d1346f2f260bdb19fea4ce64c4eb4919ecf105f",
+      "officialBaseDate": "2026-03-31"
+    },
+    {
+      "path": "education/school-location/20260427_전국초중등학교위치표준데이터.json",
+      "bytes": 9541872,
+      "sha256": "abca548c91bb999d571f277a2aba012a806ebf270afa5de8d03cb3c99e87cd9d",
+      "officialBaseDate": "2026-04-27"
+    },
+    {
+      "path": "education/school-status/20260427_인천광역시교육청_학교현황.xlsx",
+      "bytes": 536208,
+      "sha256": "2d744ed7d527b75a8030f80909708adb29d32ce3bc750807a8bbb47fa0aa6255",
+      "officialBaseDate": "2026-04-27"
+    },
+    {
+      "path": "population/20260427_행정안전부_행정동_성별_연령별_주민등록_인구수.csv",
+      "bytes": 2564015,
+      "sha256": "78a1ff778e80490f5ed3c6891a6f03a787e9ad6854906716f9c2ff7df1960935",
+      "officialBaseDate": "2026-04-27"
+    },
+    {
+      "path": "rent-vacancy/20260427_reb-small-rent_한국부동산원_RONE_소규모상가_임대료.json",
+      "bytes": 91121,
+      "sha256": "e1ccac1975a2956e651cb7c094a218262ee8290f446bec0c171930ef08d747b6",
+      "officialBaseDate": "2026-04-27"
+    },
+    {
+      "path": "rent-vacancy/20260427_reb-small-vacancy_한국부동산원_RONE_소규모상가_공실률.json",
+      "bytes": 89977,
+      "sha256": "44a3800c21c52db3e8f4210e9b8a103e9b1bf99d1b9b203424c36137947711e4",
+      "officialBaseDate": "2026-04-27"
+    },
+    {
+      "path": "rent-vacancy/screenshots/reb-small-rent-page.png",
+      "bytes": 149113,
+      "sha256": "718d809f604b7a8385f84cd136f30b0dd78205af1697168b4451fff44f157a21",
+      "officialBaseDate": null
+    },
+    {
+      "path": "rent-vacancy/screenshots/reb-small-vacancy-page.png",
+      "bytes": 141433,
+      "sha256": "5682f2eb98d6cd150e1c3b743c49482026aafe900c0d24cd2f705727f340746d",
+      "officialBaseDate": null
+    },
+    {
+      "path": "stores/20260427_소상공인시장진흥공단_상가정보.zip",
+      "bytes": 338211286,
+      "sha256": "ef7597a36ed86257ebd0af50889d39fefdf25e1b5170674b738e1f54ae11b995",
+      "officialBaseDate": "2026-04-27"
+    },
+    {
+      "path": "stores/extracted_20260427/[필독]파일열람방법.txt",
+      "bytes": 1011,
+      "sha256": "b81d2af050e9df2c01bbccf6cd4de42d7faea8d974fdce5e0a581391602a4925",
+      "officialBaseDate": null
+    },
+    {
+      "path": "stores/extracted_20260427/소상공인시장진흥공단_상가(상권)정보_인천_202512.csv",
+      "bytes": 72470077,
+      "sha256": "bcd3257f123e3f974f1790939eb256f66010bb2ea5b77999e42340dae3acd5d7",
+      "officialBaseDate": "2025-12"
+    },
+    {
+      "path": "transit/bus-ridership/20260427_인천광역시_정류장별_이용승객_현황.csv",
+      "bytes": 355209,
+      "sha256": "08c34f3b22d9e0550c290d2e4b7e8f462eed29eb33d4e1f6d6fc06840a5262d9",
+      "officialBaseDate": "2026-04-27"
+    },
+    {
+      "path": "transit/bus-stops/20260427_인천광역시_시내버스_정류소_현황.csv",
+      "bytes": 736842,
+      "sha256": "13861816df7a8ae996fd3b564c88a712a3fee0096fe0d590285f0b532ae3dd45",
+      "officialBaseDate": "2026-04-27"
+    },
+    {
+      "path": "transit/national-bus-stops/20260427_국토교통부_전국_버스정류장_위치정보.png",
+      "bytes": 827267,
+      "sha256": "49aad74b37348f65ebd6f868eeaf66ef6d407ee16fc34145da4c0a16eb25c9aa",
+      "officialBaseDate": "2026-04-27"
+    },
+    {
+      "path": "transit/subway-ridership/20260427_인천교통공사_역별_수송인원_현황.csv",
+      "bytes": 32257,
+      "sha256": "530413a0f9fd95144aa3b2f009fed523b4e633b7afcddc9bec11c2ec80161c5e",
+      "officialBaseDate": "2026-04-27"
+    }
+  ]
+}

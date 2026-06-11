@@ -7,7 +7,20 @@ export type IncheonDataPolicy = 'public-data-only'
 export type IncheonRiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'VERY_HIGH'
 export type IncheonMetricLevel = 'low' | 'medium' | 'high' | 'unknown'
 export type IncheonConfidence = 'high' | 'medium' | 'low'
-export type IncheonEvidenceMethod = 'actual' | 'estimated'
+export type IncheonEvidenceMethod = 'actual' | 'estimated' | 'heuristic'
+
+/**
+ * 모든 지표의 표시 상태를 하나의 판별 유니온으로 관리한다.
+ * - available: 정상 산출 (점수 + 설명)
+ * - degraded: 일부 원천이 비어 제한적으로만 반영 (예: 지하철 미반영)
+ * - unavailable: 산출에 필요한 데이터가 없음 ("정보 부족")
+ * - excluded: 해당 업종 산식에서 제외 ("업종 산식 제외")
+ */
+export type MetricDisplayState =
+  | { status: 'available'; score: number; confidence: IncheonConfidence }
+  | { status: 'degraded'; score: number | null; reason: string }
+  | { status: 'unavailable'; score: null; reason: string }
+  | { status: 'excluded'; score: null; reason: string }
 
 export type IncheonGranularity =
   | 'radius_500m'
@@ -66,24 +79,40 @@ export interface IncheonMetricCard {
 
 export interface IncheonRiskBreakdown {
   competition: number
-  transit: number
+  /** 휴리스틱 복합 신호. 종합 점수 가중합에는 포함되지 않는다. */
   survival: number
+  transit: number
   anchor: number
   cost: number | null
+  /** survival은 의도적으로 제외 — 종합 점수에 들어가는 4개 차원만 가중한다. */
   weights: {
     competition: number
     transit: number
-    survival: number
     anchor: number
     cost: number | null
   }
 }
 
-export interface IncheonRiskResult {
+/** survival(복합 위험 신호) 메타 — 종합 점수와 분리해 별도 카드로만 노출 */
+export interface IncheonSurvivalSignal {
   score: number
+  label: string
+  method: 'heuristic'
+  includedInOverallScore: false
+}
+
+export interface IncheonRiskResult {
+  /** 상권 데이터가 부족(NO_COMMERCIAL_CONTEXT)하면 null */
+  score: number | null
   level: IncheonRiskLevel
   scoreBreakdown: IncheonRiskBreakdown
+  survival: IncheonSurvivalSignal
   excludedMetrics: string[]
+  degradedMetrics: string[]
+  confidenceReasons: string[]
+  /** 상권 데이터 부족으로 종합 점수를 산출하지 않은 경우 true */
+  insufficientData?: boolean
+  notice?: string
   sourceIds?: string[]
   confidence?: IncheonConfidence
   method?: IncheonEvidenceMethod

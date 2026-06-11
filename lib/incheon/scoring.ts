@@ -17,6 +17,31 @@ export function normalizeWeights<T extends Record<string, number | null>>(weight
   ) as T
 }
 
+/**
+ * 가용 지표만으로 가중 평균을 낸다.
+ * null/undefined/NaN 점수는 건너뛰고 남은 지표의 가중치로 재정규화하므로,
+ * "비용 데이터 없음"을 50점 같은 임의값으로 대체하지 않는다.
+ * 가용 지표가 하나도 없으면 null을 반환한다.
+ */
+export function weightedAverageAvailable(
+  scores: Record<string, number | null | undefined>,
+  weights: Record<string, number | null | undefined>
+): number | null {
+  let weightedSum = 0
+  let weightTotal = 0
+
+  for (const [key, weight] of Object.entries(weights)) {
+    const score = scores[key]
+    if (weight === null || weight === undefined || weight <= 0) continue
+    if (score === null || score === undefined || Number.isNaN(score)) continue
+    weightedSum += score * weight
+    weightTotal += weight
+  }
+
+  if (weightTotal <= 0) return null
+  return weightedSum / weightTotal
+}
+
 export function buildIncheonRiskCards(params: {
   category: BusinessCategory
   risk: IncheonRiskResult
@@ -63,9 +88,9 @@ export function buildIncheonRiskCards(params: {
     {
       key: 'survival',
       score: params.risk.scoreBreakdown.survival,
-      title: '폐업 위험 조합을 확인하세요',
-      body: '주변 경쟁과 임대료 등을 종합해 볼 때, 버티기 어려울 수 있는 위험도를 예측했습니다.',
-      evidenceBadges: ['종합 예측', '직접 확인'],
+      title: '복합 위험 신호를 확인하세요',
+      body: '경쟁·비용·접근성을 조합해 본 부담 신호입니다. 실제 폐업률 데이터가 아닌 참고용 복합 지표이며, 종합 점수에는 반영하지 않았습니다.',
+      evidenceBadges: ['복합 신호', '참고용'],
     },
   ]
     .filter((card): card is Omit<typeof card, 'score'> & { score: number } => typeof card.score === 'number')

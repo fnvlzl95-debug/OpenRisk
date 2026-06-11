@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-04-27T04:27:34.076Z",
+  "generatedAt": "2026-06-02T14:52:40.978Z",
   "h3Resolution": 10,
   "sourceIds": [
     "incheon-bus-stops",
     "incheon-bus-ridership",
     "incheon-subway-ridership"
   ],
-  "dataPeriod": "official-file",
+  "dataPeriod": "2024-월평균(역별 수송인원)",
   "cells": {
     "8a30e0a842dffff": {
       "busStopCount": 1,
@@ -681,18 +681,6 @@
       "subwayRidership": 0,
       "accessScore": 60.10917912644224
     },
-    "8a30e1c8d127fff": {
-      "busStopCount": 1,
-      "busRidership": 0,
-      "subwayRidership": 0,
-      "accessScore": 12
-    },
-    "8a30e1c8d12ffff": {
-      "busStopCount": 1,
-      "busRidership": 0,
-      "subwayRidership": 0,
-      "accessScore": 12
-    },
     "8a30e0aaeb87fff": {
       "busStopCount": 2,
       "busRidership": 53218,
@@ -792,8 +780,8 @@
     "8a30e0a13c17fff": {
       "busStopCount": 2,
       "busRidership": 356650,
-      "subwayRidership": 0,
-      "accessScore": 151.84512991571592
+      "subwayRidership": 463516.5833333333,
+      "accessScore": 334.4975243053943
     },
     "8a30e0a13457fff": {
       "busStopCount": 1,
@@ -876,8 +864,8 @@
     "8a30e0a13597fff": {
       "busStopCount": 1,
       "busRidership": 3748,
-      "subwayRidership": 0,
-      "accessScore": 94.29244416735912
+      "subwayRidership": 245068.66666666666,
+      "accessScore": 268.02261340722407
     },
     "8a30e0a1042ffff": {
       "busStopCount": 1,
@@ -1350,8 +1338,8 @@
     "8a30e0a1a707fff": {
       "busStopCount": 2,
       "busRidership": 56178,
-      "subwayRidership": 0,
-      "accessScore": 133.36298300571013
+      "subwayRidership": 355845.0833333333,
+      "accessScore": 312.3145329319027
     },
     "8a30e0af4897fff": {
       "busStopCount": 1,
@@ -2160,8 +2148,8 @@
     "8a30e0a355a7fff": {
       "busStopCount": 2,
       "busRidership": 18844,
-      "subwayRidership": 0,
-      "accessScore": 122.44002905701237
+      "subwayRidership": 91092.83333333333,
+      "accessScore": 282.31506451386304
     },
     "8a30e0a35477fff": {
       "busStopCount": 1,
@@ -2304,8 +2292,8 @@
     "8a30e0a050a7fff": {
       "busStopCount": 2,
       "busRidership": 6360,
-      "subwayRidership": 0,
-      "accessScore": 111.57940876678803
+      "subwayRidership": 7718,
+      "accessScore": 236.89957018008602
     },
     "8a30e0a06b6ffff": {
       "busStopCount": 2,
@@ -2712,8 +2700,8 @@
     "8a30e0a180d7fff": {
       "busStopCount": 2,
       "busRidership": 29024,
-      "subwayRidership": 0,
-      "accessScore": 126.75912806566092
+      "subwayRidership": 231651.66666666666,
+      "accessScore": 299.701049699234
     },
     "8a30e0aabcc7fff": {
       "busStopCount": 1,
@@ -2892,8 +2880,8 @@
     "8a30e0a1830ffff": {
       "busStopCount": 3,
       "busRidership": 175770,
-      "subwayRidership": 0,
-      "accessScore": 156.7693729044376
+      "subwayRidership": 429456.5,
+      "accessScore": 338.3532657898013
     },
     "8a30e0a1822ffff": {
       "busStopCount": 1,
@@ -3078,8 +3066,8 @@
     "8a30e0a0a897fff": {
       "busStopCount": 2,
       "busRidership": 223352,
-      "subwayRidership": 0,
-      "accessScore": 147.16508758523503
+      "subwayRidership": 175026.83333333334,
+      "accessScore": 316.1828916155266
     },
     "8a30e0a0ac6ffff": {
       "busStopCount": 1,
@@ -8130,8 +8118,8 @@
     "8a30e0a06a4ffff": {
       "busStopCount": 1,
       "busRidership": 19021,
-      "subwayRidership": 0,
-      "accessScore": 110.53351483042331
+      "subwayRidership": 182384.5,
+      "accessScore": 280.12780484030077
     },
     "8a30e0a84547fff": {
       "busStopCount": 2,
@@ -8328,8 +8316,8 @@
     "8a30e0a914dffff": {
       "busStopCount": 1,
       "busRidership": 88234,
-      "subwayRidership": 0,
-      "accessScore": 125.87758988677334
+      "subwayRidership": 191091.33333333334,
+      "accessScore": 296.124758038142
     },
     "8a30e0a914d7fff": {
       "busStopCount": 1,
@@ -8874,8 +8862,8 @@
     "8a30e0a9174ffff": {
       "busStopCount": 1,
       "busRidership": 59504,
-      "subwayRidership": 0,
-      "accessScore": 121.93815621616541
+      "subwayRidership": 384114.6666666667,
+      "accessScore": 301.95994223704537
     },
     "8a30e0a9d11ffff": {
       "busStopCount": 1,
@@ -9714,8 +9702,8 @@
     "8a30e0a04117fff": {
       "busStopCount": 1,
       "busRidership": 23579,
-      "subwayRidership": 0,
-      "accessScore": 112.68154174091362
+      "subwayRidership": 167346.58333333334,
+      "accessScore": 281.07113746130796
     },
     "8a30e0a2250ffff": {
       "busStopCount": 2,
@@ -9918,8 +9906,8 @@
     "8a30e0a88b97fff": {
       "busStopCount": 1,
       "busRidership": 18419,
-      "subwayRidership": 0,
-      "accessScore": 110.21192309809298
+      "subwayRidership": 200878.16666666666,
+      "accessScore": 281.158346933822
     },
     "8a30e0a88b2ffff": {
       "busStopCount": 2,
@@ -10539,18 +10527,6 @@
       "subwayRidership": 0,
       "accessScore": 98.51724084373842
     },
-    "8a30e1c8d727fff": {
-      "busStopCount": 1,
-      "busRidership": 0,
-      "subwayRidership": 0,
-      "accessScore": 12
-    },
-    "8a30e1c8d08ffff": {
-      "busStopCount": 1,
-      "busRidership": 0,
-      "subwayRidership": 0,
-      "accessScore": 12
-    },
     "8a30e0a83067fff": {
       "busStopCount": 1,
       "busRidership": 42,
@@ -10566,8 +10542,8 @@
     "8a30e0a8305ffff": {
       "busStopCount": 2,
       "busRidership": 4832,
-      "subwayRidership": 0,
-      "accessScore": 108.83222671845084
+      "subwayRidership": 127612.08333333333,
+      "accessScore": 273.42684121880706
     },
     "8a30e0a833a7fff": {
       "busStopCount": 1,
@@ -11564,18 +11540,6 @@
       "busRidership": 5739,
       "subwayRidership": 0,
       "accessScore": 98.55214489313613
-    },
-    "8a30e1c8828ffff": {
-      "busStopCount": 1,
-      "busRidership": 0,
-      "subwayRidership": 0,
-      "accessScore": 12
-    },
-    "8a30e1c8820ffff": {
-      "busStopCount": 1,
-      "busRidership": 0,
-      "subwayRidership": 0,
-      "accessScore": 12
     },
     "8a30e0a95617fff": {
       "busStopCount": 2,
@@ -14886,8 +14850,8 @@
     "8a30e0a81127fff": {
       "busStopCount": 1,
       "busRidership": 10828,
-      "subwayRidership": 0,
-      "accessScore": 104.8998299962838
+      "subwayRidership": 206390.5,
+      "accessScore": 276.2252518102777
     },
     "8a30e5598607fff": {
       "busStopCount": 1,
@@ -14958,26 +14922,14 @@
     "8a30e0a8c427fff": {
       "busStopCount": 1,
       "busRidership": 6874,
-      "subwayRidership": 0,
-      "accessScore": 100.35646922534772
+      "subwayRidership": 200114.5,
+      "accessScore": 271.2495689291248
     },
     "8a30e0a8cd47fff": {
       "busStopCount": 1,
       "busRidership": 5494,
       "subwayRidership": 0,
       "accessScore": 98.11593866837723
-    },
-    "8a30e1caba87fff": {
-      "busStopCount": 1,
-      "busRidership": 0,
-      "subwayRidership": 0,
-      "accessScore": 12
-    },
-    "8a30e1caba9ffff": {
-      "busStopCount": 1,
-      "busRidership": 0,
-      "subwayRidership": 0,
-      "accessScore": 12
     },
     "8a30e094a137fff": {
       "busStopCount": 1,
@@ -15056,18 +15008,6 @@
       "busRidership": 70,
       "subwayRidership": 0,
       "accessScore": 66.62679877041316
-    },
-    "8a30e1ca3a87fff": {
-      "busStopCount": 1,
-      "busRidership": 4472,
-      "subwayRidership": 0,
-      "accessScore": 96.05814603432847
-    },
-    "8a30e1ca3a8ffff": {
-      "busStopCount": 1,
-      "busRidership": 4472,
-      "subwayRidership": 0,
-      "accessScore": 96.05814603432847
     },
     "8a30e0aaac6ffff": {
       "busStopCount": 1,
@@ -15240,8 +15180,8 @@
     "8a30e0a836affff": {
       "busStopCount": 1,
       "busRidership": 44492,
-      "subwayRidership": 0,
-      "accessScore": 119.03087152410072
+      "subwayRidership": 233548.25,
+      "accessScore": 292.08694708879904
     },
     "8a30e0a9cad7fff": {
       "busStopCount": 1,
@@ -15296,12 +15236,6 @@
       "busRidership": 179,
       "subwayRidership": 0,
       "accessScore": 63.92956850890211
-    },
-    "8a30e15269b7fff": {
-      "busStopCount": 1,
-      "busRidership": 0,
-      "subwayRidership": 0,
-      "accessScore": 12
     },
     "8a30e0b25cdffff": {
       "busStopCount": 2,
@@ -16074,8 +16008,8 @@
     "8a30e014930ffff": {
       "busStopCount": 1,
       "busRidership": 19882,
-      "subwayRidership": 0,
-      "accessScore": 110.97620374258081
+      "subwayRidership": 203048.91666666666,
+      "accessScore": 282.0731034604706
     },
     "8a30e0a924e7fff": {
       "busStopCount": 2,
@@ -17184,8 +17118,8 @@
     "8a30e0a8579ffff": {
       "busStopCount": 1,
       "busRidership": 67063,
-      "subwayRidership": 0,
-      "accessScore": 123.13402666317694
+      "subwayRidership": 420437.6666666667,
+      "accessScore": 304.4207811182963
     },
     "8a30e0a85687fff": {
       "busStopCount": 1,
@@ -17802,8 +17736,8 @@
     "8a30e0a9c14ffff": {
       "busStopCount": 1,
       "busRidership": 7641,
-      "subwayRidership": 0,
-      "accessScore": 101.41414628006845
+      "subwayRidership": 204318.91666666666,
+      "accessScore": 272.598337967799
     },
     "8a30e0a9c15ffff": {
       "busStopCount": 1,
@@ -18492,8 +18426,8 @@
     "8a30e0a119a7fff": {
       "busStopCount": 1,
       "busRidership": 4578,
-      "subwayRidership": 0,
-      "accessScore": 96.29235912657094
+      "subwayRidership": 173798.25,
+      "accessScore": 265.2115455975593
     },
     "8a30e0a150e7fff": {
       "busStopCount": 2,
@@ -20412,8 +20346,8 @@
     "8a30e0a8162ffff": {
       "busStopCount": 1,
       "busRidership": 11490,
-      "subwayRidership": 0,
-      "accessScore": 105.49319399257635
+      "subwayRidership": 472107.3333333333,
+      "accessScore": 288.4026866046613
     },
     "8a30e0a03917fff": {
       "busStopCount": 2,
@@ -20772,8 +20706,8 @@
     "8a30e0a8c607fff": {
       "busStopCount": 1,
       "busRidership": 12428,
-      "subwayRidership": 0,
-      "accessScore": 106.2778773074551
+      "subwayRidership": 323393.9166666667,
+      "accessScore": 283.8906904137575
     },
     "8a30e549e4d7fff": {
       "busStopCount": 2,
@@ -24024,8 +23958,8 @@
     "8a30e0a19097fff": {
       "busStopCount": 2,
       "busRidership": 72254,
-      "subwayRidership": 0,
-      "accessScore": 135.8795680773243
+      "subwayRidership": 346927.8333333333,
+      "accessScore": 314.4758173302354
     },
     "8a30e0a1971ffff": {
       "busStopCount": 1,
@@ -24248,12 +24182,6 @@
       "busRidership": 1,
       "subwayRidership": 0,
       "accessScore": 18.931471805599454
-    },
-    "8a30e1ca94d7fff": {
-      "busStopCount": 1,
-      "busRidership": 0,
-      "subwayRidership": 0,
-      "accessScore": 12
     },
     "8a30e08d3c47fff": {
       "busStopCount": 2,
@@ -24644,18 +24572,6 @@
       "busRidership": 300,
       "subwayRidership": 0,
       "accessScore": 81.07110264748876
-    },
-    "8a30e1c89daffff": {
-      "busStopCount": 1,
-      "busRidership": 0,
-      "subwayRidership": 0,
-      "accessScore": 12
-    },
-    "8a30e1c88a4ffff": {
-      "busStopCount": 1,
-      "busRidership": 0,
-      "subwayRidership": 0,
-      "accessScore": 12
     },
     "8a30e094b3a7fff": {
       "busStopCount": 1,
@@ -25866,8 +25782,8 @@
     "8a30e0a92c87fff": {
       "busStopCount": 1,
       "busRidership": 12291,
-      "subwayRidership": 0,
-      "accessScore": 106.16703923250375
+      "subwayRidership": 182656.41666666666,
+      "accessScore": 275.78218615461594
     },
     "8a30e0a92c17fff": {
       "busStopCount": 1,
@@ -27054,8 +26970,8 @@
     "8a30e0a93d17fff": {
       "busStopCount": 2,
       "busRidership": 1814,
-      "subwayRidership": 0,
-      "accessScore": 99.03840746698951
+      "subwayRidership": 236315.25,
+      "accessScore": 272.25937467754164
     },
     "8a30e0a96b0ffff": {
       "busStopCount": 2,
@@ -27524,12 +27440,6 @@
       "busRidership": 102,
       "subwayRidership": 0,
       "accessScore": 58.34728988229636
-    },
-    "8a30e1c9a077fff": {
-      "busStopCount": 1,
-      "busRidership": 0,
-      "subwayRidership": 0,
-      "accessScore": 12
     },
     "8a30e0aa83a7fff": {
       "busStopCount": 1,
@@ -28394,18 +28304,6 @@
       "busRidership": 19029,
       "subwayRidership": 0,
       "accessScore": 110.53771960290196
-    },
-    "8a30e1caec57fff": {
-      "busStopCount": 1,
-      "busRidership": 1912,
-      "subwayRidership": 0,
-      "accessScore": 87.56427969440253
-    },
-    "8a30e1caec5ffff": {
-      "busStopCount": 1,
-      "busRidership": 1912,
-      "subwayRidership": 0,
-      "accessScore": 87.56427969440253
     },
     "8a30e0a9ea57fff": {
       "busStopCount": 1,
@@ -30446,13 +30344,265 @@
       "busRidership": 15434,
       "subwayRidership": 0,
       "accessScore": 120.44392936936259
+    },
+    "8a30e0a0a0f7fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 48997.083333333336,
+      "accessScore": 151.19351044954055
+    },
+    "8a30e0a19ac7fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 156502.5,
+      "accessScore": 167.4516711410133
+    },
+    "8a30e0a1ab57fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 617593.5,
+      "accessScore": 186.6702232109769
+    },
+    "8a30e0aa9a1ffff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 591436,
+      "accessScore": 186.06434626993314
+    },
+    "8a30e0aa9747fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 541554.3333333334,
+      "accessScore": 184.83080735686565
+    },
+    "8a30e0af6daffff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 278835.5,
+      "accessScore": 175.53733214528575
+    },
+    "8a30e0aaba97fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 166093.58333333334,
+      "accessScore": 168.28437757869722
+    },
+    "8a30e0aab527fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 101783.58333333333,
+      "accessScore": 161.42859503255505
+    },
+    "8a30e0a8c99ffff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 412486.5833333333,
+      "accessScore": 181.0194593661122
+    },
+    "8a30e0a8130ffff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 323641,
+      "accessScore": 177.62350543851937
+    },
+    "8a30e0a83a57fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 544550.4166666666,
+      "accessScore": 184.9080470445164
+    },
+    "8a30e0a9ccdffff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 115708.41666666667,
+      "accessScore": 163.22372217926176
+    },
+    "8a30e0a92067fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 449413.3333333333,
+      "accessScore": 182.21980745643415
+    },
+    "8a30e0a967affff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 322239.8333333333,
+      "accessScore": 177.5627626440249
+    },
+    "8a30e0a9611ffff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 157189.33333333334,
+      "accessScore": 167.51297730014375
+    },
+    "8a30e0a9691ffff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 97344.08333333333,
+      "accessScore": 160.80424506264185
+    },
+    "8a30e0a0528ffff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 18017,
+      "accessScore": 137.18777152095942
+    },
+    "8a30e0a0138ffff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 39054,
+      "accessScore": 148.01816663262156
+    },
+    "8a30e0a3565ffff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 91765.66666666667,
+      "accessScore": 159.97806163447626
+    },
+    "8a30e0a2278ffff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 336171,
+      "accessScore": 178.15529497820182
+    },
+    "8a30e0a04707fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 302618.5833333333,
+      "accessScore": 176.68324513196475
+    },
+    "8a30e0a066affff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 196970.5,
+      "accessScore": 170.671400580851
+    },
+    "8a30e0a02c97fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 118143.33333333333,
+      "accessScore": 163.51527247767828
+    },
+    "8a30e0a11c17fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 313745.5833333333,
+      "accessScore": 177.1887723143244
+    },
+    "8a30e0aacc47fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 482491.3333333333,
+      "accessScore": 183.2140843423848
+    },
+    "8a30e0aac517fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 159161.08333333334,
+      "accessScore": 167.6874969561216
+    },
+    "8a30e0aae887fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 160559.83333333334,
+      "accessScore": 167.80999443074296
+    },
+    "8a30e0aae767fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 152535.58333333334,
+      "accessScore": 167.09223631759136
+    },
+    "8a30e0a85a27fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 93437.5,
+      "accessScore": 160.23082242791415
+    },
+    "8a30e0a850c7fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 317911.25,
+      "accessScore": 177.37342952401386
+    },
+    "8a30e0a88397fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 170911.66666666666,
+      "accessScore": 168.68471177284601
+    },
+    "8a30e0a8bb6ffff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 110751,
+      "accessScore": 162.610682450091
+    },
+    "8a30e0a8b247fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 49740.083333333336,
+      "accessScore": 151.4042109585947
+    },
+    "8a30e0ac0a17fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 329761.4166666667,
+      "accessScore": 177.88578814523464
+    },
+    "8a30e0ac461ffff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 151873.08333333334,
+      "accessScore": 167.03129880350818
+    },
+    "8a30e0ac44a7fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 484298,
+      "accessScore": 183.2664086897468
+    },
+    "8a30e0af10cffff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 786883.1666666666,
+      "accessScore": 190.0617086643819
+    },
+    "8a30e0af1c37fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 727126.4166666666,
+      "accessScore": 188.95599806719036
+    },
+    "8a30e0af0b37fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 742221.75,
+      "accessScore": 189.2436655095588
+    },
+    "8a30e0af474ffff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 306970.6666666667,
+      "accessScore": 176.88315023851084
+    },
+    "8a30e0af4cc7fff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 475715.75,
+      "accessScore": 183.0160905029531
+    },
+    "8a30e0aad71ffff": {
+      "busStopCount": 0,
+      "busRidership": 0,
+      "subwayRidership": 502402.5833333333,
+      "accessScore": 183.78022637158364
     }
   },
   "accessStats": {
-    "p50": 93.22074375362217,
-    "p75": 107.80799870885531,
-    "p90": 120.15205300012315,
-    "p95": 127.18308755568317,
-    "max": 165.2384896337042
+    "p50": 93.68576395746811,
+    "p75": 108.2937957415446,
+    "p90": 121.33635827663824,
+    "p95": 129.46640583169744,
+    "max": 338.3532657898013
   }
 }

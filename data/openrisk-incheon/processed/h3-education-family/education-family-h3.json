@@ -1,444 +1,445 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-04-27T05:09:35.921Z",
+  "generatedAt": "2026-06-02T14:52:43.445Z",
   "h3Resolution": 10,
   "sourceIds": [
     "school-location-standard",
+    "incheon-school-status",
     "childcare-basic"
   ],
-  "dataPeriod": "official-file",
+  "dataPeriod": "2025-04-01",
   "cells": {
     "8a30e0aaa05ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 470,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.23886475213135
     },
     "8a30e0b89577fff": {
       "schoolCount": 2,
-      "studentCount": 0,
+      "studentCount": 1645,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 36
+      "educationScore": 95.24882704989612
     },
     "8a30e0a04457fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 972,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.04307265748804
     },
     "8a30e0a19317fff": {
       "schoolCount": 2,
-      "studentCount": 0,
+      "studentCount": 331,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 36
+      "educationScore": 82.4410797513319
     },
     "8a30e0a1a80ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 634,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.62899999114154
     },
     "8a30e0a046effff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 700,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.42006309627672
     },
     "8a30e0a018dffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1007,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.32578758905052
     },
     "8a30e014bc47fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 762,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.09806425027566
     },
     "8a30e0aa94c7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 930,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.69007421821654
     },
     "8a30e0a81497fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 878,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.23027918148142
     },
     "8a30e0aac86ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 209,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 60.77686024573975
     },
     "8a30e0a9b8a7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 685,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.24702102180709
     },
     "8a30e0a19617fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 538,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.31772456727198
     },
     "8a30e0aaa4e7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 795,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.43679348675506
     },
     "8a3019ba53affff": {
       "schoolCount": 2,
-      "studentCount": 0,
+      "studentCount": 33,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 36
+      "educationScore": 64.2108841969293
     },
     "8a30e0a8c7affff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 782,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.30506156792643
     },
     "8a30e0aa35b7fff": {
       "schoolCount": 8,
-      "studentCount": 0,
+      "studentCount": 3860,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 8,
-      "educationScore": 144
+      "educationScore": 210.0694519701139
     },
     "8a30e0a88a8ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 252,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 62.26711590982016
     },
     "8a30e0aabdb7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 477,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.35688585993165
     },
     "8a30e0a8148ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 698,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.39720593787048
     },
     "8a30e0aa1297fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 298,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.60354858712549
     },
     "8a30e0af6427fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 617,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.41190765966152
     },
     "8a30e0a1bb8ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 437,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.65775128301158
     },
     "8a30e0aa21affff": {
       "schoolCount": 2,
-      "studentCount": 0,
+      "studentCount": 861,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 36
+      "educationScore": 90.07404216530955
     },
     "8a30e0aaea87fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 384,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.62594667430227
     },
     "8a30e0a8e127fff": {
       "schoolCount": 2,
-      "studentCount": 0,
+      "studentCount": 1402,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 36
+      "educationScore": 93.97094464081968
     },
     "8a30e0aac847fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 924,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.6383499000994
     },
     "8a30e0a86a0ffff": {
       "schoolCount": 2,
-      "studentCount": 0,
+      "studentCount": 1363,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 36
+      "educationScore": 93.74541470722727
     },
     "8a30e0a9c80ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 216,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 61.03917882832368
     },
     "8a30e0a83967fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 621,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.46352074191344
     },
     "8a30e0aad197fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 119,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 56.29993394225637
     },
     "8a30e0af2117fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 275,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 62.9632069257372
     },
     "8a30e0a0218ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 326,
       "childcareCount": 1,
       "childcareCapacity": 46,
       "childcareCurrent": 46,
       "anchorCount": 2,
-      "educationScore": 53.25073800855029
+      "educationScore": 99.5704193757283
     },
     "8a30e0a81ba7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 941,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.7840421966109
     },
     "8a30e0aa94d7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 785,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.33565433943366
     },
     "8a30e0a1978ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 454,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.96237935160761
     },
     "8a30e0af445ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 512,
       "childcareCount": 1,
       "childcareCapacity": 137,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 58.63626842578603
+      "educationScore": 108.55847518715218
     },
     "8a30e0a12057fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 361,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.13315369460616
     },
     "8a30e0a8c85ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 869,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.14794569318903
     },
     "8a30e0a0a3affff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 498,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.70084876601214
     },
     "8a30e0aac017fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 429,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.51028166950087
     },
     "8a30e0a18077fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 245,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 62.0426522874589
     },
     "8a30e0030b4ffff": {
       "schoolCount": 2,
-      "studentCount": 0,
+      "studentCount": 223,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 36
+      "educationScore": 79.29316841484032
     },
     "8a30e0aa3467fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1341,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 75.61533054025301
     },
     "8a30e0a9cd5ffff": {
       "schoolCount": 2,
-      "studentCount": 0,
+      "studentCount": 578,
       "childcareCount": 1,
       "childcareCapacity": 35,
       "childcareCurrent": 19,
       "anchorCount": 3,
-      "educationScore": 69.91759469228055
+      "educationScore": 120.8080145128645
     },
     "8a30e0a95a37fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 285,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.24793448655882
     },
     "8a30e0a1b91ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 342,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 64.70184357732752
     },
     "8a30e0aad08ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 517,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.99980193807586
     },
     "8a30e08e850ffff": {
       "schoolCount": 1,
@@ -451,1443 +452,1443 @@
     },
     "8a30e0aad59ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 674,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.11770152698024
     },
     "8a30e086b61ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 129,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 56.94027560364466
     },
     "8a30e0a81347fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 486,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.50611298466072
     },
     "8a30e0aa9617fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 687,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.27031070346675
     },
     "8a30e0aadba7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1018,
       "childcareCount": 1,
       "childcareCapacity": 99,
       "childcareCurrent": 94,
       "anchorCount": 2,
-      "educationScore": 57.02585092994046
+      "educationScore": 112.43846719572225
     },
     "8a30e0a982e7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 512,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.92220676136616
     },
     "8a30e0aa6467fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 137,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 57.41802948125764
     },
     "8a30e0ab0a57fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 286,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.27585772607697
     },
     "8a30e0a1b1affff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 400,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.95169141845255
     },
     "8a30e0a91547fff": {
       "schoolCount": 2,
-      "studentCount": 0,
+      "studentCount": 853,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 36
+      "educationScore": 89.99944955030855
     },
     "8a30e0af4457fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 565,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.70875262562546
     },
     "8a30e0a80177fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 349,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 64.86346523586766
     },
     "8a30e0ab5a0ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 312,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.96962552432122
     },
     "8a30e0a9baf7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 791,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.3964911345154
     },
     "8a30e548e737fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 131,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 57.062415380690965
     },
     "8a30e0a1a96ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 574,
       "childcareCount": 1,
       "childcareCapacity": 72,
       "childcareCurrent": 35,
       "anchorCount": 2,
-      "educationScore": 55.45229720574196
+      "educationScore": 106.28725753212076
     },
     "8a30e0a8d6f7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 550,
       "childcareCount": 1,
       "childcareCapacity": 20,
       "childcareCurrent": 6,
       "anchorCount": 2,
-      "educationScore": 49.22261218861711
+      "educationScore": 99.71649066184044
     },
     "8a302b6e8997fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 41,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 47.901356946266944
     },
     "8a30e0a9512ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 258,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 62.4546244935963
     },
     "8a30e0a10ceffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 885,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.29373560484065
     },
     "8a30e0a107affff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 910,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.51634317807967
     },
     "8a30e0a11177fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 205,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 60.62300935031665
     },
     "8a30e548ec1ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 469,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.22186155763283
     },
     "8a30e0aa9257fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 651,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.84035649541323
     },
     "8a30e0a16197fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 488,
       "childcareCount": 1,
       "childcareCapacity": 34,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 51.77674030744707
+      "educationScore": 101.31564022324605
     },
     "8a3019ba5207fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 16,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 40.66570675244973
     },
     "8a30e0a190affff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 290,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.38658613737194
     },
     "8a30e0aaa00ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 179,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 59.54365480712168
     },
     "8a30e0a18137fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 176,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 59.40919786059063
     },
     "8a30e0a8839ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 385,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.64669895571865
     },
     "8a30e0b91187fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1359,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 75.72191982984077
     },
     "8a30e0a0e9affff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 907,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.48995502881036
     },
     "8a30e08c930ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 400,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.95169141845255
     },
     "8a30e0aa92b7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 831,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.79065952656967
     },
     "8a30e0a0a117fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 509,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.87528580574697
     },
     "8a30e0a16a4ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1073,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.83316220055048
     },
     "8a30e0a848affff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1154,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 74.41484498364716
     },
     "8a30e0a01407fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1300,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 75.36710782810005
     },
     "8a30e0af680ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1016,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.39689916838847
     },
     "8a30e0aa86effff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 328,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 64.36846200612297
     },
     "8a30e0065947fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 237,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 61.7781653893718
     },
     "8a30e0a91adffff": {
       "schoolCount": 2,
-      "studentCount": 0,
+      "studentCount": 1733,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 36
+      "educationScore": 95.6654892587239
     },
     "8a30e0aa2897fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 434,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.60276824870948
     },
     "8a30e0a8c517fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 983,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.13300717641803
     },
     "8a30e0a2241ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 492,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.60407339234152
     },
     "8a30e0af4d67fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 190,
       "childcareCount": 2,
       "childcareCapacity": 74,
       "childcareCurrent": 54,
       "anchorCount": 3,
-      "educationScore": 71.58744056768155
+      "educationScore": 113.6056279920546
     },
     "8a30e08cd76ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 481,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.4235529124048
     },
     "8a30e0a19697fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 529,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.18301605236934
     },
     "8a30e0a9da37fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 308,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.86673021518197
     },
     "8a30e0a841affff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 214,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 60.9651042250213
     },
     "8a30e0af4327fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 207,
       "childcareCount": 1,
       "childcareCapacity": 48,
       "childcareCurrent": 47,
       "anchorCount": 2,
-      "educationScore": 53.45910149055313
+      "educationScore": 96.15940612816368
     },
     "8a30e0a99767fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1062,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.75080302673558
     },
     "8a30e0a964f7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 980,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.10857967652291
     },
     "8a30e0a12147fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 430,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.52886472082997
     },
     "8a30e0a92c57fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 886,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.30275985847663
     },
     "8a30e0a8e0effff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1019,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.42046325022653
     },
     "8a30e0a04837fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 813,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.61568292802032
     },
     "8a30e5492127fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 52,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 49.76233530841698
     },
     "8a30e0a99427fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 362,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.1552226741188
     },
     "8a302b6c1967fff": {
       "schoolCount": 2,
-      "studentCount": 0,
+      "studentCount": 149,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 36
+      "educationScore": 76.08508235277004
     },
     "8a30e0a8c187fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 763,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.10854231333217
     },
     "8a30e0a13c4ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1216,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 74.83315274390021
     },
     "8a30e0a8c81ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 585,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.9865583166161
     },
     "8a30e0aa9267fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 317,
       "childcareCount": 1,
       "childcareCapacity": 139,
       "childcareCurrent": 93,
       "anchorCount": 2,
-      "educationScore": 58.70821211304652
+      "educationScore": 104.80462317528793
     },
     "8a30e0a8436ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 843,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.90521995676767
     },
     "8a30e0aad767fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 512,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.92220676136616
     },
     "8a30e08d5287fff": {
       "schoolCount": 2,
-      "studentCount": 0,
+      "studentCount": 97,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 36
+      "educationScore": 72.67973982936458
     },
     "8a30e0aabc9ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 488,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.53889991579898
     },
     "8a30e0af405ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 921,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.61236178845274
     },
     "8a30e0aae387fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 182,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 59.67588922273137
     },
     "8a30e0949b6ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 57,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 50.48354408437135
     },
     "8a30e0af6037fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1054,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.69036836728134
     },
     "8a30e0a02d47fff": {
       "schoolCount": 2,
-      "studentCount": 0,
+      "studentCount": 476,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 36
+      "educationScore": 85.34013192710674
     },
     "8a30e0aac187fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 144,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 57.813869939364594
     },
     "8a30e5481867fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 36,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 46.88734330115379
     },
     "8a30e0a1b827fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 469,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.22186155763283
     },
     "8a30e0ab37a7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 372,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.37262735715052
     },
     "8a30e0a92b57fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1261,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 75.12362434480926
     },
     "8a30e0a05b37fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 658,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.92578827602006
     },
     "8a30e0aa230ffff": {
       "schoolCount": 2,
-      "studentCount": 0,
+      "studentCount": 1045,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 36
+      "educationScore": 91.62182915699896
     },
     "8a30e0a8bd27fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 788,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.366130566767
     },
     "8a30e0a8d5a7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 414,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.22622816184558
     },
     "8a30e0ab5ac7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 202,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 60.5056478323343
     },
     "8a30e0a95af7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 212,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 60.890337325675404
     },
     "8a30e0aae14ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 884,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.28470116006343
     },
     "8a30e0a9ca37fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 271,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 62.84641653036798
     },
     "8a30e0aa644ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 589,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.04098029519812
     },
     "8a30e0a91177fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 938,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.7585238336661
     },
     "8a30e0a913affff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 732,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.77716561509321
     },
     "8a30e0aae377fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 463,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.11907641781005
     },
     "8a30e0ab3777fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 972,
       "childcareCount": 1,
       "childcareCapacity": 19,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 48.97866136776995
+      "educationScore": 104.021734025258
     },
     "8a30e0ab154ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 750,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.97124521411308
     },
     "8a30e0a0632ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1127,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 74.22561145646404
     },
     "8a30e0a0481ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 545,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.42095180595925
     },
     "8a30e0a15697fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 584,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.97289477785486
     },
     "8a30e0ab1157fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1403,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 75.97664467668605
     },
     "8a30e0aa64d7fff": {
       "schoolCount": 3,
-      "studentCount": 0,
+      "studentCount": 1418,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 3,
-      "educationScore": 54
+      "educationScore": 112.06166141728033
     },
     "8a30e0a8272ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 467,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.18774636734118
     },
     "8a30e0a1e2c7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 217,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 61.07596050231271
     },
     "8a30e0a8c45ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 950,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.86011250036313
     },
     "8a30e0a8258ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 443,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.76659649945779
     },
     "8a30e0a8059ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 298,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.60354858712549
     },
     "8a30e0a9960ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 505,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.81229335429973
     },
     "8a30e0a1b6effff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 680,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.18849844919609
     },
     "8a30e0b9b5affff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 310,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.91834329743387
     },
     "8a30e0a9b15ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 826,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.74243756018953
     },
     "8a30e0aa8617fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 230,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 61.539341684174346
     },
     "8a30e0a1e2cffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 503,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.78061014457094
     },
     "8a30e0aa86d7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 291,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.414030418146254
     },
     "8a30e0ae4b8ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 452,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.92713700386427
     },
     "8a30e0a2e6a7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 484,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.47319112749986
     },
     "8a30e0a19327fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 544,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.40628635730596
     },
     "8a30e0a8100ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 480,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.4069381608461
     },
     "8a30e0a84637fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 365,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.22106666721092
     },
     "8a30e0aaab8ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 288,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.33141350489946
     },
     "8a30e0a91c97fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 493,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.62028413750338
     },
     "8a30e0b9680ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 789,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.37626356368854
     },
     "8a30e0aad5b7fff": {
       "schoolCount": 2,
-      "studentCount": 0,
+      "studentCount": 833,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 36
+      "educationScore": 89.80986721886998
     },
     "8a30e0a9dd37fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 571,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.79311193103838
     },
     "8a30e0a82727fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 454,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.96237935160761
     },
     "8a30e0a8c55ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 631,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.59111515317485
     },
     "8a30e0aad7b7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 427,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.47298556465438
     },
     "8a30e0a90267fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1022,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.443958127613
     },
     "8a30e0aaa457fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 694,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.35129476451834
     },
     "8a30e0aa2c57fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 509,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.87528580574697
     },
     "8a30e0ab5af7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 423,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.39786764185567
     },
     "8a30e0aaa6b7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 242,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 61.944491546724386
     },
     "8a30e0a06307fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 459,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.04981191586512
     },
     "8a30e0af6a1ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 416,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.2646897743904
     },
     "8a30e0a8862ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 313,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.995143887266025
     },
     "8a30e0aaeb27fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 386,
       "childcareCount": 1,
       "childcareCapacity": 31,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 51.32867951399864
+      "educationScore": 98.99607705823689
     },
     "8a30e0aad4d7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 322,
       "childcareCount": 2,
       "childcareCapacity": 46,
       "childcareCurrent": 0,
       "anchorCount": 3,
-      "educationScore": 69.25073800855029
+      "educationScore": 115.47195659433154
     },
     "8a30e0a9940ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 838,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.85768565173765
     },
     "8a30e0a86b17fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 369,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.30802404510615
     },
     "8a30e0aa2177fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 437,
       "childcareCount": 1,
       "childcareCapacity": 16,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 48.16606672028108
+      "educationScore": 96.82381800329266
     },
     "8a30e0a9146ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 384,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.62594667430227
     },
     "8a30e0a8259ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 295,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.52287563459248
     },
     "8a30e0a8cc0ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 394,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.83108611920898
     },
     "8a30e0a80357fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 426,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.454272105829
     },
     "8a30e0a882e7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 103,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 55.15512719313098
     },
     "8a30e0a1525ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 933,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.71581150583074
     },
     "8a30e0aa9d47fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 219,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 61.14902037081889
     },
     "8a30e0a90d5ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 719,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.63400969608081
     },
     "8a30e0a80557fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 418,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.3029673593771
     },
     "8a30e0aad6cffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 543,
       "childcareCount": 3,
       "childcareCapacity": 56,
       "childcareCurrent": 0,
       "anchorCount": 4,
-      "educationScore": 86.21525633917275
+      "educationScore": 136.60685031402028
     },
     "8a30e0af4157fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 749,
       "childcareCount": 2,
       "childcareCapacity": 39,
       "childcareCurrent": 0,
       "anchorCount": 3,
-      "educationScore": 68.44439727056968
+      "educationScore": 121.40498292281254
     },
     "8a30e0af6657fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 278,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.04969425457092
     },
     "8a30e0a18c87fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 559,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.62349426983356
     },
     "8a30e0a9104ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 748,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.94991186813775
     },
     "8a30e0aaa85ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 566,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.72287442982201
     },
     "8a30e032481ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 923,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.62969657313347
     },
     "8a30e0a1690ffff": {
       "schoolCount": 2,
-      "studentCount": 0,
+      "studentCount": 937,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 36
+      "educationScore": 90.74999959204979
     },
     "8a30e0a8d6d7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 387,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.68804271698619
     },
     "8a30e0aa8377fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 822,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.70364960541656
     },
     "8a30e0a124effff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 277,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.020968909525095
     },
     "8a30e0aa6047fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 263,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 62.60759282517053
     },
     "8a30e0af6a6ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 555,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.56614635400466
     },
     "8a30e0a83aa7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 341,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 64.67848589650083
     },
     "8a30e0ab371ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 570,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.77911367724809
     },
     "8a30e0af484ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 978,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.09225314024408
     },
     "8a30e0a86387fff": {
       "schoolCount": 1,
@@ -1900,66 +1901,66 @@
     },
     "8a30e0a12157fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 317,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 64.09641106224142
     },
     "8a30e0a88ac7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 164,
       "childcareCount": 1,
       "childcareCapacity": 78,
       "childcareCurrent": 49,
       "anchorCount": 2,
-      "educationScore": 55.84723926233511
+      "educationScore": 96.69480305353974
     },
     "8a30e0aa6477fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 421,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.36004251228809
     },
     "8a30e0aaa2d7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 295,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.52287563459248
     },
     "8a30e0aa90e7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 625,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.51480296880078
     },
     "8a30e0af6b2ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 350,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 64.88628978772692
     },
     "8a30e0a9c857fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 830,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.78103835884359
     },
     "8a30e01a6d9ffff": {
       "schoolCount": 1,
@@ -1972,867 +1973,867 @@
     },
     "8a30e0a95857fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 474,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.30651843227713
     },
     "8a30e0aaba0ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 768,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.16072775604516
     },
     "8a30e0a8061ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 551,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.50838437021676
     },
     "8a30e0aa361ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 431,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.54740470595289
     },
     "8a30e0a8b08ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 735,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.80984094983101
     },
     "8a30e0a04007fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 633,
       "childcareCount": 1,
       "childcareCapacity": 19,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 48.97866136776995
+      "educationScore": 100.59505300326776
     },
     "8a30e0af606ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 659,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.93791868016376
     },
     "8a30e0a1859ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 453,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.94477758433078
     },
     "8a30e0a2342ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 680,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.18849844919609
     },
     "8a30e0aa8357fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 417,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.28385146019805
     },
     "8a30e0a95997fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 700,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.42006309627672
     },
     "8a30e0a1bb5ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 485,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.48966899120396
     },
     "8a30e0a83a17fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 760,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.07706686289349
     },
     "8a30e0a946dffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1280,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 75.24317041517386
     },
     "8a30e0aa62f7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 348,
       "childcareCount": 1,
       "childcareCapacity": 15,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 47.86294361119891
+      "educationScore": 94.70351898881832
     },
     "8a30e0aaa21ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 342,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 64.70184357732752
     },
     "8a30e0a1baf7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 400,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.95169141845255
     },
     "8a30e0ab1d27fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 346,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 64.79459823957487
     },
     "8a30e0a1bd67fff": {
       "schoolCount": 2,
-      "studentCount": 0,
+      "studentCount": 1090,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 36
+      "educationScore": 91.95879988666456
     },
     "8a30e0ab1087fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 752,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.99252182239914
     },
     "8a30e0a810a7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 926,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.65562852452683
     },
     "8a30e08cd687fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 415,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.2454820820901
     },
     "8a30e0a9b567fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 519,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.03063049260379
     },
     "8a30e0a19aa7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 618,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.42484218147678
     },
     "8a30e0a8b92ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 721,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.65620111114261
     },
     "8a30e0a8b737fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 805,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.53666994005303
     },
     "8a30e0aaa557fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 555,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.56614635400466
     },
     "8a30e0af462ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 830,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.78103835884359
     },
     "8a30e0a88697fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 369,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.30802404510615
     },
     "8a30e0ab1d77fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 477,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.35688585993165
     },
     "8a30e0a8428ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 766,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.13989441093804
     },
     "8a30e0a9bcc7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 847,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.94304508633522
     },
     "8a30e0af670ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 195,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 60.22491727384414
     },
     "8a30e0861707fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 58,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 50.62029955124576
     },
     "8a30e0ce682ffff": {
       "schoolCount": 3,
-      "studentCount": 0,
+      "studentCount": 44,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 3,
-      "educationScore": 54
+      "educationScore": 84.45329991816256
     },
     "8a30e0a1119ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 195,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 60.22491727384414
     },
     "8a30e0a12a8ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 2043,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 78.98131161058876
     },
     "8a30e0aac41ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 231,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 61.57389897333048
     },
     "8a30e0aac8dffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 454,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.96237935160761
     },
     "8a30e0a85027fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 362,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.1552226741188
     },
     "8a30e0a848a7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 448,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.85618310193803
     },
     "8a30e0a186cffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 309,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.89257837983354
     },
     "8a30e0a19b87fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 224,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 61.32880321763536
     },
     "8a30e0a188d7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 162,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 58.7500016064541
     },
     "8a30e0a8052ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 371,
       "childcareCount": 1,
       "childcareCapacity": 84,
       "childcareCurrent": 13,
       "anchorCount": 2,
-      "educationScore": 56.21325628245158
+      "educationScore": 103.56440711663676
     },
     "8a30e0a15347fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1245,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 75.02154959477919
     },
     "8a30e0a85d2ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 366,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.24289478443657
     },
     "8a30e0a9b8affff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 320,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 64.17152898504013
     },
     "8a30e0a86007fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 835,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.82902890467761
     },
     "8a30e0aa9c6ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 695,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.36279728267536
     },
     "8a30e0a8104ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 482,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.44013322922058
     },
     "8a30e0a1e36ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 391,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.77009471832369
     },
     "8a30e0a92d47fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 932,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.70724160677875
     },
     "8a30e0aa2547fff": {
       "schoolCount": 2,
-      "studentCount": 0,
+      "studentCount": 787,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 36
+      "educationScore": 89.35598471886303
     },
     "8a30e0a8c5affff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1016,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.39689916838847
     },
     "8a30e0a8614ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 939,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.7670390021124
     },
     "8a30e0af6077fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 625,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.51480296880078
     },
     "8a30e0ab52effff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 699,
       "childcareCount": 2,
       "childcareCapacity": 38,
       "childcareCurrent": 0,
       "anchorCount": 3,
-      "educationScore": 68.31780823064824
+      "educationScore": 120.72645091099548
     },
     "8a30e0af472ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 286,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.27585772607697
     },
     "8a30e0a9a24ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 743,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.89632827866473
     },
     "8a30e0a182d7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 246,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 62.07510669302382
     },
     "8a30e0a1b4effff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 503,
       "childcareCount": 1,
       "childcareCapacity": 12,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 46.82474678730768
+      "educationScore": 96.60535693187863
     },
     "8a30e0a1206ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 690,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.30511859014136
     },
     "8a30e0a88b77fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 358,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.06657910790622
     },
     "8a30e0a1a6dffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 379,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.52137002176346
     },
     "8a30e0a9d4cffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 324,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 64.2706014586379
     },
     "8a30e0aa9057fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 604,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.24182766424673
     },
     "8a30e0a9525ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 440,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.71235900357476
     },
     "8a30e0a9cac7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 403,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.0113190236892
     },
     "8a30e0aa2117fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 244,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 62.01006568435782
     },
     "8a30e0ab40dffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 104,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 55.231682801260185
     },
     "8a30e0ab32e7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 881,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.25753644805434
     },
     "8a30e0a98277fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 918,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.58628897884549
     },
     "8a30e0af45b7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 298,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.60354858712549
     },
     "8a30e0a8d727fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 668,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.04627248102582
     },
     "8a30e0a91367fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 608,
       "childcareCount": 2,
       "childcareCapacity": 40,
       "childcareCurrent": 18,
       "anchorCount": 3,
-      "educationScore": 68.56786033352154
+      "educationScore": 119.86240647520071
     },
     "8a30e0a1b2b7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 510,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.89095672162964
     },
     "8a30e0ab109ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1149,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 74.38013777085837
     },
     "8a30e0a19d8ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 593,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.09503455490116
     },
     "8a30e0a88b0ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 490,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.57155302235617
     },
     "8a30e0a1e347fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 271,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 62.84641653036798
     },
     "8a30e0ab12effff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 420,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.34106266945905
     },
     "8a30e0a16867fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1009,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.34164487868244
     },
     "8a30e08cd72ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 743,
       "childcareCount": 1,
       "childcareCapacity": 20,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 49.22261218861711
+      "educationScore": 102.11894046728185
     },
     "8a30e0a90d47fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 965,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.98531067370014
     },
     "8a30e0aad30ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 495,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.65260741379942
     },
     "8a30e0a8026ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 393,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.81080727438348
     },
     "8a30e0a92b6ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 472,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.27276310793546
     },
     "8a30e0ab146ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 497,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.68480061619722
     },
     "8a30e0af5db7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 695,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.36279728267536
     },
     "8a30e0a35777fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 734,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.7989639937027
     },
     "8a30e0a8d4b7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 607,
       "childcareCount": 1,
       "childcareCapacity": 82,
       "childcareCurrent": 18,
       "anchorCount": 2,
-      "educationScore": 56.09420303898299
+      "educationScore": 107.37560209471232
     },
     "8a30e0a14a37fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 568,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.75104347301064
     },
     "8a30e0a01caffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 695,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.36279728267536
     },
     "8a30e0a8c0e7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 539,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.33255311646656
     },
     "8a30e0a1865ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 311,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.94402550247586
     },
     "8a30e0a56737fff": {
       "schoolCount": 1,
@@ -2845,147 +2846,147 @@
     },
     "8a30e0a92c4ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 555,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.56614635400466
     },
     "8a30e0aa6227fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 354,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 64.97694231580333
     },
     "8a30e0a99717fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 591,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.06805307907204
     },
     "8a30e0a1a2e7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 282,
       "childcareCount": 1,
       "childcareCapacity": 94,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 56.769384458002705
+      "educationScore": 101.9329596391486
     },
     "8a30e0a90457fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 760,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.07706686289349
     },
     "8a30e0a1b79ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 413,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.20692779060252
     },
     "8a30e0aa2447fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 386,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.66739754423826
     },
     "8a30e0a91897fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 658,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.92578827602006
     },
     "8a30e0a82637fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 503,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.78061014457094
     },
     "8a30e0a959a7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 747,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.93922382379583
     },
     "8a30e003055ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 147,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 57.97769819011292
     },
     "8a30e0a195b7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 288,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.33141350489946
     },
     "8a30e0a19a27fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 346,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 64.79459823957487
     },
     "8a30e0a1908ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 384,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.62594667430227
     },
     "8a30e0a918dffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 951,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.86852027833092
     },
     "8a30e0aaebaffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 848,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.95247349049077
     },
     "8a30e081d54ffff": {
       "schoolCount": 1,
@@ -2998,246 +2999,246 @@
     },
     "8a30e0aa82cffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 471,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.25583188468444
     },
     "8a30e5498b8ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 233,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 61.642568922861614
     },
     "8a30e0aad61ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 654,
       "childcareCount": 2,
       "childcareCapacity": 85,
       "childcareCurrent": 69,
       "anchorCount": 3,
-      "educationScore": 72.27173648126754
+      "educationScore": 124.14881836634956
     },
     "8a30e0a22627fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 959,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.93546627569506
     },
     "8a30e0af44cffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 608,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.29454614167918
     },
     "8a30e0a90b77fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 490,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.57155302235617
     },
     "8a30e084d037fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 140,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 57.59007912302535
     },
     "8a30e0aa1227fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 321,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 64.19641236435527
     },
     "8a30e0b8bb97fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1026,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.47517767942847
     },
     "8a30e0aac12ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 358,
       "childcareCount": 1,
       "childcareCapacity": 104,
       "childcareCurrent": 55,
       "anchorCount": 2,
-      "educationScore": 57.269801750787614
+      "educationScore": 104.33638085869384
     },
     "8a30e0af6a57fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 291,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.414030418146254
     },
     "8a30e549205ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 47,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 48.969608087263126
     },
     "8a30e0b94daffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 667,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.03430538829316
     },
     "8a30e0af5d2ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 447,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.83834585931987
     },
     "8a30e0a8d44ffff": {
       "schoolCount": 2,
-      "studentCount": 0,
+      "studentCount": 1276,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 36
+      "educationScore": 93.21815084826031
     },
     "8a30e0aaa42ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 699,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.40864268034724
     },
     "8a30e0a156a7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 533,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.24316671168157
     },
     "8a30e0a81ccffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 743,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.89632827866473
     },
     "8a30e0a2224ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 758,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.05601421916504
     },
     "8a30e0a2e687fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 850,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.971297028587
     },
     "8a30e0a90d67fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 875,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.20292872749113
     },
     "8a30e0a8b4a7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1358,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 75.71603531320915
     },
     "8a30e0a18187fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 141,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 57.64661646081009
     },
     "8a30e0a91087fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 428,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.49165535142413
     },
     "8a30e0a814affff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 431,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.54740470595289
     },
     "8a30e0a880dffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 200,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 60.426439264472606
     },
     "8a30e0b349affff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 51,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 49.60994974865142
     },
     "8a30e0cc859ffff": {
       "schoolCount": 1,
@@ -3250,183 +3251,183 @@
     },
     "8a30e0a93197fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 753,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.00313894406365
     },
     "8a30e0a22547fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 269,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 62.787375671987
     },
     "8a30e0af4d1ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 379,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.52137002176346
     },
     "8a30e0b8bbb7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 915,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.56013091739304
     },
     "8a30e014bb0ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1189,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 74.6536686888446
     },
     "8a30e0a8054ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 976,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.07589321634225
     },
     "8a30e0aa8627fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 594,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.10849124436504
     },
     "8a30e0a99747fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 267,
       "childcareCount": 1,
       "childcareCapacity": 30,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 51.16993602242573
+      "educationScore": 95.89783186651258
     },
     "8a30e0a1274ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 249,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 62.17168734289797
     },
     "8a30e0844a87fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 37,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 47.100689277811085
     },
     "8a30e0b94c97fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 204,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 60.58407983310727
     },
     "8a30e0aa9d87fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 844,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.91469301885739
     },
     "8a30e0324a77fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1043,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.60651814754067
     },
     "8a30e0a1686ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1166,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 74.49753305829245
     },
     "8a30e08cd747fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 663,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.98625719581148
     },
     "8a30e0b90d8ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 946,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.82639274548862
     },
     "8a30e0a88ca7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 223,
       "childcareCount": 1,
       "childcareCapacity": 42,
       "childcareCurrent": 14,
       "anchorCount": 2,
-      "educationScore": 52.80600057846782
+      "educationScore": 96.09916899330814
     },
     "8a302b6c156ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 65,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 51.5172379362114
     },
     "8a30e086b687fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 190,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 60.01818742437304
     },
     "8a30e548c6c7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 107,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 55.45704981699376
     },
     "8a30e0aa2367fff": {
       "schoolCount": 2,
@@ -3439,75 +3440,75 @@
     },
     "8a30e0a99b57fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 318,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 64.12152882227875
     },
     "8a30e0a017b7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1668,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 77.35983938929468
     },
     "8a30e0940377fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 14,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 39.664401608817684
     },
     "8a30e548e8c7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 478,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.37360477928732
     },
     "8a30e0af4367fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 207,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 60.70030463761054
     },
     "8a30e54b588ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 23,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 43.42443064278356
     },
     "8a30e548a82ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 480,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.4069381608461
     },
     "8a30e0a10307fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 243,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 61.97734580234562
     },
     "8a30e0a2ac87fff": {
       "schoolCount": 1,
@@ -3520,435 +3521,426 @@
     },
     "8a30e0a9b197fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 548,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.46478753207624
     },
     "8a30e0a16d8ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 829,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.77140560632515
     },
     "8a30e0a1e4effff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 412,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.18758074368827
     },
     "8a30e559609ffff": {
       "schoolCount": 2,
-      "studentCount": 0,
+      "studentCount": 41,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 36
+      "educationScore": 65.90135694626694
     },
     "8a30e5491657fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 22,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 43.0839537274332
     },
     "8a30e0b8d4affff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 267,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 62.72789584408685
     },
     "8a30e0b89647fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 891,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.34772906064008
     },
     "8a30e0949317fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 219,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 61.14902037081889
     },
     "8a30e5596107fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 18,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
-    },
-    "8a30c4a0c4d7fff": {
-      "schoolCount": 1,
-      "studentCount": 0,
-      "childcareCount": 0,
-      "childcareCapacity": 0,
-      "childcareCurrent": 0,
-      "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 41.55551183333152
     },
     "8a30e0aa2a27fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 329,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 64.39274123568421
     },
     "8a30e08c972ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 931,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.69866251748473
     },
     "8a30e0ae415ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 721,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.65620111114261
     },
     "8a30e0a1ab9ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 291,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.414030418146254
     },
     "8a30e08c925ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 394,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.83108611920898
     },
     "8a30e09094a7fff": {
       "schoolCount": 3,
-      "studentCount": 0,
+      "studentCount": 10,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 3,
-      "educationScore": 54
+      "educationScore": 73.18316218238697
     },
     "8a30e0a0e2f7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 307,
       "childcareCount": 1,
       "childcareCapacity": 89,
       "childcareCurrent": 9,
       "anchorCount": 2,
-      "educationScore": 56.499048351651325
+      "educationScore": 102.33984661543992
     },
     "8a30e0a0188ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1140,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 74.3172827988966
     },
     "8a30e548e277fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 461,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.08451912865391
     },
     "8a30e54b0447fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 45,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 48.62913117191276
     },
     "8a30e0a8810ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1105,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 74.06804145665825
     },
     "8a30e0a047b7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 806,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.54658934615959
     },
     "8a30e0a019a7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 738,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.84238336758561
     },
     "8a30e0aa8967fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 594,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.10849124436504
     },
     "8a30e0b9021ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1000,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.27003823452176
     },
     "8a30e0a04c67fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 434,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.60276824870948
     },
     "8a30e0a93087fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 729,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.74435627313949
     },
     "8a30e0b9081ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 458,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.03240168048436
     },
     "8a30e0a8566ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 902,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.44578042733588
     },
     "8a30e0a12327fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 996,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.2380061596947
     },
     "8a30e0a8c207fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 771,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.19187640019821
     },
     "8a30e0a9826ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 733,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.78807222891612
     },
     "8a30e548e317fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 209,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 60.77686024573975
     },
     "8a30e0b908e7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 223,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 61.293168414840316
     },
     "8a30e0a96a27fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1116,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 74.14721439255361
     },
     "8a30e0a10daffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1281,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 75.24941309984493
     },
     "8a30e084416ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 41,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 47.901356946266944
     },
     "8a30e014981ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 912,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.53388704475975
     },
     "8a30e0a10b47fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 426,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.454272105829
     },
     "8a30e0af46affff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 276,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 62.99214004949871
     },
     "8a30e0ae6db7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 842,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.89573566401484
     },
     "8a30e0a93537fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 889,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.32977170180948
     },
     "8a30e0a94997fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 536,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.28798475607093
     },
     "8a30e0a162b7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 877,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.22117274908094
     },
     "8a30e014bb57fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 801,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.49686886293212
     },
     "8a30e0a9ba1ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 850,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.971297028587
     },
     "8a30e0ab1707fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1192,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 74.67381137678333
     },
     "8a30e0a00a2ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 437,
       "childcareCount": 1,
       "childcareCapacity": 49,
       "childcareCurrent": 49,
       "anchorCount": 2,
-      "educationScore": 53.560115027140725
+      "educationScore": 102.2178663101523
     },
     "8a30e0bb30dffff": {
       "schoolCount": 1,
@@ -3961,651 +3953,642 @@
     },
     "8a30e0a90d97fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1518,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 76.60646002076618
     },
     "8a30e54a2777fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 37,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 47.100689277811085
     },
     "8a30e0a1826ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 265,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 62.66797047025359
     },
     "8a30e0af468ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 480,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.4069381608461
     },
     "8a30e0a01a77fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 619,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.4377558243131
     },
     "8a30e0a01aeffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1934,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 78.54290084371107
     },
     "8a30e0a927b7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1582,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 76.9366164790481
     },
     "8a30e409c797fff": {
       "schoolCount": 3,
-      "studentCount": 0,
+      "studentCount": 50,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 3,
-      "educationScore": 54
+      "educationScore": 85.45460506179461
     },
     "8a30e548ec97fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 221,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 61.221419054978234
     },
     "8a30e0a8c08ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 509,
       "childcareCount": 1,
       "childcareCapacity": 49,
       "childcareCurrent": 28,
       "anchorCount": 2,
-      "educationScore": 53.560115027140725
+      "educationScore": 103.4354008328877
     },
     "8a30e086e0affff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 42,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 48.089600925548496
     },
     "8a30e0a04c47fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1297,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 75.34863917811228
     },
     "8a30e0324307fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 748,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.94991186813775
     },
     "8a30e0a104f7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1561,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 76.82977864319705
     },
     "8a30e0aa2a8ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 488,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.53889991579898
     },
     "8a30e0b8b8c7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1833,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 78.11403722253128
     },
     "8a30e0a81657fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 768,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.16072775604516
     },
     "8a30e54a1d8ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 33,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 46.21088419692929
     },
     "8a30e0a06a8ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 227,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 61.43476503163553
     },
     "8a30e0a1b287fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 620,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.45064865546783
     },
     "8a30e0aa8d97fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 664,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.99829632524683
     },
     "8a30e0a80877fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 869,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.14794569318903
     },
     "8a30e0a927affff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1173,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 74.54537600310434
     },
     "8a30e0a162c7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 863,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.09258215043243
     },
     "8a30e0aa80cffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 323,
       "childcareCount": 1,
       "childcareCapacity": 58,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 54.3876872195286
+      "educationScore": 100.63363534586723
     },
     "8a30e0a1b297fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 740,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.86400500236869
     },
     "8a30e0a1628ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 836,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.8385925639158
     },
     "8a30e0a8eb5ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 299,
       "childcareCount": 1,
       "childcareCapacity": 88,
       "childcareCurrent": 21,
       "anchorCount": 2,
-      "educationScore": 56.4431818486607
+      "educationScore": 102.07344164591031
     },
     "8a30e0aab06ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 405,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.05082527681387
     },
     "8a30e0a94d57fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1502,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 76.5217471180238
     },
     "8a30e0a06337fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 766,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 71.13989441093804
     },
     "8a30e0a1e427fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 340,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 64.65505981826814
     },
     "8a30e0a1bc0ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 688,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 70.28193016810927
     },
     "8a30e0b9c0a7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 993,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.21389765325259
     },
     "8a30e09598e7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 7,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 34.63553233343869
     },
     "8a30e0aae16ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 198,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 60.34643859779594
     },
     "8a30e0a15327fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 995,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.22997806067679
     },
     "8a30e0b91ae7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1305,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 75.39779447869101
     },
     "8a30e0b9c537fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1582,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 76.9366164790481
     },
     "8a30e0aa9d07fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 912,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.53388704475975
     },
     "8a30e0a01a57fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1350,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 75.66880270368159
     },
     "8a30e014d2effff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1091,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.9661292504388
     },
     "8a30e0a1b60ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 299,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.63025979724961
     },
     "8a30e0a1a347fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 561,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.65201479914953
     },
     "8a30e0a906affff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 988,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.1735546529817
     },
     "8a30e0940337fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 82,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 53.350724862372786
     },
     "8a30e0aae347fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 313,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.995143887266025
     },
     "8a30e0a1ba17fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 430,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.52886472082997
     },
     "8a30e0af6a47fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 459,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.04981191586512
     },
     "8a30e0a8c807fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 282,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 63.1635751811459
     },
     "8a30e0af48effff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 610,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 69.32077567337276
     },
     "8a30e014b2c7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1057,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.71308489934596
     },
     "8a30e0a98b8ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 506,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.82808802872947
     },
     "8a30e0324aeffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 897,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 72.4013605464176
     },
     "8a30e0aac497fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 209,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 60.77686024573975
     },
     "8a30e0a96537fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1185,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 74.62673263646137
     },
     "8a30e0b9109ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1251,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 75.05998041328036
     },
     "8a30e0aaa8f7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 388,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 65.70863474894756
     },
     "8a30e0a98b17fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 551,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.50838437021676
     },
     "8a30e548aae7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 484,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 67.47319112749986
     },
     "8a30e0b9c19ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1108,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 74.08971189880293
     },
     "8a30e0a92617fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1041,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.5911777785065
     },
     "8a30e0a01417fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1154,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 74.41484498364716
     },
     "8a30e0a0142ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1249,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 75.04719064237077
     },
     "8a30e0a044c7fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 537,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 68.30286848129427
     },
     "8a30e0a01b97fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1597,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 77.01206501060976
     },
     "8a30e014d2dffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1556,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 76.80412937467199
     },
     "8a30e0a9116ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 449,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 66.87398066211492
     },
     "8a30e0a83c2ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 419,
       "childcareCount": 1,
       "childcareCapacity": 45,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 53.14320698244548
+      "educationScore": 101.46524467266478
     },
     "8a30e0af4d37fff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 474,
       "childcareCount": 1,
       "childcareCapacity": 20,
       "childcareCurrent": 0,
       "anchorCount": 2,
-      "educationScore": 49.22261218861711
-    },
-    "8a30eaaa02a7fff": {
-      "schoolCount": 1,
-      "studentCount": 0,
-      "childcareCount": 0,
-      "childcareCapacity": 0,
-      "childcareCurrent": 0,
-      "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 98.52913062089425
     },
     "8a30e0a02d9ffff": {
       "schoolCount": 1,
-      "studentCount": 0,
+      "studentCount": 1067,
       "childcareCount": 0,
       "childcareCapacity": 0,
       "childcareCurrent": 0,
       "anchorCount": 1,
-      "educationScore": 18
+      "educationScore": 73.78834415616112
     },
     "8a30e0aa2c2ffff": {
       "schoolCount": 0,
@@ -23653,10 +23636,10 @@
     }
   },
   "educationStats": {
-    "p50": 34.05458956322112,
-    "p75": 39.02585092994046,
-    "p90": 54.3876872195286,
-    "p95": 69.25073800855029,
+    "p50": 37.31339938520658,
+    "p75": 57.97769819011292,
+    "p90": 71.85004841660891,
+    "p95": 85.56087346650413,
     "max": 337.32204510175205
   },
   "anchorStats": {

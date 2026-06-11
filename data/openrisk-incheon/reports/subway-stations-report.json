@@ -1,0 +1,7 @@
+{
+  "updatedAt": "2026-06-02T14:41:14.936Z",
+  "status": "ready",
+  "outputFile": "C:\\Users\\dbvision10\\project\\새 폴더\\OpenRisk\\data\\openrisk-incheon\\reference\\incheon-subway-stations.json",
+  "stations": 257,
+  "note": "역명→좌표 마스터(OSM). import-transit에서 역별 수송인원과 역명으로 조인"
+}

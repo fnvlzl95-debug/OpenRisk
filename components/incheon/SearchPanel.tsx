@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, KeyboardEvent, useEffect, useMemo, useState } from 'react'
+import { FormEvent, KeyboardEvent, ReactNode, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Building2, ChevronDown, Coffee, LocateFixed, MapPin, RefreshCw, Search, Target } from 'lucide-react'
 import { CATEGORY_LIST, type BusinessCategory } from '@/lib/categories'
@@ -22,6 +22,7 @@ type SearchPanelProps = {
   compact?: boolean
   initialQuery?: string
   initialCategory?: string
+  rightAction?: ReactNode
 }
 
 type RemoteSearchSuggestion = Omit<SearchSuggestion, 'source'> & {
@@ -135,6 +136,7 @@ export default function SearchPanel({
   compact = false,
   initialQuery = '인천 연수구 송도동',
   initialCategory = INCHEON_DEFAULT_CATEGORY,
+  rightAction,
 }: SearchPanelProps) {
   const router = useRouter()
   const [query, setQuery] = useState(initialQuery)
@@ -399,10 +401,13 @@ export default function SearchPanel({
           </span>
         </div>
 
-        <button className="inline-flex min-h-[clamp(42px,5.2svh,48px)] items-center justify-center gap-3 border border-white/20 px-[clamp(18px,2.4svh,24px)] text-[clamp(14px,1.55svh,16px)] font-black text-white transition-colors hover:bg-white/8 active:scale-[0.98]">
-          <RefreshCw className="h-5 w-5" />
-          다시 검색
-        </button>
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <button className="inline-flex min-h-[clamp(42px,5.2svh,48px)] items-center justify-center gap-3 border border-white/20 px-[clamp(18px,2.4svh,24px)] text-[clamp(14px,1.55svh,16px)] font-black text-white transition-colors hover:bg-white/8 active:scale-[0.98]">
+            <RefreshCw className="h-5 w-5" />
+            다시 검색
+          </button>
+          {rightAction}
+        </div>
       </form>
     )
   }

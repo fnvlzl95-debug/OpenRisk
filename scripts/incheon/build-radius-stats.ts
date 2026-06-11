@@ -43,7 +43,7 @@ function main() {
     ...Object.keys(stores.cells),
     ...Object.keys(transit.cells),
     ...Object.keys(educationFamily.cells),
-  ])
+  ]).sort()
 
   const latLngCache = new Map<string, { lat: number; lng: number }>()
   const getCenter = (h3Id: string) => {
@@ -121,7 +121,7 @@ function main() {
     method: 'distance_decay_radius',
     centerCellCount: centerCellIds.length,
     sourceIds: unique([...stores.sourceIds, ...transit.sourceIds, ...educationFamily.sourceIds]),
-    dataPeriod: 'official-file',
+    dataPeriod: 'derived-from-sources',
     storeCategoryStats: Object.fromEntries(
       categories.map((category) => [category, distributionStats(categoryValues[category] ?? [])])
     ),
