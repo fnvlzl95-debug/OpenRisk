@@ -8,6 +8,7 @@ import {
   BarChart3,
   Building2,
   Calendar,
+  Check,
   ChevronDown,
   ClipboardCheck,
   Download,
@@ -15,8 +16,10 @@ import {
   Info,
   MapPin,
   Route,
+  Share2,
   Shield,
   ShieldCheck,
+  Sparkles,
   Store,
   Users,
 } from 'lucide-react'
@@ -25,6 +28,8 @@ import IncheonFooter from '@/components/incheon/IncheonFooter'
 import SearchPanel from '@/components/incheon/SearchPanel'
 import DataSourcePanel from '@/components/incheon/DataSourcePanel'
 import RiskAnalysisMapCard from '@/components/incheon/RiskAnalysisMapCard'
+import AIAnalysisModal from '@/components/incheon/AIAnalysisModal'
+import type { AIAnalysisResponse } from '@/lib/ai-analysis/types'
 import type { IncheonAnalyzeResponse } from '@/lib/incheon/types'
 import { INCHEON_DEFAULT_CATEGORY } from '@/lib/incheon/constants'
 import { confidenceLabel, deriveMetricState, metricScoreText, metricStateTag } from '@/lib/incheon/display'
@@ -512,6 +517,7 @@ function ResultDashboard({
 }
 
 type ErrorView = { title: string; description: string; action: string }
+type ShareStatus = 'idle' | 'copied' | 'shared' | 'failed'
 
 function getErrorView(
   status: number,
@@ -547,6 +553,89 @@ function getErrorView(
   }
 }
 
+function formatBaseDate(result: IncheonAnalyzeResponse) {
+  const generatedAt = result.auxiliary?.datasetGeneratedAt
+  return generatedAt ? new Date(generatedAt).toLocaleDateString('ko-KR') : '—'
+}
+
+function ResultStatusBar({ result, query }: { result: IncheonAnalyzeResponse; query: string }) {
+  const conf = confidenceLabel(result.risk.confidence ?? 'medium')
+  const items = [
+    { label: '위치', value: query || result.location.label, icon: MapPin },
+    { label: '업종', value: result.category.name, icon: Store },
+    { label: '위험 단계', value: result.risk.insufficientData ? '판단 보류' : riskLevelText(result), icon: AlertTriangle },
+    { label: '신뢰도', value: conf, icon: ShieldCheck },
+    { label: '기준일', value: formatBaseDate(result), icon: Calendar },
+  ]
+
+  return (
+    <div className="grid gap-2 border border-[#155396] bg-[#061B3A]/92 p-3 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] sm:grid-cols-2 lg:grid-cols-5">
+      {items.map((item) => {
+        const Icon = item.icon
+        return (
+          <div key={item.label} className="flex min-w-0 items-center gap-2.5 border border-white/8 bg-white/[0.03] px-3 py-2">
+            <Icon className="h-4 w-4 shrink-0 text-[#20D6F4]" strokeWidth={2.1} />
+            <span className="min-w-0">
+              <span className="block text-[10px] font-bold text-white/45">{item.label}</span>
+              <span className="block truncate text-sm font-black text-white">{item.value}</span>
+            </span>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+function ResultActionGroup({
+  aiLoading,
+  pdfLoading,
+  shareStatus,
+  onAI,
+  onPdf,
+  onShare,
+}: {
+  aiLoading: boolean
+  pdfLoading: boolean
+  shareStatus: ShareStatus
+  onAI: () => void
+  onPdf: () => void
+  onShare: () => void
+}) {
+  const ShareIcon = shareStatus === 'copied' || shareStatus === 'shared' ? Check : shareStatus === 'failed' ? AlertTriangle : Share2
+  const shareLabel = shareStatus === 'copied' ? '복사됨' : shareStatus === 'shared' ? '공유됨' : shareStatus === 'failed' ? '실패' : '공유'
+
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <button
+        type="button"
+        onClick={onAI}
+        disabled={aiLoading}
+        className="inline-flex items-center gap-2 border border-[#FFB14A] bg-[#FFF1E8] px-4 py-2.5 text-sm font-black text-[#E8590C] transition-colors hover:bg-[#FFE4CE] disabled:opacity-60"
+      >
+        <Sparkles className="h-4 w-4" strokeWidth={2.2} />
+        {aiLoading ? '분석 중' : 'AI 분석'}
+      </button>
+      <button
+        type="button"
+        onClick={onPdf}
+        disabled={pdfLoading}
+        className="inline-flex items-center gap-2 border border-[#2D7BFF] bg-[#0B66FF] px-4 py-2.5 text-sm font-black text-white transition-colors hover:bg-[#0A57DB] disabled:opacity-60"
+      >
+        <Download className="h-4 w-4" strokeWidth={2.2} />
+        {pdfLoading ? '저장 중' : '리포트 저장'}
+      </button>
+      <button
+        type="button"
+        onClick={onShare}
+        className="inline-flex items-center gap-2 border border-white/20 bg-white/8 px-4 py-2.5 text-sm font-black text-white transition-colors hover:bg-white/14"
+      >
+        <ShareIcon className="h-4 w-4" strokeWidth={2.2} />
+        {shareLabel}
+      </button>
+    </div>
+  )
+}
+
 function ResultContent() {
   const searchParams = useSearchParams()
   const lat = Number(searchParams.get('lat') || '37.3897')
@@ -558,17 +647,96 @@ function ResultContent() {
   const [loading, setLoading] = useState(true)
   const [errorView, setErrorView] = useState<ErrorView | null>(null)
   const [pdfLoading, setPdfLoading] = useState(false)
+  const [showAIModal, setShowAIModal] = useState(false)
+  const [aiLoading, setAILoading] = useState(false)
+  const [aiData, setAIData] = useState<AIAnalysisResponse | null>(null)
+  const [aiError, setAIError] = useState<string | null>(null)
+  const [shareStatus, setShareStatus] = useState<ShareStatus>('idle')
 
   async function handleDownloadPdf() {
     if (!result || pdfLoading) return
     setPdfLoading(true)
     try {
       const { generateIncheonPdfClient } = await import('@/lib/incheon/generate-pdf-client')
-      await generateIncheonPdfClient(result)
+      await generateIncheonPdfClient(result, query)
     } catch {
       window.alert('PDF 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.')
     } finally {
       setPdfLoading(false)
+    }
+  }
+
+  async function handleAIAnalysis(force = false) {
+    if (!result) return
+
+    setShowAIModal(true)
+
+    if (result.risk.insufficientData) {
+      setAILoading(false)
+      setAIData(null)
+      setAIError('상권 데이터가 부족한 위치는 AI 분석을 제공하지 않습니다. 지도와 원자료만 참고해 주세요.')
+      return
+    }
+
+    if (aiData && !force) {
+      setAIError(null)
+      return
+    }
+
+    setAILoading(true)
+    setAIError(null)
+    if (force) {
+      setAIData(null)
+    }
+
+    try {
+      const response = await fetch('/api/incheon/ai/summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: result }),
+      })
+      const data = await response.json()
+
+      if (!response.ok) {
+        setAIError(data.error || 'AI 분석 중 오류가 발생했습니다.')
+        return
+      }
+
+      setAIData(data.analysis)
+    } catch {
+      setAIError('AI 서버 연결에 실패했습니다.')
+    } finally {
+      setAILoading(false)
+    }
+  }
+
+  async function handleShare() {
+    if (!result) return
+
+    const url = window.location.href
+    const title = `${query} ${result.category.name} OpenRisk 인천 분석`
+    const text = `위험 단계 ${result.risk.insufficientData ? '판단 보류' : riskLevelText(result)} · 데이터 신뢰도 ${confidenceLabel(result.risk.confidence ?? 'medium')}`
+
+    try {
+      if (navigator.share) {
+        await navigator.share({ title, text, url })
+        setShareStatus('shared')
+        return
+      }
+
+      await navigator.clipboard.writeText(url)
+      setShareStatus('copied')
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        setShareStatus('idle')
+        return
+      }
+      try {
+        await navigator.clipboard.writeText(url)
+        setShareStatus('copied')
+      } catch {
+        setShareStatus('failed')
+      }
     }
   }
 
@@ -577,6 +745,10 @@ function ResultContent() {
     async function run() {
       setLoading(true)
       setErrorView(null)
+      setAIData(null)
+      setAIError(null)
+      setShowAIModal(false)
+      setShareStatus('idle')
       try {
         const response = await fetch('/api/incheon/analyze', {
           method: 'POST',
@@ -604,6 +776,12 @@ function ResultContent() {
   }, [lat, lng, category])
 
   useEffect(() => {
+    if (shareStatus === 'idle') return
+    const timer = window.setTimeout(() => setShareStatus('idle'), 2200)
+    return () => window.clearTimeout(timer)
+  }, [shareStatus])
+
+  useEffect(() => {
     if (!result || !window.location.hash) return
     const target = document.querySelector(window.location.hash)
     if (!target) return
@@ -624,18 +802,19 @@ function ResultContent() {
           initialCategory={category}
           rightAction={
             result && !loading ? (
-              <button
-                type="button"
-                onClick={handleDownloadPdf}
-                disabled={pdfLoading}
-                className="inline-flex items-center gap-2 border border-[#2D7BFF] bg-[#0B66FF] px-4 py-2.5 text-sm font-black text-white transition-colors hover:bg-[#0A57DB] disabled:opacity-60"
-              >
-                <Download className="h-4 w-4" strokeWidth={2.2} />
-                {pdfLoading ? '저장 중…' : '리포트 저장'}
-              </button>
+              <ResultActionGroup
+                aiLoading={aiLoading}
+                pdfLoading={pdfLoading}
+                shareStatus={shareStatus}
+                onAI={() => handleAIAnalysis()}
+                onPdf={handleDownloadPdf}
+                onShare={handleShare}
+              />
             ) : null
           }
         />
+
+        {result && !loading && <ResultStatusBar result={result} query={query} />}
 
         {loading && (
           <div className="grid gap-3 lg:min-h-0 lg:flex-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(360px,0.64fr)]">
@@ -676,6 +855,14 @@ function ResultContent() {
       )}
 
       <IncheonFooter />
+      <AIAnalysisModal
+        isOpen={showAIModal}
+        onClose={() => setShowAIModal(false)}
+        onRetry={result?.risk.insufficientData ? undefined : () => handleAIAnalysis(true)}
+        analysis={aiData}
+        isLoading={aiLoading}
+        error={aiError}
+      />
     </main>
   )
 }

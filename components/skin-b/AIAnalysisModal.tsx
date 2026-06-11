@@ -1,6 +1,6 @@
 'use client'
 
-import { AIAnalysisResponse } from '@/lib/v2/types'
+import type { AIAnalysisResponse } from '@/lib/ai-analysis/types'
 
 interface AIAnalysisModalProps {
   isOpen: boolean

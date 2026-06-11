@@ -405,7 +405,7 @@ export default function SearchPanel({
           </span>
         </div>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
           <button className="inline-flex items-center gap-2 border border-white/20 px-4 py-2.5 text-sm font-black text-white transition-colors hover:bg-white/8 active:scale-[0.98]">
             <RefreshCw className="h-4 w-4" />
             다시 검색

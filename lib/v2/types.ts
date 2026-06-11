@@ -307,12 +307,4 @@ export interface BusStop {
   period: string | null
 }
 
-// ===== AI 분석 응답 =====
-export interface AIAnalysisResponse {
-  headline: string           // 핵심 경고 (50자 이내)
-  riskAnalysis: string       // 리스크 분석 (400자 이내)
-  failureScenario: string    // 실패 시나리오 (150자 이내)
-  fieldChecks: string[]      // 현장 체크리스트 (3-5개)
-  reconsideration: string    // 재고 권유 (100자 이내)
-  disclaimer: string         // 면책 조항
-}
+export type { AIAnalysisResponse } from '../ai-analysis/types'

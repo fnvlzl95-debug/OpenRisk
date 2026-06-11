@@ -56,8 +56,9 @@ function metricSection(num: number, data: IncheonAnalyzeResponse, key: 'competit
   `)
 }
 
-export function generateIncheonPdfHtml(data: IncheonAnalyzeResponse): string {
+export function generateIncheonPdfHtml(data: IncheonAnalyzeResponse, displayLabel = data.location.label || '인천 분석 지점'): string {
   const { location, category, risk } = data
+  const analysisLabel = displayLabel || location.label || '인천 분석 지점'
   const scoreText = risk.score === null ? '—' : String(risk.score)
   const levelText = risk.insufficientData ? '판단 보류' : riskLevelKo[risk.level] ?? '-'
   const date = formatDate()
@@ -125,7 +126,7 @@ export function generateIncheonPdfHtml(data: IncheonAnalyzeResponse): string {
 
   <div class="top">
     <div class="brand">OpenRisk 인천 · 공공데이터 상권 리스크 리포트</div>
-    <div class="title">${esc(location.label || '인천 분석 지점')} · ${esc(category.name)}</div>
+    <div class="title">${esc(analysisLabel)} · ${esc(category.name)}</div>
     <div class="meta">
       <span>업종 <b>${esc(category.name)}</b></span>
       <span>분석 반경 <b>${location.radiusMeters}m</b></span>
@@ -137,19 +138,21 @@ export function generateIncheonPdfHtml(data: IncheonAnalyzeResponse): string {
   ${section(1, '분석 개요', `이 리포트는 인천 공공데이터(점포·교통·교육/보육·임대료)만으로 반경 ${location.radiusMeters}m 상권 리스크를 0~100으로 산정한 결과입니다. 점수가 높을수록 위험이 큽니다. 본 분석은 참고 자료이며, 창업·투자 결정의 최종 근거로 사용할 수 없습니다.`)}
 
   ${section(2, '위치 · 업종 · 분석 반경', `
-    <p>· 분석 기준점: <b>${esc(location.label || '인천 분석 지점')}</b> (위도 ${location.lat.toFixed(5)}, 경도 ${location.lng.toFixed(5)})</p>
+    <p>· 분석 기준점: <b>${esc(analysisLabel)}</b> (위도 ${location.lat.toFixed(5)}, 경도 ${location.lng.toFixed(5)})</p>
     <p>· 대상 업종: <b>${esc(category.name)}</b></p>
     <p>· 분석 반경: <b>${location.radiusMeters}m</b> (H3 res ${location.h3Resolution}, 거리 감쇠 가중)</p>
   `)}
 
   <div class="hero">
     <div>
-      <div style="font-size:12px;font-weight:800;color:#53657E">③ 종합 위험 점수</div>
+      <div style="font-size:12px;font-weight:800;color:#53657E">종합 위험 점수</div>
       <div class="hero-score">${scoreText}</div>
     </div>
     <div class="hero-level">${esc(levelText)}</div>
     <div class="hero-conf">데이터 신뢰도<br/><b style="font-size:16px;color:#0E1F38">${confidenceKo[risk.confidence ?? 'medium']}</b></div>
   </div>
+
+  ${section(3, '핵심 위험 요인', top3 || '<p>상권 데이터가 부족해 핵심 위험 요인을 확정하지 않았습니다.</p>')}
 
   ${metricSection(4, data, 'competition', 'categoryDensity')}
   ${metricSection(5, data, 'transit', 'transitAccess')}
@@ -161,7 +164,6 @@ export function generateIncheonPdfHtml(data: IncheonAnalyzeResponse): string {
       <p><b>${esc(survival?.label ?? '복합 위험 신호')}: ${survival?.score ?? '—'}</b> <span class="tag tag-na">종합 점수 미반영</span></p>
       <p style="margin-top:6px;color:#53657E">경쟁·비용·접근성을 조합한 참고용 복합 신호입니다. 실제 폐업률 데이터가 아니며, 종합 점수에는 반영하지 않습니다.</p>
     </div>
-    ${top3 ? `<p class="lbl">먼저 확인할 요인</p>${top3}` : ''}
   `)}
 
   ${section(9, '데이터 신뢰도 · 한계', `

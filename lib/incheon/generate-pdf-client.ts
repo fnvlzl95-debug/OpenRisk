@@ -6,7 +6,7 @@ import type { IncheonAnalyzeResponse } from './types'
  * v2와 동일한 html2canvas-pro → PNG → jsPDF 패턴(한글 폰트 자동).
  * 내용이 길어 단일 캡처를 A4 높이로 분할해 여러 페이지로 출력한다.
  */
-export async function generateIncheonPdfClient(data: IncheonAnalyzeResponse): Promise<void> {
+export async function generateIncheonPdfClient(data: IncheonAnalyzeResponse, displayLabel?: string): Promise<void> {
   const [html2canvasModule, jsPDFModule] = await Promise.all([import('html2canvas-pro'), import('jspdf')])
   const html2canvas = html2canvasModule.default
   const jsPDF = jsPDFModule.default
@@ -27,7 +27,7 @@ export async function generateIncheonPdfClient(data: IncheonAnalyzeResponse): Pr
   }
 
   iframeDoc.open()
-  iframeDoc.write(generateIncheonPdfHtml(data))
+  iframeDoc.write(generateIncheonPdfHtml(data, displayLabel))
   iframeDoc.close()
 
   await new Promise((resolve) => setTimeout(resolve, 350))
@@ -64,7 +64,7 @@ export async function generateIncheonPdfClient(data: IncheonAnalyzeResponse): Pr
       pdf.addImage(imgData, 'PNG', 0, 0, pageWidthMm, sliceHeightMm, undefined, 'FAST')
     }
 
-    const safeLabel = (data.location.label || '인천').replace(/[^\w가-힣]+/g, '_').slice(0, 30)
+    const safeLabel = (displayLabel || data.location.label || '인천').replace(/[^\w가-힣]+/g, '_').slice(0, 30)
     pdf.save(`OpenRisk_Incheon_${safeLabel}_${data.category.name}.pdf`)
   } finally {
     document.body.removeChild(iframe)
