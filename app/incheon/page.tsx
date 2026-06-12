@@ -143,7 +143,7 @@ export default function IncheonHomePage() {
               <p className="mt-7 text-xl font-semibold leading-9 text-white/86">
                 위치와 업종만 입력하세요.
                 <br />
-                우리 동네 상권의 위험도를 바로 알려드립니다.
+                인천 상권의 위험도를 바로 알려드립니다.
               </p>
 
               <div className="mt-9 max-w-[690px]">
@@ -219,8 +219,8 @@ export default function IncheonHomePage() {
           <div className="mt-10 overflow-hidden bg-[#052552] p-8 text-white shadow-[0_18px_50px_rgba(5,37,82,0.22)]">
             <div className="grid items-center gap-8 md:grid-cols-[1fr_auto_260px]">
               <div>
-                <h2 className="text-3xl font-black tracking-[-0.02em]">지금 우리 동네를 분석해보세요</h2>
-                <p className="mt-4 text-lg font-semibold text-white/78">상권의 기회와 위험, 지금 바로 확인해 보세요</p>
+                <h2 className="text-3xl font-black tracking-[-0.02em]">지금 인천 상권을 분석해보세요</h2>
+                <p className="mt-4 text-lg font-semibold text-white/78">인천 상권의 기회와 위험, 지금 바로 확인해 보세요</p>
               </div>
               <a
                 href="/incheon/result?lat=37.3897&lng=126.6454&category=cafe&query=%EC%9D%B8%EC%B2%9C%20%EC%97%B0%EC%88%98%EA%B5%AC%20%EC%86%A1%EB%8F%84%EB%8F%99"
